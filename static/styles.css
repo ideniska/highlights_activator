@@ -1,0 +1,46 @@
+/*Headings*/
+h1 {
+font-family: "Montseratt";
+font-weight: bold;
+font-size: 3.5rem;
+}
+
+h4 {
+font-family: "Ubuntu";
+font-size: 1.4rem;
+padding-bottom: 0.5rem;
+}
+
+/*Navigation bar*/
+.navbar-brand-custom {
+font-family: "Ubuntu";
+font-size: 1.8rem;
+}
+
+.navbar {
+font-family: "Ubuntu";
+padding-bottom: 2rem;
+}
+
+/*Padding*/
+.container-fluid {
+padding: 1% 12.6%;
+}
+
+.text-center-custom {
+padding-bottom: 2rem;
+}
+
+.row {
+padding-bottom: 4rem;
+}
+
+@media (min-width: 300px) {
+    .container-sm{
+        max-width: 400px;
+    }
+}
+
+#random-quote-block {
+    background-color: #F2F5F8;
+}
