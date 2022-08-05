@@ -110,8 +110,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'users.CustomUser' # new
 
-LOGIN_REDIRECT_URL = 'home'
-ACCOUNT_LOGOUT_REDIRECT_URL = 'home' #TODO change it to landing
+LOGIN_REDIRECT_URL = 'dashboard'
+ACCOUNT_LOGOUT_REDIRECT_URL = 'landing' #TODO change it to landing
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/

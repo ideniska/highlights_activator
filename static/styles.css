@@ -44,3 +44,21 @@ padding-bottom: 4rem;
 #random-quote-block {
     background-color: #F2F5F8;
 }
+
+#logout {
+    background-color: #222529;
+    
+}
+
+.btn-outline-light {
+    --btn-font-family: "Ubuntu";
+    --bs-btn-hover-color: #C8C8C9;
+    --bs-btn-hover-bg: #222529;
+    --bs-btn-border-color: #222529;
+    --bs-btn-color: #9B9D9F;
+    --bs-btn-hover-border-color: #222529;
+}
+
+.register-block {
+    margin-top: 30px;
+}
