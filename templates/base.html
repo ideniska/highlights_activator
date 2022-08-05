@@ -36,13 +36,13 @@
                     <a class="nav-link" href="">Welcome, {{ user.email }}</a>
                 </li>
                  <li class="nav-item">
-                    <a class="nav-link" href="">Upload</a>
+                    <a class="nav-link" href="{% url 'upload' %}">Upload</a>
                 </li>
                 <li class="nav-item">
-                  <form action="{% url 'account_logout' %}" method="POST">
+                  <!-- <form action="{% url 'account_logout' %}" method="POST">
                     {% csrf_token %}
                     <button class="btn btn-outline-light" type="submit">Log out</button>
-                </li>
+                </li> -->
             </ul>
           {% else %}
             <ul class="navbar-nav ms-auto">
