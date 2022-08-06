@@ -1,9 +1,8 @@
 import os
-from .models import Book, Quote
+from .models.py import Book, Quote
 
 
-def start_kindle_parser(file_name, user_id):
-    print("file name: ", file_name, " user: ", user_id)
+def test_kindle_parser():
 
     # --- KINDLE NOTES FILE PARSER --- #
     notes_line_list = []
@@ -12,7 +11,9 @@ def start_kindle_parser(file_name, user_id):
 
     # TODO implement file extension check - if it is TXT then start parser if it is not - show alert "wrong file"
 
-    with open(file_name, "r", encoding="utf-8") as kindle_file:
+    with open(
+        "media/user_uploads/kindle_notes_denis_2OoBhW5.txt", "r", encoding="utf-8"
+    ) as kindle_file:
         for line in kindle_file:
             if len(line) > 1:
                 notes_line_list.append(line)
@@ -64,15 +65,21 @@ def start_kindle_parser(file_name, user_id):
         except IndexError:
             continue
 
+    # print(notes_dict['Разбуди в себе исполина (Энтони Роббинс)'])
+    # print(random.choice(list(notes_dict.items())))
+
+    # random_book = random.choice(list(notes_dict))
+    # random_quote = random.choice(list(notes_dict[random_book].items()))[1]
+
     ## --- ADD PARSED TXT TO DATABASE --- ##
     for book in notes_dict:
-        new_book_entry = Book.create(book_title_db=book, owner=user_id)
-        new_book_entry.save()
+        new_book_entry = Book.create(book_title_db=book)
         for date_added, note in notes_dict[book].items():
             new_quote_entry = Quote.create(
-                date_added_db=date_added,
-                quote_db=note,
-                book_title_db=new_book_entry,
-                owner=new_book_entry.owner,
+                date_added_db=date_added, quote_db=note, from_book=book
             )
             new_quote_entry.save()
+        new_book_entry.save()
+
+
+test_kindle_parser()
