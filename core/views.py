@@ -27,7 +27,8 @@ class DashboardPageView(ListView):
     # return when context_object_name is called in a template
     def get_queryset(self):
         items = list(Quote.objects.filter(owner=self.request.user.id))
-        return random.choice(items)
+        if items:
+            return random.choice(items)
 
 
 class SmartFeedView(TemplateView):
