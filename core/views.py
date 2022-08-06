@@ -7,9 +7,7 @@ from .kindle_parser import start_kindle_parser
 from .forms import FileForm
 from django.core.files.storage import FileSystemStorage
 from .models import UserFiles, Quote
-
-
-# from kindle_parser import start_kindle_parser
+import random
 
 
 class HomePageView(TemplateView):
@@ -20,10 +18,16 @@ class LandingPageView(TemplateView):
     template_name = "landing.html"
 
 
-class DashboardPageView(TemplateView):
+class DashboardPageView(ListView):
     template_name = "dashboard.html"
-    # model = Quote
-    # context_object_name = Quote.objects.filter(owner=user=self.request.user)
+    model = Quote
+    context_object_name = "random_quote"
+
+    # Get all quotes whos owner is current user, pick random,
+    # return when context_object_name is called in a template
+    def get_queryset(self):
+        items = list(Quote.objects.filter(owner=self.request.user.id))
+        return random.choice(items)
 
 
 class SmartFeedView(TemplateView):
@@ -47,14 +51,11 @@ def upload_file(request):
                 request.user
             )  # gets the file file owner from current user
             form.save()
-            # user_file_name_obj = UserFiles.objects.all().filter(owner=form.instance.owner )
             user_file_name_obj = UserFiles.objects.filter(
                 owner=form.instance.owner
             ).latest("uploaded_at")
             field_name = "file"
             user_file_name_value = getattr(user_file_name_obj, field_name)
-            # print('user_file_name is:', user_file_name_value)
-            # print('owner is: ', form.instance.owner)
             start_kindle_parser(
                 "media/" + str(user_file_name_value), form.instance.owner.id
             )
