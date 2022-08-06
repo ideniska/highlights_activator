@@ -18,9 +18,12 @@ class Book(models.Model):
         book = cls(book_title_db=book_title_db, owner=owner)
         return book
 
+    def __str__(self):
+        return self.book_title_db
+
 
 class Quote(models.Model):
-    book_title_db = models.ForeignKey(Book, on_delete=models.CASCADE)
+    book_title_db = models.ForeignKey("Book", on_delete=models.CASCADE)
     date_added_db = models.CharField(max_length=250)
     quote_db = models.CharField(max_length=1500)
     owner = models.IntegerField()

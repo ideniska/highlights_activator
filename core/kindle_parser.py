@@ -3,7 +3,6 @@ from .models import Book, Quote
 
 
 def start_kindle_parser(file_name, user_id):
-    print("file name: ", file_name, " user: ", user_id)
 
     # --- KINDLE NOTES FILE PARSER --- #
     notes_line_list = []
