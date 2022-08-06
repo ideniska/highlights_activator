@@ -2,23 +2,33 @@
 {% load static %}
 
 {% block content %}
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Upload</button>
-  </form>
 
-  <p><a href="{% url 'dashboard' %}">Go to Dashboard</a></p>
+<div class="container upload">
 
-  <!-- <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <input type="file" name="userfile">
-    <button type="submit">Upload</button>
-  </form>
+  <div class="row">
 
-  {% if uploaded_file_url %}
-    <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
-  {% endif %}
+    <div class="col">
+      <img src="{% static '/img/Click-on-Documents-folder-from-Kindle-drive.png' %}" alt="">
+      <img src="{% static '/img/Open-the-My-Clippings-file.png' %}" alt="">
+    </div>
 
-  {% endblock %} -->
+    <div class="col">
+      <h3>How to export your Kindle notes?</h3>
+      <p>First, connect your Kindle to your Mac or Windows PC using the provided USB cable. Now, go to Finder on your
+        Mac or File Explorer on your PC and open the “Kindle” file directory. Go to the <strong>“Documents”</strong>
+        folder.</p>
+      <p>Here, search for the <strong>“My Clippings.txt”</strong> file.</p>
+      <p>You can drag it to "Choose file" area below or click and choose it.</p>
 
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Upload</button>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+
+{% endblock %}

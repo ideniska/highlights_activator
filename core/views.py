@@ -8,6 +8,8 @@ from .forms import FileForm
 from django.core.files.storage import FileSystemStorage
 from .models import UserFiles, Quote
 import random
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 
 class HomePageView(TemplateView):
@@ -18,7 +20,7 @@ class LandingPageView(TemplateView):
     template_name = "landing.html"
 
 
-class DashboardPageView(ListView):
+class DashboardPageView(LoginRequiredMixin, ListView):
     template_name = "dashboard.html"
     model = Quote
     context_object_name = "random_quote"
@@ -31,19 +33,20 @@ class DashboardPageView(ListView):
             return random.choice(items)
 
 
-class SmartFeedView(TemplateView):
+class SmartFeedView(LoginRequiredMixin, TemplateView):
     template_name = "smart_feed.html"
 
 
-class ByBookView(TemplateView):
+class ByBookView(LoginRequiredMixin, TemplateView):
     template_name = "by_book.html"
 
 
-class ByTagView(TemplateView):
+class ByTagView(LoginRequiredMixin, TemplateView):
     template_name = "by_tag.html"
 
 
 # FILE UPLOAD
+@login_required
 def upload_file(request):
     if request.method == "POST":
         form = FileForm(request.POST, request.FILES)
