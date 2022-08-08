@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% load static %}
 
-{% block title %}Dashboard{% endblock %}
+
+{% block title %}Your notes feed{% endblock %}
 {% block content %}
 <div style="background-color: #F2F5F8;">
     <br>
@@ -18,18 +18,21 @@
         </div>
         <br>
         <div class="col-md-4">
+            <div>
+                <h3>{{ book_title }} </h3>
+            </div>
             <table class="table table-hover table-bordered">
                 <thead>
                     <tr>
-                        <th scope="col">Title</th>
-                        <th scope="col">Highlights</th>
-                        <th scope="col">Status</th>
+                        <th scope="col">Quote</th>
+                        <th scope="col">Date added</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for book in books_list %}
+                    {% for quote in quotes_by_book %}
                     <tr>
-                        <td><a href="{% url 'book_page' book.id %}">{{ book.book_title_db }}</a></td>
+                        <td>{{ quote.quote_db }}</td>
+                        <td>{{ quote.date_added_db }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

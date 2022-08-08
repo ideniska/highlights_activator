@@ -43,10 +43,7 @@
           <a class="nav-link" href="{% url 'upload' %}">Upload</a>
         </li>
         <li class="nav-item">
-          <!-- <form action="{% url 'account_logout' %}" method="POST">
-                    {% csrf_token %}
-                    <button class="btn btn-outline-light" type="submit">Log out</button>
-                </li> -->
+          <a class="nav-link" href="{% url 'logout' %}">Logout</a>
       </ul>
       {% else %}
       <ul class="navbar-nav ms-auto">
