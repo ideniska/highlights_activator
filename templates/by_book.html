@@ -27,9 +27,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for book in books_list %}
+                    {% for book_title, count in highlights_count %}
                     <tr>
-                        <td><a href="{% url 'book_page' book.id %}">{{ book.book_title_db }}</a></td>
+                        <td><a href="{% url 'book_page' book_title.id %}">{{ book_title }}</a></td>
+                        <td> {{ count }}</td>
+                        <td>X</td>
                     </tr>
                     {% endfor %}
                 </tbody>
