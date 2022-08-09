@@ -66,3 +66,14 @@ h4 {
 .upload {
     padding-top: 5%;
 }
+
+.dashboard-books {
+    max-height: 450px;
+    overflow: hidden;
+}
+
+
+#show-more {
+    margin-top: 30px;
+}
+
