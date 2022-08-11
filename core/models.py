@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django import forms
 
 
 class UserFiles(models.Model):
@@ -10,8 +11,9 @@ class UserFiles(models.Model):
 
 class Book(models.Model):
     book_title_db = models.CharField(max_length=350)
-    show_status = models.IntegerField(default=1)
+    show_status = models.BooleanField(default=True)
     owner = models.IntegerField()
+    quotes_count = models.IntegerField(default=0)
 
     @classmethod
     def create(cls, book_title_db, owner):

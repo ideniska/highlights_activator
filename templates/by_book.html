@@ -24,34 +24,27 @@
                         <tr>
                             <th scope=" col">Title</th>
                             <th scope="col">Highlights</th>
-                            <th scope="col">Status</th>
+                            <th scope="col">Status from DB</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for book_title, count in highlights_count %}
+                        {% for book in books %}
                         <tr>
-                            <td><a href="{% url 'book_page' book_title.id %}">{{ book_title }}</a></td>
-                            <td> {{ count }}</td>
-                            <td>
-                                <form method="POST">
-                                    {% csrf_token %}
-                                    {{ form.as_p }}
-                                    <input type="checkbox" id="show_status" name="show_status" value="show_status">
-                                </form>
+                            <td><a href="{% url 'book_page' book.id %}">{{ book.book_title_db }}</a></td>
+                            <td> {{ book.quotes_count }}</td>
+                            <td> {{ book.show_status }} </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-            </td>
-            </tr>
-            {% endfor %}
-            </tbody>
-            </table>
+            <button type="button" class="btn btn-primary" id="show-more">SHOW MORE</button>
         </div>
-        <button type="button" class="btn btn-primary" id="show-more">SHOW MORE</button>
-    </div>
 
-</div>
-<br>
-<br>
-<br>
-<br>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
 </div>
 {% endblock %}

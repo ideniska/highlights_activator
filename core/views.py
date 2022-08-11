@@ -42,30 +42,36 @@ class SmartFeedView(LoginRequiredMixin, TemplateView):
     template_name = "smart_feed.html"
 
 
+# class ByBookView(LoginRequiredMixin, ListView):
+#     template_name = "by_book.html"
+#     model = Quote
+#     context_object_name = "highlights_count"
+
+#     def get_queryset(self):
+#         quotes_list = list(Quote.objects.filter(owner=self.request.user.id))
+
+#         # Count how many highlights in each book
+#         highlights = {}
+#         for record in quotes_list:
+#             book_title = record.book_title_db
+#             quote = record.quote_db
+#             if book_title not in highlights:
+#                 highlights[book_title] = [quote]
+#             else:
+#                 highlights[book_title].append(quote)
+
+#         highlights_count = {}
+#         for key in highlights:
+#             highlights_count[key] = len(highlights[key])
+
+#         # Return dict with books as keys and highlights count as values
+#         return highlights_count.items()
+
+
 class ByBookView(LoginRequiredMixin, ListView):
     template_name = "by_book.html"
-    model = Quote
-    context_object_name = "highlights_count"
-
-    def get_queryset(self):
-        quotes_list = list(Quote.objects.filter(owner=self.request.user.id))
-
-        # Count how many highlights in each book
-        highlights = {}
-        for record in quotes_list:
-            book_title = record.book_title_db
-            quote = record.quote_db
-            if book_title not in highlights:
-                highlights[book_title] = [quote]
-            else:
-                highlights[book_title].append(quote)
-
-        highlights_count = {}
-        for key in highlights:
-            highlights_count[key] = len(highlights[key])
-
-        # Return dict with books as keys and highlights count as values
-        return highlights_count.items()
+    model = Book
+    context_object_name = "books"
 
 
 class ByTagView(LoginRequiredMixin, TemplateView):

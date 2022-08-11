@@ -1,4 +1,3 @@
-import os
 from .models import Book, Quote
 
 
@@ -75,3 +74,29 @@ def start_kindle_parser(file_name, user_id):
                 owner=new_book_entry.owner,
             )
             new_quote_entry.save()
+
+    quotes_list = list(Quote.objects.filter(owner=user_id))
+
+    # Count how many highlights in each book
+    highlights = {}
+    for record in quotes_list:
+        book_title = record.book_title_db
+        quote = record.quote_db
+        if book_title not in highlights:
+            highlights[book_title] = [quote]
+        else:
+            highlights[book_title].append(quote)
+
+    highlights_count = {}
+    for key in highlights:
+        highlights_count[key] = len(highlights[key])
+
+    # Update highlights count at Books model
+    for book_title, count in highlights_count.items():
+        # print("book: ", book_title, "count: ", count)
+        users_books = Book.objects.filter(owner=user_id)
+        # print("Book object: ", users_books.get(book_title_db=book_title))
+        book_to_update = users_books.get(book_title_db=book_title)
+        book_to_update.quotes_count = count
+        book_to_update.save()
+        print(book_to_update.quotes_count)
