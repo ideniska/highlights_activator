@@ -2,9 +2,13 @@ from django.db import models
 from django.conf import settings
 from django import forms
 
+from users.models import CustomUser
+
 
 class UserFiles(models.Model):
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    owner = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name="user_files"
+    )
     file = models.FileField("", upload_to="user_uploads/")
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
@@ -12,7 +16,7 @@ class UserFiles(models.Model):
 class Book(models.Model):
     book_title_db = models.CharField(max_length=350)
     show_status = models.BooleanField(default=True)
-    owner = models.IntegerField()
+    owner = models.IntegerField()  # FK to User
     quotes_count = models.IntegerField(default=0)
 
     @classmethod
@@ -25,7 +29,9 @@ class Book(models.Model):
 
 
 class Quote(models.Model):
-    book_title_db = models.ForeignKey("Book", on_delete=models.CASCADE)
+    book_title_db = models.ForeignKey(
+        "Book", on_delete=models.CASCADE, related_name="quotes"
+    )
     date_added_db = models.CharField(max_length=250)
     quote_db = models.CharField(max_length=1500)
     owner = models.IntegerField()

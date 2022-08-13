@@ -24,7 +24,7 @@
                         <tr>
                             <th scope=" col">Title</th>
                             <th scope="col">Highlights</th>
-                            <th scope="col">Status from DB</th>
+                            <th scope="col">Visibilty status from DB</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -32,13 +32,26 @@
                         <tr>
                             <td><a href="{% url 'book_page' book.id %}">{{ book.book_title_db }}</a></td>
                             <td> {{ book.quotes_count }}</td>
-                            <td> {{ book.show_status }} </td>
+                            <td>
+                                <input type="hidden" name="show_status" value="{{ book.show_status }}">
+                                {% if book.show_status == True %}
+                                <label>
+                                    <input type="checkbox" name="{{book.book_title_db}}" checked id="checkbox"
+                                        onchange="test_func({{ book.id }})">
+                                </label>
+                                {% else %}
+                                <label>
+                                    <input type="checkbox" name="{{subtest.id}}" id="checkbox"
+                                        onchange="test_func({{ book.id }})">
+                                </label>
+                                {% endif %}
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-            <button type="button" class="btn btn-primary" id="show-more">SHOW MORE</button>
+            <button type=" button" class="btn btn-primary" id="show-more">SHOW MORE</button>
         </div>
 
     </div>
