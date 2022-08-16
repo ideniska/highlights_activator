@@ -102,5 +102,4 @@ def start_kindle_parser(file_path, user_id):
 
     for book in Book.objects.all():
         book.quotes_count = Quote.objects.filter(book=book.id).count()
-        print(book.quotes_count)
         book.save()
