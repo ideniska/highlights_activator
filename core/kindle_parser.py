@@ -1,7 +1,7 @@
 from .models import Book, Quote
 
 
-def start_kindle_parser(file_name, user_id):
+def start_kindle_parser(file_name):
 
     # --- KINDLE NOTES FILE PARSER --- #
     notes_line_list = []
@@ -64,14 +64,14 @@ def start_kindle_parser(file_name, user_id):
 
     ## --- ADD PARSED TXT TO DATABASE --- ##
     for book in notes_dict:
-        new_book_entry = Book.create(book_title_db=book, owner=user_id)
-        new_book_entry.save()
+        new_book_entry = Book.objects.create(title=book)
+        # TODO GOOGLE bulk create
+        # TODO GOOGLE db transaction
         for date_added, note in notes_dict[book].items():
-            new_quote_entry = Quote.create(
+            new_quote_entry = Quote(
                 date_added_db=date_added,
                 quote_db=note,
                 book_title_db=new_book_entry,
-                owner=new_book_entry.owner,
             )
             new_quote_entry.save()
 
