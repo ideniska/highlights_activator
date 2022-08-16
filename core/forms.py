@@ -9,18 +9,16 @@ class FileForm(forms.ModelForm):
     def clean(self):
         quote_type: FileType = self.cleaned_data["type"]
         file: InMemoryUploadedFile = self.cleaned_data["file"]
-        print(file.content_type)
-        print(file.name)
-        print(file.size / (1024 * 1024))
+        # print(file.content_type)
+        # print(file.name)
+        # print(file.size / (1024 * 1024))
         size = file.size / (1024 * 1024)
 
         # File size limit is in settings.py
         if size > settings.FILE_SIZE_LIMIT:
-            print("Too big!")
             raise forms.ValidationError("File size limit is 100 Mb")
 
         if quote_type != "kindle":
-            print("Sorry, currently we don't support other file formats.")
             raise forms.ValidationError(
                 "Sorry, currently we don't support other file formats."
             )

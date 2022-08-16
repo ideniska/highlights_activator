@@ -42,10 +42,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "users",
     "core",
+    "api",
     # 3rd party
-    "allauth",  # new
-    "allauth.account",  # new
-    "allauth.socialaccount",  # new
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
 ]
 
 MIDDLEWARE = [

@@ -15,6 +15,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, get_list_or_404
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class HomePageView(TemplateView):
@@ -92,16 +95,15 @@ def upload_file(request):
     if request.method == "POST":
         form = FileForm(request.POST, request.FILES)
         if form.is_valid():
-            pass
-            # form.instance.owner = (
-            #     request.user
-            # )  # gets the file file owner from current user
-            # form.save()
-            # user_file_name_obj = UserFile.objects.latest("uploaded_at")
-            # field_name = "file"
-            # user_file_name_value = getattr(user_file_name_obj, field_name)
-            # start_kindle_parser("media/" + str(user_file_name_value))
-            # return redirect("dashboard")
+            form.instance.owner = (
+                request.user
+            )  # gets the file file owner from current user
+            form.save()
+            user_file_name_obj = UserFile.objects.latest("uploaded_at")
+            field_name = "file"
+            user_file_path = getattr(user_file_name_obj, field_name)
+            start_kindle_parser("media/" + str(user_file_path), request.user)
+            return redirect("dashboard")
     else:
         form = FileForm()
     return render(request, "upload.html", {"form": form})

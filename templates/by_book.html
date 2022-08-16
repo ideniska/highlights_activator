@@ -30,13 +30,13 @@
                     <tbody>
                         {% for book in books %}
                         <tr>
-                            <td><a href="{% url 'book_page' book.id %}">{{ book.book_title_db }}</a></td>
+                            <td><a href="{% url 'book_page' book.id %}">{{ book.title }}</a></td>
                             <td> {{ book.quotes_count }}</td>
                             <td>
-                                <input type="hidden" name="show_status" value="{{ book.show_status }}">
-                                {% if book.show_status == True %}
+                                <input type="hidden" name="show_status" value="{{ book.visibility }}">
+                                {% if book.visibility == True %}
                                 <label>
-                                    <input type="checkbox" name="{{book.book_title_db}}" checked id="checkbox"
+                                    <input type="checkbox" name="{{book.book}}" checked id="checkbox"
                                         onchange="test_func({{ book.id }})">
                                 </label>
                                 {% else %}

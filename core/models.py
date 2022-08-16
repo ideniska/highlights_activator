@@ -27,6 +27,7 @@ class Book(models.Model):
     title = models.CharField(max_length=350)
     visibility = models.BooleanField(default=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="books")
+    quotes_count = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title
