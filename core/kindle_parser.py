@@ -76,30 +76,3 @@ def start_kindle_parser(file_path, user_id):
                 owner=user_id,
             )
             new_quote_entry.save()
-
-    # quotes_list = list(Quote.objects.all())
-
-    # # Count how many highlights in each book
-    # highlights = {}
-    # for record in quotes_list:
-    #     book_title = record.book
-    #     quote = record.text
-    #     if book_title not in highlights:
-    #         highlights[book_title] = [quote]
-    #     else:
-    #         highlights[book_title].append(quote)
-
-    # highlights_count = {}
-    # for key in highlights:
-    #     highlights_count[key] = len(highlights[key])
-
-    # # Update highlights count at Books model
-    # for book_title, count in highlights_count.items():
-    #     users_books = Book.objects.all()
-    #     book_to_update = users_books.get(title=book_title)
-    #     book_to_update.quotes_count = count
-    #     book_to_update.save()
-
-    for book in Book.objects.all():
-        book.quotes_count = Quote.objects.filter(book=book.id).count()
-        book.save()
