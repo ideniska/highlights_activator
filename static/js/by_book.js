@@ -1,5 +1,4 @@
 $(function () {
-    console.log('Here');
     bookList();
 });
 
@@ -27,7 +26,6 @@ function bookList () {
     })
 }
 
-// TODO How to handle datatable with ajax request
 // TODO How to pass data to html
 
 

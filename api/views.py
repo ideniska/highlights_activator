@@ -3,9 +3,10 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import generics, mixins, permissions, authentication
 from core.models import Book, Quote
-from .serializers import BookSerializer
+from .serializers import BookSerializer, QuoteSerializer
 from core.pagination import BasePageNumberPagination
 from django.db.models import Count
+import random
 
 
 @api_view(["POST"])
@@ -42,12 +43,20 @@ class BookDetailAPIView(generics.RetrieveAPIView):
     serializer_class = BookSerializer
 
 
-class BookVisibilityView(generics.GenericAPIView):
-    def post(self, request, pk: int):
-        try:
-            book = Book.objects.get(id=pk)
-            print(book)
-        except Book.DoesNotExist:
-            return Response({"detail": "not found"}, status=404)
+class RandomQuoteAPIView(
+    generics.ListCreateAPIView,
+):
 
-        return Response({})
+    queryset = Quote.objects.all()
+    serializer_class = QuoteSerializer
+
+
+# class BookVisibilityView(generics.GenericAPIView):
+#     def post(self, request, pk: int):
+#         try:
+#             book = Book.objects.get(id=pk)
+#             print(book)
+#         except Book.DoesNotExist:
+#             return Response({"detail": "not found"}, status=404)
+
+#         return Response({})
