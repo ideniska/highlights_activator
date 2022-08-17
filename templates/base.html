@@ -78,14 +78,6 @@
 <!-- https://datatables.net/ for table sorting features -->
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.js"></script>
 <script>$(document).ready(function () {
-    $('.book-table').DataTable(
-      {
-        paging: false,
-        "order": [1, 'desc'],
-        "searching": false,
-        "info": false,
-      }
-    );
     {% block jquery %} {% endblock jquery %};
   });</script>
 

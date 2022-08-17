@@ -1,11 +1,11 @@
 import json
-from urllib import response
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import generics, mixins, permissions, authentication
 from core.models import Book, Quote
 from .serializers import BookSerializer
 from core.pagination import BasePageNumberPagination
+from django.db.models import Count
 
 
 @api_view(["POST"])
@@ -16,9 +16,15 @@ def api_home(request, *args, **kwargs):
 class BookListAPIView(
     generics.ListCreateAPIView,
 ):
-    queryset = Book.objects.all()
+
+    queryset = Book.objects.annotate(quotes_count=Count("quotes"))
     serializer_class = BookSerializer
     pagination_class = BasePageNumberPagination
+
+    # def get_queryset(self):
+    #     return Book.objects.filter(owner=self.request.user).annotate(
+    #         quotes_count=Count("quotes")
+    #     )  # annotate creates a variable quotes_count for each book object and uses Count method to count related quotes
 
     # permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
 
