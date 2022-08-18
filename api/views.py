@@ -18,7 +18,9 @@ class BookListAPIView(
     generics.ListCreateAPIView,
 ):
 
-    queryset = Book.objects.annotate(quotes_count=Count("quotes"))
+    queryset = Book.objects.annotate(quotes_count=Count("quotes")).order_by(
+        "-quotes_count"
+    )
     serializer_class = BookSerializer
     pagination_class = BasePageNumberPagination
 
@@ -51,12 +53,17 @@ class RandomQuoteAPIView(
     serializer_class = QuoteSerializer
 
 
-# class BookVisibilityView(generics.GenericAPIView):
-#     def post(self, request, pk: int):
-#         try:
-#             book = Book.objects.get(id=pk)
-#             print(book)
-#         except Book.DoesNotExist:
-#             return Response({"detail": "not found"}, status=404)
+class BookVisibilityView(generics.GenericAPIView):
+    def post(self, request, pk: int):
+        try:
+            book = Book.objects.get(id=pk)
+            print(book)
+        except Book.DoesNotExist:
+            return Response({"detail": "not found"}, status=404)
 
-#         return Response({})
+        book.visibility = not book.visibility
+        book.save()
+        return Response({"detail": True})
+
+
+# TODO Ask Nazarii to update BookVisibilityView: filter.exists() if yes .update() -- more optimal way update visibility status from db

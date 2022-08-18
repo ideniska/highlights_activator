@@ -21,3 +21,7 @@ function randomQuote () {
         }
     });
 }
+
+
+// TODO API should send 1 quote not 2957
+// https://stackoverflow.com/questions/962619/how-to-pull-a-random-record-using-djangos-orm
