@@ -9,12 +9,27 @@ function bookList () {
         success: function (data) {
             console.log("SUCCESS", data);
             $.each(data.results, function (i, row) {
-              console.log(row);
-              $('.datarows').append('<tr><td>'+row.title+'</td><td>'+row.quotes_count+'</td><td>'+row.visibility+'</td></tr>');
+              $('.datarows').append('<tr><td>'+row.title+'</td><td>'+row.quotes_count+'</td><td>'+bookVisibility2(row.visibility)+'</td></tr>');
+              
             });
         }
     })
-}
+};
+
+function bookVisibility (visibility) {
+    if (visibility) {
+      return '<input type="checkbox" checked>';
+    }
+    return '<input type="checkbox">';
+
+};
+
+function bookVisibility2 (visibility) {
+  if (visibility) {
+    return '<div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked></div>';
+  }
+  return '<div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"></div>';
+};
 
 // SORT TABLE
 // const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;

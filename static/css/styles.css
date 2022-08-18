@@ -67,7 +67,7 @@ h4 {
     padding-top: 5%;
 }
 
-.dashboard-books {
+/* .dashboard-books {
     max-height: 450px;
     overflow: hidden;
 }
@@ -75,4 +75,16 @@ h4 {
 
 #show-more {
     margin-top: 10px;
+} */
+
+.dashboard-books {
+    border-radius: 6px;
+    background-color: white;
+    overflow: hidden;
 }
+
+.table {
+    --bs-table-hover-bg: #f8f9fa;
+}
+
+/* style="background-color: white; border-radius: 10px; border-color: transparent;" */
