@@ -1,5 +1,6 @@
 from gc import get_objects
 from multiprocessing import context
+from urllib import request
 from django.views.generic import TemplateView, DetailView
 from django.views.generic.list import ListView
 from django.http import HttpResponseRedirect
@@ -8,13 +9,22 @@ from django.urls import reverse_lazy
 from .kindle_parser import start_kindle_parser
 from .forms import FileForm
 from django.core.files.storage import FileSystemStorage
-from .models import UserFiles, Quote, Book
+from .models import UserFile, Quote, Book
 import random
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, get_list_or_404
+from django.contrib.auth import get_user_model
+from django.db.models import Count
+from rest_framework.permissions import AllowAny
+from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+
+User = get_user_model()
 
 
 class HomePageView(TemplateView):
@@ -70,8 +80,13 @@ class SmartFeedView(LoginRequiredMixin, TemplateView):
 
 class ByBookView(LoginRequiredMixin, ListView):
     template_name = "by_book.html"
-    model = Book
+    # model = Book
     context_object_name = "books"
+
+    def get_queryset(self):
+        return Book.objects.filter(owner=self.request.user).annotate(
+            quotes_count=Count("quotes")
+        )  # annotate creates a variable quotes_count for each book object and uses Count method to count related quotes
 
 
 class ByTagView(LoginRequiredMixin, TemplateView):
@@ -96,14 +111,10 @@ def upload_file(request):
                 request.user
             )  # gets the file file owner from current user
             form.save()
-            user_file_name_obj = UserFiles.objects.filter(
-                owner=form.instance.owner
-            ).latest("uploaded_at")
+            user_file_name_obj = UserFile.objects.latest("uploaded_at")
             field_name = "file"
-            user_file_name_value = getattr(user_file_name_obj, field_name)
-            start_kindle_parser(
-                "media/" + str(user_file_name_value), form.instance.owner.id
-            )
+            user_file_path = getattr(user_file_name_obj, field_name)
+            start_kindle_parser("media/" + str(user_file_path), request.user)
             return redirect("dashboard")
     else:
         form = FileForm()
@@ -113,3 +124,17 @@ def upload_file(request):
 def logout_user(request):
     logout(request)
     return HttpResponseRedirect(reverse("landing"))
+
+
+class TemplateAPIView(APIView):
+    """Help to build CMS System using DRF, JWT and Cookies
+    path('some-path/', TemplateAPIView.as_view(template_name='template.html'))
+    """
+
+    swagger_schema = None
+    permission_classes = (AllowAny,)
+    renderer_classes = (JSONRenderer, TemplateHTMLRenderer)
+    template_name: str = ""
+
+    def get(self, request, *args, **kwargs):
+        return Response()

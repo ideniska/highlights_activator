@@ -29,27 +29,6 @@
                             <th scope="col">Visibilty status from DB</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {% for book in books %}
-                        <tr>
-                            <td><a href="{% url 'book_page' book.id %}">{{ book.title }}</a></td>
-                            <td> {{ book.quotes_count }}</td>
-                            <td>
-                                <input type="hidden" name="show_status" value="{{ book.visibility }}">
-                                {% if book.visibility == True %}
-                                <label>
-                                    <input type="checkbox" name="{{book.title}}" checked id="checkbox"
-                                        onchange="test_func({{ book.id }})">
-                                </label>
-                                {% else %}
-                                <label>
-                                    <input type="checkbox" name="{{book.title}}}" id="checkbox"
-                                        onchange="test_func({{ book.id }})">
-                                </label>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -62,4 +41,7 @@
     <br>
     <br>
 </div>
+{% endblock %}
+{% block jquery %}
+$.getScript('{% static 'js/by_book.js' %}');
 {% endblock %}

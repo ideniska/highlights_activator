@@ -1,7 +1,7 @@
 from .models import Book, Quote
 
 
-def start_kindle_parser(file_name, user_id):
+def start_kindle_parser(file_path, user_id):
 
     # --- KINDLE NOTES FILE PARSER --- #
     notes_line_list = []
@@ -10,7 +10,7 @@ def start_kindle_parser(file_name, user_id):
 
     # TODO implement file extension check - if it is TXT then start parser if it is not - show alert "wrong file"
 
-    with open(file_name, "r", encoding="utf-8") as kindle_file:
+    with open(file_path, "r", encoding="utf-8") as kindle_file:
         for line in kindle_file:
             if len(line) > 1:
                 notes_line_list.append(line)
@@ -64,39 +64,15 @@ def start_kindle_parser(file_name, user_id):
 
     ## --- ADD PARSED TXT TO DATABASE --- ##
     for book in notes_dict:
-        new_book_entry = Book.create(book_title_db=book, owner=user_id)
+        new_book_entry = Book(title=book, owner=user_id)
         new_book_entry.save()
+        # TODO GOOGLE bulk create
+        # TODO GOOGLE db transaction
         for date_added, note in notes_dict[book].items():
-            new_quote_entry = Quote.create(
-                date_added_db=date_added,
-                quote_db=note,
-                book_title_db=new_book_entry,
-                owner=new_book_entry.owner,
+            new_quote_entry = Quote(
+                date_added=date_added,
+                text=note,
+                book=new_book_entry,
+                owner=user_id,
             )
             new_quote_entry.save()
-
-    quotes_list = list(Quote.objects.filter(owner=user_id))
-
-    # Count how many highlights in each book
-    highlights = {}
-    for record in quotes_list:
-        book_title = record.book_title_db
-        quote = record.quote_db
-        if book_title not in highlights:
-            highlights[book_title] = [quote]
-        else:
-            highlights[book_title].append(quote)
-
-    highlights_count = {}
-    for key in highlights:
-        highlights_count[key] = len(highlights[key])
-
-    # Update highlights count at Books model
-    for book_title, count in highlights_count.items():
-        # print("book: ", book_title, "count: ", count)
-        users_books = Book.objects.filter(owner=user_id)
-        # print("Book object: ", users_books.get(book_title_db=book_title))
-        book_to_update = users_books.get(book_title_db=book_title)
-        book_to_update.quotes_count = count
-        book_to_update.save()
-        print(book_to_update.quotes_count)
