@@ -26,6 +26,27 @@ function bookList () {
     })
 }
 
-// TODO How to pass data to html
+
+// SHOW MORE BUTTON
+var content = document.querySelector(".dashboard-books");
+var button = document.getElementById("show-more");
+
+
+button.onclick = function() {
+    content.classList.toggle('dashboard-books');
+    console.log('click');
+}
+
+
+// Checkbox changed event
+document.addEventListener("DOMContentLoaded", function (event) {
+  var _selector = document.querySelector('input[type=checkbox]');
+  _selector.addEventListener('change', function (event) {
+      if (_selector.checked) {
+          console.log('Checkbox changed')
+      };
+  });
+});
+
 
 
