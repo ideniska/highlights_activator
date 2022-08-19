@@ -9,7 +9,6 @@ function bookList () {
         url: '/api/by-book/',
         type: 'get',
         success: function (data) {
-            console.log("SUCCESS", data);
             $.each(data.results, function (i, row) {
             $('.datarows').append('<tr><td>'+row.title+'</td><td>'+row.quotes_count+'</td><td>'+bookVisibility(row.visibility, row.book_id)+'</td></tr>');
             });
@@ -28,7 +27,6 @@ function bookVisibility (visibility, book_id) {
 
 // SAVE CHANGED BOOK VISIBILITY TO DB
 $(document).on('change','.form-check-input', function() {
-  console.log($(this).data("bookid"));
   change_visibility($(this).data("bookid"));
 });
 
