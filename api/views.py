@@ -57,7 +57,6 @@ class BookVisibilityView(generics.GenericAPIView):
     def post(self, request, pk: int):
         try:
             book = Book.objects.get(id=pk)
-            print(book)
         except Book.DoesNotExist:
             return Response({"detail": "not found"}, status=404)
 
@@ -67,3 +66,15 @@ class BookVisibilityView(generics.GenericAPIView):
 
 
 # TODO Ask Nazarii to update BookVisibilityView: filter.exists() if yes .update() -- more optimal way update visibility status from db
+
+
+class QuoteLikeView(generics.GenericAPIView):
+    def post(self, request, pk: int):
+        try:
+            quote = Quote.objects.get(id=pk)
+        except Quote.DoesNotExist:
+            return Response({"detail": "not found"}, status=404)
+
+        quote.like = not quote.like
+        quote.save()
+        return Response({"detail": True})

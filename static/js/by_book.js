@@ -2,6 +2,8 @@ $(function () {
     bookList();
 });
 
+
+// GET BOOK LIST FROM API AND SHOW IT AS A TABLE
 function bookList () {
     $.ajax({
         url: '/api/by-book/',
@@ -9,27 +11,48 @@ function bookList () {
         success: function (data) {
             console.log("SUCCESS", data);
             $.each(data.results, function (i, row) {
-              $('.datarows').append('<tr><td>'+row.title+'</td><td>'+row.quotes_count+'</td><td>'+bookVisibility2(row.visibility)+'</td></tr>');
-              
+            $('.datarows').append('<tr><td>'+row.title+'</td><td>'+row.quotes_count+'</td><td>'+bookVisibility(row.visibility, row.book_id)+'</td></tr>');
             });
         }
     })
 };
 
-function bookVisibility (visibility) {
-    if (visibility) {
-      return '<input type="checkbox" checked>';
-    }
-    return '<input type="checkbox">';
 
-};
-
-function bookVisibility2 (visibility) {
+function bookVisibility (visibility, book_id) {
   if (visibility) {
-    return '<div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked></div>';
+    return '<div class="form-check form-switch"><input data-bookId="'+book_id+'"class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked></div>';
   }
-  return '<div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"></div>';
+  return '<div class="form-check form-switch"><input data-bookId="'+book_id+'"class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"></div>';
 };
+
+
+// SAVE CHANGED BOOK VISIBILITY TO DB
+$(document).on('change','.form-check-input', function() {
+  console.log($(this).data("bookid"));
+  change_visibility($(this).data("bookid"));
+});
+
+
+function change_visibility(bookId) {
+  const csrftoken = getCookie('csrftoken');
+  console.log("This is", bookId)
+  $.ajax({
+      type: "POST",
+      url: `/api/book/${bookId}/visibility/`,
+      data: {
+          book_id: bookId,
+          csrfmiddlewaretoken: csrftoken,
+      },
+      success: function(data) {
+          console.log("success", data)
+      },
+      error: function(data) {
+          console.log("error", data)
+      }
+  })
+}
+
+//   console.log(this.data('bookId'));
 
 // SORT TABLE
 // const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
