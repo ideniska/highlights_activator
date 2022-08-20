@@ -40,7 +40,9 @@ urlpatterns = [
         name="by-book-api",
     ),
     path("by-book/<int:id>", book_inside_view, name="book_page"),
-    path("by-book-api/<int:id>", book_inside_view, name="book_page"),
+    path(
+        "by-book-api/<int:id>", TemplateAPIView.as_view(template_name="book_page.html")
+    ),
     path("by-tag/", ByTagView.as_view(), name="by_tag"),
     path("logout/", logout_user, name="logout"),
 ]

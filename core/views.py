@@ -97,9 +97,9 @@ class ByTagView(LoginRequiredMixin, TemplateView):
 
 @login_required
 def book_inside_view(request, id):
-    list_of_quotes = get_list_or_404(Quote, book_title_db=id)
+    list_of_quotes = get_list_or_404(Quote, book=id)
     book_title = get_object_or_404(Book, id=id)
-    context = {"quotes_by_book": list_of_quotes, "book_title": book_title.book_title_db}
+    context = {"quotes_by_book": list_of_quotes, "book_title": book_title.title}
     return render(request, "book_page.html", context)
 
 

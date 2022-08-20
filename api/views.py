@@ -49,6 +49,38 @@ class BookDetailAPIView(generics.RetrieveAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
+    def get_queryset(self):
+        queryset = (
+            Book.objects.filter(owner=self.request.user)
+            .annotate(quotes_count=Count("quotes"))
+            .order_by("-quotes_count")
+        )
+        return queryset
+
+
+# class QuotesFromBookAPIView(generics.RetrieveAPIView):
+
+#     lookup_field = "book.id"
+#     serializer_class = QuoteSerializer
+
+#     def get_queryset(self):
+#         queryset = Quote.objects.filter(owner=self.request.user)
+#         return queryset
+
+
+class QuotesFromBookAPIView(generics.ListAPIView):
+
+    queryset = Quote.objects.all()
+    serializer_class = QuoteSerializer
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(owner=self.request.user)
+            .filter(book_id=self.kwargs["pk"])
+        )
+
 
 # For RandomServerQuoteAPIView
 def pick_random_object(user):

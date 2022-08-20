@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 
 {% block title %}Your notes feed{% endblock %}
@@ -19,7 +20,7 @@
         <br>
         <div class="col-md-4">
             <div>
-                <h3>{{ book_title }} </h3>
+                <h3>BOOK TITLE </h3>
             </div>
             <table class="table table-hover table-bordered">
                 <thead>
@@ -28,13 +29,11 @@
                         <th scope="col">Date added</th>
                     </tr>
                 </thead>
-                <tbody>
-                    {% for quote in quotes_by_book %}
+                <tbody class="datarows" data-href="/api/{id}/">
                     <tr>
-                        <td>{{ quote.quote_db }}</td>
-                        <td>{{ quote.date_added_db }}</td>
+                        <td></td>
+                        <td></td>
                     </tr>
-                    {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -44,4 +43,7 @@
     <br>
     <br>
 </div>
+{% endblock %}
+{% block jquery %}
+$.getScript('{% static 'js/book_page.js' %}');
 {% endblock %}
