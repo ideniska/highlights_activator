@@ -4,8 +4,9 @@ from .views import (
     BookListAPIView,
     BookDetailAPIView,
     BookVisibilityView,
-    RandomQuoteAPIView,
     QuoteLikeView,
+    FavoriteQuotesAPIView,
+    RandomServerQuoteAPIView,
 )
 
 urlpatterns = [
@@ -13,5 +14,6 @@ urlpatterns = [
     path("<int:pk>/", BookDetailAPIView.as_view()),
     path("book/<int:pk>/visibility/", BookVisibilityView.as_view()),
     path("quote/<int:pk>/like/", QuoteLikeView.as_view()),
-    path("random/", RandomQuoteAPIView.as_view()),
+    path("random/", RandomServerQuoteAPIView.as_view()),
+    path("favorites/", FavoriteQuotesAPIView.as_view()),
 ]

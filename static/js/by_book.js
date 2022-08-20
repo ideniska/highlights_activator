@@ -2,19 +2,45 @@ $(function () {
     bookList();
 });
 
+var requestedPage = false;
 
 // GET BOOK LIST FROM API AND SHOW IT AS A TABLE
 function bookList () {
     $.ajax({
-        url: '/api/by-book/',
+        url: $('.datarows').attr('data-href'),
         type: 'get',
-        success: function (data) {
-            $.each(data.results, function (i, row) {
-            $('.datarows').append('<tr><td>'+row.title+'</td><td>'+row.quotes_count+'</td><td>'+bookVisibility(row.visibility, row.book_id)+'</td></tr>');
-            });
-        }
+        success: function(data) {
+          if (BookListHandler(data)) {requestedPage = false;};
+        },
     })
 };
+
+
+$(window).scroll(function() {
+  var pagination = $(".datarows")
+    if ($(this).height()-pagination.height() <= $(this).scrollTop() && !requestedPage) {
+      let nextUrl = $('.datarows').attr('data-href')
+      if (nextUrl) {
+        requestedPage = true;
+        console.log($(this).height(), $(this).scrollTop() , pagination.height());
+        console.log('True')
+        bookList();
+      }
+    };
+})
+
+function BookListHandler (data) {
+  console.log('BookListHandler');
+  for (row of data.results) {
+      $('.datarows').attr('data-href', data.next);
+      $('.datarows').append('<tr class="infinite-item"><td><a href="'+row.book_id+'">'+row.title+'</a></td><td>'+row.quotes_count+'</td><td>'+bookVisibility(row.visibility, row.book_id)+'</td></tr>');
+  }
+  // $.each(data.results, function (i, row) {
+  //   $('.datarows').attr('data-href', data.next);
+  //   $('.datarows').append('<tr class="infinite-item"><td><a href="'+row.book_id+'">'+row.title+'</a></td><td>'+row.quotes_count+'</td><td>'+bookVisibility(row.visibility, row.book_id)+'</td></tr>');
+  //   });
+  return true;
+} 
 
 
 function bookVisibility (visibility, book_id) {
@@ -49,6 +75,10 @@ function change_visibility(bookId) {
       }
   })
 }
+
+var infinite = new Waypoint.Infinite({
+  element: $('.infinite-container')[0]
+});
 
 //   console.log(this.data('bookId'));
 
@@ -92,4 +122,5 @@ function change_visibility(bookId) {
 //       }
 //   })
 // }
+
 

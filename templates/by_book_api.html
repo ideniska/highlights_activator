@@ -13,35 +13,44 @@
                 <a href="{% url 'dashboard-api' %}" class="list-group-item list-group-item-action" aria-current="true">
                     Random quote
                 </a>
-                <a href="{% url 'smart_feed' %}" class="list-group-item list-group-item-action">Smart feed</a>
-                <a href="{% url 'by-book-api' %}" class="list-group-item list-group-item-action active">By book</a>
+                <a href="{% url 'daily' %}" class="list-group-item list-group-item-action">Daily review</a>
+                <a href="{% url 'smart_feed' %}" class="list-group-item list-group-item-action">Feed</a>
+                <a href="{% url 'favorite' %}" class="list-group-item list-group-item-action">Favorites</a>
+                <a href="{% url 'by-book-api' %}" class="list-group-item list-group-item-action active">My books</a>
                 <a href="{% url 'by_tag' %}" class="list-group-item list-group-item-action">By tag</a>
             </div>
         </div>
         <br>
         <div class="col-md-6">
-            <div class="dashboard-books">
-                <table class="table table-hover table-bordered" id="table">
-                    <thead>
-                        <tr>
-                            <th scope=" col">Title</th>
-                            <th scope="col">Highlights</th>
-                            <th scope="col">Visibilty</th>
-                        </tr>
-                    </thead>
-                    <tbody class="datarows">
-                        <tr>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="infinite-container">
+                <div class="dashboard-books">
+                    <table class="table table-hover table-bordered" id="table">
+                        <thead>
+                            <tr>
+                                <th scope=" col">Title</th>
+                                <th scope="col">Highlights</th>
+                                <th scope="col">Visibilty</th>
+                            </tr>
+                        </thead>
+                        <tbody class="datarows" data-href="/api/by-book/?page=1&page_size=15">
+                            <tr>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-
+        </div>
+        <div class="loading" style="display: none;">
+            Loading...
         </div>
         <br>
         <br>
         <br>
         <br>
     </div>
+    {% if is_paginated %}
+    <a class="infinite-more-link" href="?page={{ page.next_page_number  }}">More</a>
+    {% endif %}
     {% endblock %}
     {% block jquery %}
     $.getScript('{% static 'js/by_book.js' %}');

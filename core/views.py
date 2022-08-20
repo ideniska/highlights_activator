@@ -10,6 +10,7 @@ from .kindle_parser import start_kindle_parser
 from .forms import FileForm
 from django.core.files.storage import FileSystemStorage
 from .models import UserFile, Quote, Book
+from api.serializers import BookSerializer
 import random
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -22,6 +23,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from .pagination import PageNumberPagination
 
 
 User = get_user_model()
@@ -124,6 +126,54 @@ def upload_file(request):
 def logout_user(request):
     logout(request)
     return HttpResponseRedirect(reverse("landing"))
+
+
+class BooksTemplateAPIView(APIView):
+    """Help to build CMS System using DRF, JWT and Cookies
+    path('some-path/', TemplateAPIView.as_view(template_name='template.html'))
+    """
+
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    swagger_schema = None
+    permission_classes = (AllowAny,)
+    renderer_classes = (JSONRenderer, TemplateHTMLRenderer)
+    template_name: str = ""
+    pagination_class = PageNumberPagination
+
+    def get(self, request, *args, **kwargs):
+        page = self.paginate_queryset(self.queryset)
+        if page is not None:
+            serializer = self.serializer_class(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        return Response()
+
+    @property
+    def paginator(self):
+        """
+        The paginator instance associated with the view, or `None`.
+        """
+        if not hasattr(self, "_paginator"):
+            if self.pagination_class is None:
+                self._paginator = None
+            else:
+                self._paginator = self.pagination_class()
+        return self._paginator
+
+    def paginate_queryset(self, queryset):
+        """
+        Return a single page of results, or `None` if pagination is disabled.
+        """
+        if self.paginator is None:
+            return None
+        return self.paginator.paginate_queryset(queryset, self.request, view=self)
+
+    def get_paginated_response(self, data):
+        """
+        Return a paginated style `Response` object for the given output data.
+        """
+        assert self.paginator is not None
+        return self.paginator.get_paginated_response(data)
 
 
 class TemplateAPIView(APIView):

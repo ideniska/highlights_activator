@@ -15,9 +15,9 @@ function randomQuote () {
             quote = data[randItem].text;
             quote_date = data[randItem].date_added
             book = data[randItem].book
-            $(".card-text").html(quote_date);
+            $(".card-header").html(book);
             $("#quote-text").html(quote);
-            $(".blockquote-footer").html(book);
+            $(".blockquote-footer").html(quote_date);
             current_quote = data[randItem].quote_id;
             console.log(current_quote);
             

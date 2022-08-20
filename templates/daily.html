@@ -8,10 +8,10 @@
     <div class="row justify-content-center">
         <div class="col-md-2">
             <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
+                <a href="{% url 'dashboard-api' %}" class="list-group-item list-group-item-action">
                     Quote of the day
                 </a>
-                <a href="{% url 'daily' %}" class="list-group-item list-group-item-action">Daily review</a>
+                <a href="{% url 'daily' %}" class="list-group-item list-group-item-action active">Daily review</a>
                 <a href="{% url 'smart_feed' %}" class="list-group-item list-group-item-action">Feed</a>
                 <a href="{% url 'favorite' %}" class="list-group-item list-group-item-action">Favorites</a>
                 <a href="{% url 'by-book-api' %}" class="list-group-item list-group-item-action">My books</a>
@@ -22,13 +22,14 @@
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
-                    Quote of the day
+                    Random quote of the day
                 </div>
                 <div class="card-body">
                     <h5 class="card-title"></h5>
                     <p class="card-text"></p>
                     <blockquote class="blockquote mb-0">
                         <p id="quote-text"></p>
+
                         <footer class="blockquote-footer"><cite title="Source Title">
                         </footer>
                     </blockquote>
@@ -46,5 +47,5 @@
 </div>
 {% endblock %}
 {% block jquery %}
-$.getScript('{% static 'js/dashboard.js' %}');
+$.getScript('{% static 'js/daily.js' %}');
 {% endblock %}

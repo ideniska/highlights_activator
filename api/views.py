@@ -4,9 +4,24 @@ from rest_framework.response import Response
 from rest_framework import generics, mixins, permissions, authentication
 from core.models import Book, Quote
 from .serializers import BookSerializer, QuoteSerializer
+
 from core.pagination import BasePageNumberPagination
 from django.db.models import Count
 import random
+from django.core.exceptions import ValidationError
+from django.http import Http404
+from django.shortcuts import get_object_or_404 as _get_object_or_404
+
+
+def get_object_or_404(queryset, *filter_args, **filter_kwargs):
+    """
+    Same as Django's standard shortcut, but make sure to also raise 404
+    if the filter_kwargs don't match the required types.
+    """
+    try:
+        return _get_object_or_404(queryset, *filter_args, **filter_kwargs)
+    except (TypeError, ValueError, ValidationError):
+        raise Http404
 
 
 @api_view(["POST"])
@@ -18,26 +33,16 @@ class BookListAPIView(
     generics.ListCreateAPIView,
 ):
 
-    queryset = Book.objects.annotate(quotes_count=Count("quotes")).order_by(
-        "-quotes_count"
-    )
     serializer_class = BookSerializer
     pagination_class = BasePageNumberPagination
 
-    # def get_queryset(self):
-    #     return Book.objects.filter(owner=self.request.user).annotate(
-    #         quotes_count=Count("quotes")
-    #     )  # annotate creates a variable quotes_count for each book object and uses Count method to count related quotes
-
-    # permission_classes = [permissions.IsAdminUser, IsStaffEditorPermission]
-
-    # def perform_create(self, serializer):
-    #     # serializer.save(user=self.request.user)
-    #     title = serializer.validated_data.get("title")
-    #     content = serializer.validated_data.get("content") or None
-    #     if content is None:
-    #         content = title
-    #     serializer.save(content=content)
+    def get_queryset(self):
+        queryset = (
+            Book.objects.filter(owner=self.request.user)
+            .annotate(quotes_count=Count("quotes"))
+            .order_by("-quotes_count")
+        )
+        return queryset
 
 
 class BookDetailAPIView(generics.RetrieveAPIView):
@@ -45,15 +50,41 @@ class BookDetailAPIView(generics.RetrieveAPIView):
     serializer_class = BookSerializer
 
 
-class RandomQuoteAPIView(
+# For RandomServerQuoteAPIView
+def pick_random_object(user):
+    start = Quote.objects.filter(owner=user).first().id
+    end = Quote.objects.filter(owner=user).last().id
+    return random.randrange(start, end)
+
+
+class RandomServerQuoteAPIView(
+    generics.ListAPIView,
+):
+
+    serializer_class = QuoteSerializer
+
+    def get_queryset(self):
+        return Quote.objects.filter(owner=self.request.user).filter(
+            id=pick_random_object(self.request.user)
+        )
+
+
+class FavoriteQuotesAPIView(
     generics.ListCreateAPIView,
 ):
 
-    queryset = Quote.objects.all()
     serializer_class = QuoteSerializer
+
+    def get_queryset(self):
+        queryset = Quote.objects.filter(owner=self.request.user).filter(like=True)
+        return queryset
 
 
 class BookVisibilityView(generics.GenericAPIView):
+
+    serializer_class = BookSerializer
+    queryset = Book.objects.all()
+
     def post(self, request, pk: int):
         try:
             book = Book.objects.get(id=pk)
@@ -69,6 +100,10 @@ class BookVisibilityView(generics.GenericAPIView):
 
 
 class QuoteLikeView(generics.GenericAPIView):
+
+    serializer_class = QuoteSerializer
+    queryset = Quote.objects.all()
+
     def post(self, request, pk: int):
         try:
             quote = Quote.objects.get(id=pk)
