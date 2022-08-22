@@ -22,6 +22,7 @@
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
+
                     Quote of the day
                 </div>
                 <div class="card-body">
@@ -33,8 +34,10 @@
                         </footer>
                     </blockquote>
                     <br>
-                    <a href="{% url 'dashboard-api' %}" class="btn btn-primary">SHOW NEW RANDOM QUOTE</a>
-                    <a href="" class="btn btn-success" onclick="likeQuote(current_quote)">LIKE</a>
+                    <div>
+                        <a href="{% url 'dashboard-api' %}" class="btn btn-primary">SHOW NEW RANDOM QUOTE</a>
+                        <div class="like-button" style="display: inline-block;"></div>
+                    </div>
                 </div>
             </div>
         </div>

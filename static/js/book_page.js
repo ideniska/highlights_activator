@@ -20,9 +20,7 @@ function bookList () {
         console.log(data);
         QuoteListHandler (data);
       }
-
     }
-
   )
 };
 

@@ -102,3 +102,7 @@ h4 {
 #like {
     text-align: center;
 }
+
+.like-button {
+    padding-left: 20px;
+}

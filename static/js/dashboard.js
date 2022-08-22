@@ -15,34 +15,56 @@ function randomQuote () {
             quote = data[randItem].text;
             quote_date = data[randItem].date_added
             book = data[randItem].book
+            like = data[randItem].like
             $(".card-header").html(book);
             $("#quote-text").html(quote);
             $(".blockquote-footer").html(quote_date);
             current_quote = data[randItem].quote_id;
             console.log(current_quote);
-            
+            $(".like-button").html('<div id="like">'+showCurrentLike(like, current_quote)+'</div>')
+
         }
     });
 }
 
-function likeQuote(current_quote) {
-    const csrftoken = getCookie('csrftoken');
-  console.log("Quote #", current_quote)
-  $.ajax({
-      type: "POST",
-      url: `/api/quote/${current_quote}/like/`,
-      data: {
-          quote_id: current_quote,
-          csrfmiddlewaretoken: csrftoken,
-      },
-      success: function(data) {
-          console.log("success", data)
-      },
-      error: function(data) {
-          console.log("error", data)
-      }
-  })
-}
 
-// TODO API should send 1 quote not 2957
-// https://stackoverflow.com/questions/962619/how-to-pull-a-random-record-using-djangos-orm
+function showCurrentLike(like, current_quote) {
+    if (like) {
+        console.log(current_quote);
+      return '<span class="liked" id ="heart" data-quoteId="'+current_quote+'"><i class="fa fa-heart" aria-hidden="true"></i></span>'
+    }
+    console.log(current_quote);
+    return '<span id ="heart" data-quoteId="'+current_quote+'"><i class="fa fa-heart-o" aria-hidden="true"></i></span>'
+  };
+
+
+  $(document).on('click', '#heart', function(){
+    if($(this).hasClass("liked")){
+      $(this).html('<i class="fa fa-heart-o" aria-hidden="true"></i>');
+      $(this).removeClass("liked");
+      changeLikeStatus($(this).data("quoteid"));
+    }else{
+      $(this).html('<i class="fa fa-heart" aria-hidden="true"></i>');
+      $(this).addClass("liked");
+      changeLikeStatus($(this).data("quoteid"));
+    }
+  });
+
+  function changeLikeStatus(quoteId) {
+    const csrftoken = getCookie('csrftoken');
+    console.log("This is", quoteId)
+    $.ajax({
+        type: "POST",
+        url: `/api/quote/${quoteId}/like/`,
+        data: {
+            quote_id: quoteId,
+            csrfmiddlewaretoken: csrftoken,
+        },
+        success: function(data) {
+            console.log("success", data)
+        },
+        error: function(data) {
+            console.log("error", data)
+        }
+    })
+  }
