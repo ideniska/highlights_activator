@@ -87,4 +87,18 @@ h4 {
     --bs-table-hover-bg: #f8f9fa;
 }
 
-/* style="background-color: white; border-radius: 10px; border-color: transparent;" */
+
+/* LIKE */
+.fa-heart-o {
+    color: #9B9D9F;
+    cursor: pointer;
+}
+
+.fa-heart {
+    color: #9B9D9F;
+    cursor: pointer;
+}
+
+#like {
+    text-align: center;
+}
