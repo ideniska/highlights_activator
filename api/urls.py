@@ -8,6 +8,7 @@ from .views import (
     RandomServerQuoteAPIView,
     QuotesFromBookAPIView,
     DailyTenAPIView,
+    QuoteDeleteView,
 )
 
 urlpatterns = [
@@ -15,6 +16,7 @@ urlpatterns = [
     path("by-book/<int:pk>/", QuotesFromBookAPIView.as_view()),
     path("book/<int:pk>/visibility/", BookVisibilityView.as_view()),
     path("quote/<int:pk>/like/", QuoteLikeView.as_view()),
+    path("quote/<int:pk>/delete/", QuoteDeleteView.as_view()),
     path("random/", RandomServerQuoteAPIView.as_view()),
     path("favorites/", FavoriteQuotesAPIView.as_view()),
     path("daily/", DailyTenAPIView.as_view()),

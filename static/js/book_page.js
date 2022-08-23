@@ -34,7 +34,7 @@ function QuoteListHandler (data) {
   $(".book-title").html(data[0].book);
 
   $.each(data, function (i, row) {
-      $('.datarows').append('<tr><td>'+row.text+'</td><td>'+row.date_added+'</td><td id="like">'+showCurrentLike(row.like, row.quote_id)+'</td></tr>');
+      $('.datarows').append('<tr><td>'+row.text+'</td><td>'+row.date_added+'</td><td id="like">'+showCurrentLike(row.like, row.quote_id)+'<div id="delete" data-quoteId="'+row.quote_id+'"><i class="fa-solid fa-ban"></i></div></td></tr>');
     }
 
   );
@@ -50,12 +50,14 @@ function showCurrentLike(like, quoteId) {
 };
 
 
-// SAVE CHANGED BOOK VISIBILITY TO DB
-// $(document).on('change','.fa', function() {
-//   changeLikeStatus($(this).data("quoteId"));
-// });
+// DELETE
+$(document).on('click', '#delete', function(){
+    deleteQuote($(this).data("quoteid"));
+    }
+  );
 
-$(document).on('click', '#heart', function(){
+// LIKE
+  $(document).on('click', '#heart', function(){
     if($(this).hasClass("liked")){
       $(this).html('<i class="fa fa-heart-o fa-lg" aria-hidden="true"></i>');
       $(this).removeClass("liked");
@@ -68,13 +70,32 @@ $(document).on('click', '#heart', function(){
   });
 
 
-
 function changeLikeStatus(quoteId) {
   const csrftoken = getCookie('csrftoken');
   console.log("This is", quoteId)
   $.ajax({
       type: "POST",
       url: `/api/quote/${quoteId}/like/`,
+      data: {
+          quote_id: quoteId,
+          csrfmiddlewaretoken: csrftoken,
+      },
+      success: function(data) {
+          console.log("success", data)
+      },
+      error: function(data) {
+          console.log("error", data)
+      }
+  })
+}
+
+
+function deleteQuote(quoteId) {
+  const csrftoken = getCookie('csrftoken');
+  console.log("This is", quoteId)
+  $.ajax({
+      type: "DELETE",
+      url: `/api/quote/${quoteId}/delete/`,
       data: {
           quote_id: quoteId,
           csrfmiddlewaretoken: csrftoken,

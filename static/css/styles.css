@@ -108,3 +108,18 @@ h4 {
 .like-button {
     padding-left: 20px;
 }
+
+.fa-ban {
+    padding-top: 15px;
+    color: red;
+    cursor: pointer;
+}
+
+.carousel-control-next,
+.carousel-control-prev {
+    width: 7%;
+}
+
+.card-body {
+    padding: 34px;
+}

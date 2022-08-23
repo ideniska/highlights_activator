@@ -147,6 +147,17 @@ class QuoteLikeView(generics.GenericAPIView):
         return Response({"detail": True})
 
 
+class QuoteDeleteView(generics.DestroyAPIView):
+
+    serializer_class = QuoteSerializer
+    queryset = Quote.objects.all()
+    lookup_field = "pk"
+
+    def perform_destroy(self, instance):
+        # instance
+        super().perform_destroy(instance)
+
+
 class DailyTenAPIView(
     generics.ListCreateAPIView,
 ):
@@ -154,31 +165,47 @@ class DailyTenAPIView(
     serializer_class = QuoteSerializer
 
     def get_queryset(self):
+        # list of liked quotes id's
         liked_quotes_id_list = list(
             Quote.objects.filter(owner=self.request.user)
             .filter(like=True)
             .values_list("id", flat=True)
         )
-        print("liked_quotes_id_list ", liked_quotes_id_list)
 
-        two_random_quote_id_list = random.sample(
-            liked_quotes_id_list, min(len(liked_quotes_id_list), 2)
+        liked_quotes_count = len(liked_quotes_id_list)
+
+        # If user has less then 30 liked quotes we don't show them in daily review
+        # because they will be shown too frequently
+        if liked_quotes_count > 60:
+            number_of_fav_quotes = 2
+
+        elif 30 <= liked_quotes_count < 60:
+            number_of_fav_quotes = 1
+
+        else:
+            number_of_fav_quotes = 0
+
+        liked_random_quote_id_list = random.sample(
+            liked_quotes_id_list, min(liked_quotes_count, number_of_fav_quotes)
         )
-        print("two_random_quote_id_list", two_random_quote_id_list)
 
         queryset1 = Quote.objects.filter(owner=self.request.user).filter(
-            id__in=two_random_quote_id_list
+            id__in=liked_random_quote_id_list
         )
-        print("queryset1", queryset1)
 
+        # list of all other quotes to show in daily review
         other_quotes_id_list = list(
             Quote.objects.filter(owner=self.request.user).values_list("id", flat=True)
         )
-        eight_random_quote_id_list = random.sample(
-            liked_quotes_id_list, min(len(other_quotes_id_list), 8)
+
+        number_of_quotes_to_show = 10 - number_of_fav_quotes
+        random_quote_id_list = random.sample(
+            other_quotes_id_list,
+            min(len(other_quotes_id_list), number_of_quotes_to_show),
         )
         queryset2 = Quote.objects.filter(owner=self.request.user).filter(
-            id__in=eight_random_quote_id_list
+            id__in=random_quote_id_list
         )
+
         queryset = queryset1.union(queryset2)
         return queryset

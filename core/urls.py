@@ -16,6 +16,11 @@ from .views import (
 urlpatterns = [
     path("dashboard/", DashboardPageView.as_view(), name="dashboard"),
     path(
+        "daily/",
+        TemplateAPIView.as_view(template_name="daily.html"),
+        name="daily-api",
+    ),
+    path(
         "dashboard-api/",
         TemplateAPIView.as_view(template_name="dashboard_api.html"),
         name="dashboard-api",
