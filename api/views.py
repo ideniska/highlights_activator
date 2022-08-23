@@ -145,3 +145,40 @@ class QuoteLikeView(generics.GenericAPIView):
         quote.like = not quote.like
         quote.save()
         return Response({"detail": True})
+
+
+class DailyTenAPIView(
+    generics.ListCreateAPIView,
+):
+
+    serializer_class = QuoteSerializer
+
+    def get_queryset(self):
+        liked_quotes_id_list = list(
+            Quote.objects.filter(owner=self.request.user)
+            .filter(like=True)
+            .values_list("id", flat=True)
+        )
+        print("liked_quotes_id_list ", liked_quotes_id_list)
+
+        two_random_quote_id_list = random.sample(
+            liked_quotes_id_list, min(len(liked_quotes_id_list), 2)
+        )
+        print("two_random_quote_id_list", two_random_quote_id_list)
+
+        queryset1 = Quote.objects.filter(owner=self.request.user).filter(
+            id__in=two_random_quote_id_list
+        )
+        print("queryset1", queryset1)
+
+        other_quotes_id_list = list(
+            Quote.objects.filter(owner=self.request.user).values_list("id", flat=True)
+        )
+        eight_random_quote_id_list = random.sample(
+            liked_quotes_id_list, min(len(other_quotes_id_list), 8)
+        )
+        queryset2 = Quote.objects.filter(owner=self.request.user).filter(
+            id__in=eight_random_quote_id_list
+        )
+        queryset = queryset1.union(queryset2)
+        return queryset

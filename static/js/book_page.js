@@ -44,9 +44,9 @@ function QuoteListHandler (data) {
 
 function showCurrentLike(like, quoteId) {
   if (like) {
-    return '<span class="liked" id ="heart" data-quoteId="'+quoteId+'"><i class="fa fa-heart" aria-hidden="true"></i></span>'
+    return '<span class="liked" id ="heart" data-quoteId="'+quoteId+'"><i class="fa fa-heart fa-lg" aria-hidden="true"></i></span>'
   }
-  return '<span id ="heart" data-quoteId="'+quoteId+'"><i class="fa fa-heart-o" aria-hidden="true"></i></span>'
+  return '<span id ="heart" data-quoteId="'+quoteId+'"><i class="fa fa-heart-o fa-lg" aria-hidden="true"></i></span>'
 };
 
 
@@ -57,11 +57,11 @@ function showCurrentLike(like, quoteId) {
 
 $(document).on('click', '#heart', function(){
     if($(this).hasClass("liked")){
-      $(this).html('<i class="fa fa-heart-o" aria-hidden="true"></i>');
+      $(this).html('<i class="fa fa-heart-o fa-lg" aria-hidden="true"></i>');
       $(this).removeClass("liked");
       changeLikeStatus($(this).data("quoteid"));
     }else{
-      $(this).html('<i class="fa fa-heart" aria-hidden="true"></i>');
+      $(this).html('<i class="fa fa-heart fa-lg" aria-hidden="true"></i>');
       $(this).addClass("liked");
       changeLikeStatus($(this).data("quoteid"));
     }

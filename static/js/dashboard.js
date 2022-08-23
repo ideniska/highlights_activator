@@ -31,20 +31,20 @@ function randomQuote () {
 function showCurrentLike(like, current_quote) {
     if (like) {
         console.log(current_quote);
-      return '<span class="liked" id ="heart" data-quoteId="'+current_quote+'"><i class="fa fa-heart" aria-hidden="true"></i></span>'
+      return '<span class="liked" id ="heart" data-quoteId="'+current_quote+'"><i class="fa fa-heart fa-lg" aria-hidden="true"></i></span>'
     }
     console.log(current_quote);
-    return '<span id ="heart" data-quoteId="'+current_quote+'"><i class="fa fa-heart-o" aria-hidden="true"></i></span>'
+    return '<span id ="heart" data-quoteId="'+current_quote+'"><i class="fa fa-heart-o fa-lg" aria-hidden="true"></i></span>'
   };
 
 
   $(document).on('click', '#heart', function(){
     if($(this).hasClass("liked")){
-      $(this).html('<i class="fa fa-heart-o" aria-hidden="true"></i>');
+      $(this).html('<i class="fa fa-heart-o fa-lg" aria-hidden="true"></i>');
       $(this).removeClass("liked");
       changeLikeStatus($(this).data("quoteid"));
     }else{
-      $(this).html('<i class="fa fa-heart" aria-hidden="true"></i>');
+      $(this).html('<i class="fa fa-heart fa-lg" aria-hidden="true"></i>');
       $(this).addClass("liked");
       changeLikeStatus($(this).data("quoteid"));
     }
