@@ -123,3 +123,15 @@ h4 {
 .card-body {
     padding: 34px;
 }
+
+#fav-delete {
+    padding-left: 80%;
+}
+
+.dashboard-delete {
+    padding-left: 11%;
+}
+
+#daily-delete {
+    padding-left: 80%;
+}

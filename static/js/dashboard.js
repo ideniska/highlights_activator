@@ -22,6 +22,7 @@ function randomQuote () {
             current_quote = data[randItem].quote_id;
             console.log(current_quote);
             $(".like-button").html('<div id="like">'+showCurrentLike(like, current_quote)+'</div>')
+            $(".dashboard-delete").html('<div id="dash-delete" data-quoteId="'+current_quote+'"><i class="fa-solid fa-ban"></i></div>')
 
         }
     });
@@ -68,3 +69,31 @@ function showCurrentLike(like, current_quote) {
         }
     })
   }
+
+
+// DELETE
+$(document).on('click', '#dash-delete', function(){
+  deleteQuote($(this).data("quoteid"));
+  }
+);
+
+
+function deleteQuote(quoteId) {
+  const csrftoken = getCookie('csrftoken');
+  console.log("This is", quoteId)
+  $.ajax({
+      type: "DELETE",
+      url: `/api/quote/${quoteId}/delete/`,
+      headers: {"X-CSRFToken": csrftoken},
+      data: {
+          quote_id: quoteId,
+      },
+      success: function(data) {
+          console.log("success", data);
+          $(this).remove();
+      },
+      error: function(data) {
+          console.log("error", data)
+      }
+  })
+}

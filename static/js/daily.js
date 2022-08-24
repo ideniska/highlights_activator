@@ -29,7 +29,7 @@ function QuoteListHandler (data) {
 
   $.each(data, function (i, row) {
       $('.carousel-inner').append(
-        '<div class="carousel-item"><div class="card"><div class="card-header">'+row.book+'</div><div class="card-body"><h5 class="card-title"></h5><p class="card-text"></p><blockquote class="blockquote mb-0"><p id="quote-text">'+row.text+'</p><footer class="blockquote-footer">'+row.date_added+'<cite title="Source Title"></footer></blockquote><br><div><div class="like-button" style="display: inline-block;"><div id="like">'+showCurrentLike(row.like, row.quote_id)+'</div></div></div></div></div></div>'
+        '<div class="carousel-item"><div class="card"><div class="card-header">'+row.book+'</div><div class="card-body"><h5 class="card-title"></h5><p class="card-text"></p><blockquote class="blockquote mb-0"><p id="quote-text">'+row.text+'</p><footer class="blockquote-footer">'+row.date_added+'<cite title="Source Title"></footer></blockquote><br><div><div class="like-button" style="display: inline-block;"><div id="like">'+showCurrentLike(row.like, row.quote_id)+'</div></div><div id="daily-delete" style="display: inline-block;" data-quoteid="'+row.quote_id+'"><i class="fa-solid fa-ban"></i></div></div></div></div></div>'
         );
     }
 
@@ -47,7 +47,8 @@ function showCurrentLike(like, quoteId) {
 
 
 // DELETE
-$(document).on('click', '#delete', function(){
+$(document).on('click', '#daily-delete', function(){
+    console.log($(this))
     deleteQuote($(this).data("quoteid"));
     }
   );
@@ -92,9 +93,9 @@ function deleteQuote(quoteId) {
   $.ajax({
       type: "DELETE",
       url: `/api/quote/${quoteId}/delete/`,
+      headers: {"X-CSRFToken": csrftoken},
       data: {
           quote_id: quoteId,
-          csrfmiddlewaretoken: csrftoken,
       },
       success: function(data) {
           console.log("success", data)

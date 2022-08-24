@@ -96,6 +96,7 @@ function deleteQuote(quoteId) {
   $.ajax({
       type: "DELETE",
       url: `/api/quote/${quoteId}/delete/`,
+      headers: {"X-CSRFToken": csrftoken},
       data: {
           quote_id: quoteId,
           csrfmiddlewaretoken: csrftoken,
