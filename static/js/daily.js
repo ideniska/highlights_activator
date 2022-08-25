@@ -29,7 +29,7 @@ function QuoteListHandler (data) {
 
   $.each(data, function (i, row) {
       $('.carousel-inner').append(
-        '<div class="carousel-item"><div class="card"><div class="card-header">'+row.book+'</div><div class="card-body"><h5 class="card-title"></h5><p class="card-text"></p><blockquote class="blockquote mb-0"><p id="quote-text">'+row.text+'</p><footer class="blockquote-footer">'+row.date_added+'<cite title="Source Title"></footer></blockquote><br><div><div class="like-button" style="display: inline-block;"><div id="like">'+showCurrentLike(row.like, row.quote_id)+'</div></div><div id="daily-delete" style="display: inline-block;" data-quoteid="'+row.quote_id+'"><i class="fa-solid fa-ban"></i></div></div></div></div></div>'
+        '<div class="carousel-item"><div id="'+row.quote_id+'" class="card"><div class="card-header">'+row.book+'</div><div class="card-body"><h5 class="card-title"></h5><p class="card-text"></p><blockquote class="blockquote mb-0"><p id="quote-text">'+row.text+'</p><footer class="blockquote-footer">'+row.date_added+'<cite title="Source Title"></footer></blockquote><br><div><div class="like-button" style="display: inline-block;"><div id="like">'+showCurrentLike(row.like, row.quote_id)+'</div></div><div id="daily-delete" style="display: inline-block;" data-quoteid="'+row.quote_id+'"><i class="fa-solid fa-ban"></i></div></div></div></div></div>'
         );
     }
 
@@ -99,9 +99,15 @@ function deleteQuote(quoteId) {
       },
       success: function(data) {
           console.log("success", data)
+          console.log(document.getElementById(quoteId));
+          document.getElementById(quoteId).remove();
+          $(".carousel-control-next").click();
       },
       error: function(data) {
           console.log("error", data)
       }
   })
 }
+
+
+// TODO use remove() to delete card from a screen after clicking on delete button

@@ -102,7 +102,8 @@ function deleteQuote(quoteId) {
           csrfmiddlewaretoken: csrftoken,
       },
       success: function(data) {
-          console.log("success", data)
+          console.log("success", data);
+          window.location.reload();
       },
       error: function(data) {
           console.log("error", data)

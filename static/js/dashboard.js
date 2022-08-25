@@ -90,7 +90,7 @@ function deleteQuote(quoteId) {
       },
       success: function(data) {
           console.log("success", data);
-          $(this).remove();
+          window.location.reload();
       },
       error: function(data) {
           console.log("error", data)
