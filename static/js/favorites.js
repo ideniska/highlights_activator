@@ -17,7 +17,7 @@ function quoteList () {
 
 
 function QuoteListHandler (data) {
-    console.log('QuoteListHandler');  
+    console.log('QuoteListHandler');
     $.each(data, function (i, row) {
         $('.col-md-4').append(
             '<div class="card"><div class="card-header">'+row.book+'</div><div class="card-body"><h5 class="card-title"></h5><p class="card-text"></p><blockquote class="blockquote mb-0"><p id="quote-text">'+row.text+'</p><footer class="blockquote-footer">'+row.date_added+'<cite title="Source Title"></footer></blockquote><br><div><div class="like-button" style="display: inline-block;"><div id="like">'+showCurrentLike(row.like, row.quote_id)+'</div></div><div id="fav-delete" data-quoteId="'+row.quote_id+'"style="display: inline-block;"><i class="fa-solid fa-ban"></i></div></div></div></div><br>'
