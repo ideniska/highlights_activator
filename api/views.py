@@ -162,6 +162,13 @@ class QuoteDeleteView(generics.DestroyAPIView):
         super().perform_destroy(instance)
 
 
+class QuoteUpdateView(generics.UpdateAPIView):
+
+    serializer_class = QuoteSerializer
+    queryset = Quote.objects.all()
+    lookup_field = "pk"
+
+
 class DailyTenAPIView(
     generics.ListCreateAPIView,
 ):

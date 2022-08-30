@@ -38,3 +38,4 @@ class Quote(models.Model):
     text = models.CharField(max_length=1500)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="quotes")
     like = models.BooleanField(default=False)
+    comment = models.CharField(max_length=1500, default="")
