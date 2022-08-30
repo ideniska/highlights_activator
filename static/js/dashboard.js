@@ -21,9 +21,11 @@ function randomQuote () {
             $(".blockquote-footer").html(quote_date);
             current_quote = data[randItem].quote_id;
             console.log(current_quote);
-            $(".like-button").html('<div id="like">'+showCurrentLike(like, current_quote)+'</div>')
-            $(".dashboard-delete").html('<div id="dash-delete" data-quoteId="'+current_quote+'"><i class="fa-solid fa-ban"></i></div>')
-
+            $(".like-button").html('<div id="like">'+showCurrentLike(like, current_quote)+'</div>');
+            $(".dashboard-delete").html('<div id="dash-delete" data-quoteId="'+current_quote+'"><i class="fa-solid fa-ban"></i></div>');
+            $(".dashboard-share").html(
+              '<div class="dropdown"><div data-bs-toggle="dropdown" aria-expanded="false" id="dash-share" data-quoteId="'+current_quote+'"><i class="fa-solid fa-share-nodes"></i></div><ul class="dropdown-menu"><li><a class="dropdown-item" href="#">Twitter</a></li><li><a class="dropdown-item" href="#">Facebook</a></li><li><a class="dropdown-item" href="#">Copy</a></li></ul></div>'
+              );
         }
     });
 }
@@ -39,6 +41,7 @@ function showCurrentLike(like, current_quote) {
   };
 
 
+  // LIKE
   $(document).on('click', '#heart', function(){
     if($(this).hasClass("liked")){
       $(this).html('<i class="fa fa-heart-o fa-lg" aria-hidden="true"></i>');
@@ -96,4 +99,17 @@ function deleteQuote(quoteId) {
           console.log("error", data)
       }
   })
+}
+
+
+// SHARE
+$(document).on('click', '#dash-share', function(){
+
+  shareQuote($(this).data("quoteid"));
+  
+});
+
+
+function shareQuote(quoteId) {
+  
 }

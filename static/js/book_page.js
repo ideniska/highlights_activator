@@ -34,7 +34,9 @@ function QuoteListHandler (data) {
   $(".book-title").html(data[0].book);
 
   $.each(data, function (i, row) {
-      $('.datarows').append('<tr><td>'+row.text+'</td><td>'+row.date_added+'</td><td id="like">'+showCurrentLike(row.like, row.quote_id)+'<div id="delete" data-quoteId="'+row.quote_id+'"><i class="fa-solid fa-ban"></i></div></td></tr>');
+      $('.datarows').append(
+        '<tr><td>'+row.text+'</td><td>'+row.date_added+'</td><td id="like">'+showCurrentLike(row.like, row.quote_id)+'<div id="delete" data-quoteId="'+row.quote_id+'"><i class="fa-solid fa-ban"></i></div><div class="dropdown" id="book-page-dropdown" style="display: inline-block;"><div data-bs-toggle="dropdown" aria-expanded="false" id="dash-share" data-quoteId="'+row.quote_id+'"><i class="fa-solid fa-share-nodes"></i></div><ul class="dropdown-menu"><li><a class="dropdown-item" href="#">Twitter</a></li><li><a class="dropdown-item" href="#">Facebook</a></li><li><a class="dropdown-item" href="#">Copy</a></li></ul></div></div></div></td></tr>'
+        );
     }
 
   );

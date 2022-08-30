@@ -125,13 +125,35 @@ h4 {
 }
 
 #fav-delete {
-    padding-left: 80%;
+    padding-left: 40%;
 }
 
 .dashboard-delete {
     padding-left: 11%;
 }
 
+.dashboard-share {
+    padding-left: 8%;
+}
+
 #daily-delete {
-    padding-left: 80%;
+    padding-left: 40%;
+}
+
+.fa-share-nodes {
+    color: grey;
+    cursor: pointer;
+}
+
+#daily-dropdown {
+    padding-left: 40%;
+}
+
+#fav-dropdown {
+    padding-left: 40%;
+}
+
+#book-page-dropdown {
+    padding-top: 15px;
+    text-align: center;
 }

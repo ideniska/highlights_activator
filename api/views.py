@@ -93,6 +93,10 @@ class RandomServerQuoteAPIView(
     generics.ListAPIView,
 ):
 
+    authentication_classes = [
+        authentication.SessionAuthentication,
+        authentication.TokenAuthentication,
+    ]
     serializer_class = QuoteSerializer
 
     def get_queryset(self):
