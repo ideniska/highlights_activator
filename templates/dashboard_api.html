@@ -31,12 +31,19 @@
                         <p id="quote-text"></p>
                         <footer class="blockquote-footer"><cite title="Source Title">
                         </footer>
+                        <div class="comment">
+                        </div>
+                        <div class="comment-box-buttons">
+                            <button type="button" id="cancel" class="btn btn-outline-secondary">Cancel</button>
+                            <button type="button" class="btn btn-outline-success">Save</button>
+                        </div>
                     </blockquote>
                     <br>
                     <div>
                         <a href="{% url 'dashboard-api' %}" class="btn btn-primary">SHOW NEW RANDOM QUOTE</a>
                         <div class="like-button" style="display: inline-block;"></div>
                         <div class="dashboard-delete" style="display: inline-block;"></div>
+                        <div class="dashboard-edit" style="display: inline-block;"></div>
                         <div class="dashboard-share" style="display: inline-block;"></div>
                     </div>
                 </div>
