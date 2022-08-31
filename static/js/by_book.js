@@ -10,7 +10,7 @@ function bookList () {
         url: $('.datarows').attr('data-href'),
         type: 'get',
         success: function(data) {
-          if (BookListHandler(data)) {requestedPage = true;};
+          if (BookListHandler(data)) requestedPage = false;
         },
     })
 };
@@ -18,9 +18,9 @@ function bookList () {
 
 $(window).scroll(function() {
   var pagination = $(".datarows")
-  console.log($(this).height(), $(this).scrollTop() , pagination.height());
+  // console.log($(this).height(), $(this).scrollTop() , pagination.height());
     console.log(pagination.height()-$(this).height(), $(this).scrollTop());
-    console.log(pagination.height() - $(this).height() <= $(this).scrollTop() && !requestedPage);
+    // console.log(pagination.height() - $(this).height() <= $(this).scrollTop() && !requestedPage);
     if (pagination.height() - $(this).height() <= $(this).scrollTop() && !requestedPage) {
       let nextUrl = $('.datarows').attr('data-href')
       console.log('NEXT URL', nextUrl)
@@ -30,6 +30,9 @@ $(window).scroll(function() {
         console.log('True')
         bookList();
       }
+      else {
+        requestedPage = true;
+      };
     };
 })
 

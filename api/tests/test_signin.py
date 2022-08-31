@@ -11,3 +11,11 @@ def test_signin_success(user, client):
     response = client.post(url, data)
     print(response.cookies)
     assert response.status_code == 200
+
+
+def test_signin_fail(client):
+    url = reverse("account_login")
+    data = {"email": "test@mail.com", "password": "7721pass!Wd"}
+    response = client.post(url, data)
+    print(response)
+    assert response.status_code == 403

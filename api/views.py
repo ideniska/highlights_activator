@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import generics, mixins, permissions, authentication
 from core.models import Book, Quote
-from .serializers import BookSerializer, QuoteSerializer
+from .serializers import BookSerializer, QuoteSerializer, QuoteUpdateSerializer
 
 from core.pagination import BasePageNumberPagination
 from django.db.models import Count
@@ -93,10 +93,10 @@ class RandomServerQuoteAPIView(
     generics.ListAPIView,
 ):
 
-    authentication_classes = [
-        authentication.SessionAuthentication,
-        authentication.TokenAuthentication,
-    ]
+    # authentication_classes = [
+    #     authentication.SessionAuthentication,
+    #     authentication.TokenAuthentication,
+    # ]
     serializer_class = QuoteSerializer
 
     def get_queryset(self):
@@ -164,7 +164,7 @@ class QuoteDeleteView(generics.DestroyAPIView):
 
 class QuoteUpdateView(generics.UpdateAPIView):
 
-    serializer_class = QuoteSerializer
+    serializer_class = QuoteUpdateSerializer
     queryset = Quote.objects.all()
     lookup_field = "pk"
 
