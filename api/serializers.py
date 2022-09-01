@@ -21,6 +21,8 @@ class QuoteSerializer(serializers.ModelSerializer):
 
 
 class QuoteUpdateSerializer(serializers.ModelSerializer):
+    quote_id = serializers.IntegerField(source="id")
+
     class Meta:
         model = Quote
-        fields = ["text", "comment"]
+        fields = ["quote_id", "text", "comment"]

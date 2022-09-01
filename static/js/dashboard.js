@@ -13,11 +13,20 @@ function randomQuote () {
             var randItem = Math.floor(Math.random() * data.length);
             console.log(data.randItem);
             quote = data[randItem].text;
+            comment = data[randItem].comment;
             quote_date = data[randItem].date_added
             book = data[randItem].book
             like = data[randItem].like
             $(".card-header").html(book);
             $("#quote-text").html(quote);
+            if (comment) {
+              console.log(comment);
+              $(".comment-box").html(comment);
+              $(".comment-box").css({
+                "visibility" : "visible",
+                "height": "100px",
+              })
+            };
             $(".blockquote-footer").html(quote_date);
             current_quote = data[randItem].quote_id;
             console.log(current_quote);
@@ -119,18 +128,17 @@ function shareQuote(quoteId) {
 
 // EDIT AND COMMENT
 $(document).on('click', '#dash-edit', function(){
-  editQuote($(this).data("quoteid"));
-  addComment($(this).data("quoteid"));
+  editQuote();
 });
 
 // EDIT QUOTE, SHOW COMMENT BOX, SHOW CANCEL & SAVE BUTTONS
-function editQuote(quoteid) {
+function editQuote() {
   $("#quote-text").attr('contenteditable', 'true');
   $(".card-text").html('<h5>Edit:</h5>');
   $("#quote-text").css({
     "background" : "#FEFAE0",
   });
-  $(".comment").html('Add note:<div class="comment-box"></div>');
+  //$(".comment").html('Add note:<div class="comment-box"></div>');
   $(".comment-box").css({
     "visibility" : "visible",
     "height": "100px",
@@ -144,6 +152,39 @@ function editQuote(quoteid) {
 
 // CANCEL EDIT
 $(document).on('click', '#cancel', function(){
+  if ($(".comment-box").text().length) {
+    $("#quote-text").attr('contenteditable', 'false');
+    $(".card-text").html('');
+    $("#quote-text").css({
+      "background" : "white",
+    });
+    $(".comment-box").attr('contenteditable', 'false');
+    $(".comment-box-buttons").css({
+      "visibility" : "hidden",
+      "height": "0",
+    });
+  } else {
+  $("#quote-text").attr('contenteditable', 'false');
+  $(".card-text").html('');
+  $("#quote-text").css({
+    "background" : "white",
+  });
+  $(".comment").html('');
+  $(".comment-box").css({
+    "visibility" : "hidden",
+    "height": "0",
+  });
+  $(".comment-box").attr('contenteditable', 'false');
+  $(".comment-box-buttons").css({
+    "visibility" : "hidden",
+    "height": "0",
+  });}
+});
+
+// SAVE EDIT
+$(document).on('click', '#save', function(){
+  sessionStorage.setItem("quote-text", $('#quote-text').html());
+  sessionStorage.setItem("note-text", $('.comment-box').html());
   $("#quote-text").attr('contenteditable', 'false');
   $(".card-text").html('');
   $("#quote-text").css({
@@ -159,4 +200,30 @@ $(document).on('click', '#cancel', function(){
     "visibility" : "hidden",
     "height": "0",
   });
+  var editedQuote = sessionStorage.getItem('quote-text');
+  var addedNote = sessionStorage.getItem('note-text');
+  saveToServer(current_quote, editedQuote, addedNote);
 });
+
+
+function saveToServer(current_quote, editedQuote, addedNote) {
+  const csrftoken = getCookie('csrftoken');
+  console.log("This is", current_quote)
+  $.ajax({
+      type: "PUT",
+      url: `/api/quote/${current_quote}/update/`,
+      headers: {"X-CSRFToken": csrftoken},
+      data: {
+          quote_id: current_quote,
+          text: editedQuote,
+          comment: addedNote,
+      },
+      success: function(data) {
+          console.log("success", data);
+          window.location.reload();
+      },
+      error: function(data) {
+          console.log("error", data)
+      }
+  })
+}
