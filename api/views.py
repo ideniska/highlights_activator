@@ -73,6 +73,7 @@ class QuotesFromBookAPIView(generics.ListAPIView):
 
     queryset = Quote.objects.all()
     serializer_class = QuoteSerializer
+    pagination_class = BasePageNumberPagination
 
     def get_queryset(self):
         return (

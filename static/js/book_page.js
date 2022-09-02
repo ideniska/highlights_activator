@@ -1,28 +1,40 @@
-$(function () {
-    bookList();
-  }
-
-);
 
 var requestedPage=false;
 var parts=$(location).attr('href').split('/');
 var lastSegment=parts.pop() || parts.pop(); // handle potential trailing slash
 var url='http://127.0.0.1:8000/api/by-book/'+lastSegment+'/'
 
+$(function () {
+  bookList();
+}
+);
 
-// GET BOOK LIST FROM API AND SHOW IT AS A TABLE
 function bookList () {
   $.ajax( {
-
       url: url,
       type: 'get',
       success: function (data) {
         console.log(data);
-        QuoteListHandler (data);
-      }
+        if (QuoteListHandler(data)) requestedPage=false;
+      },
     }
   )
 };
+
+$(window).scroll(function() {
+  var pagination = $(".datarows")
+  console.log($(this).height()/3, $(this).scrollTop(), pagination.height()/3)
+  if ($(this).scrollTop() >= pagination.height()/3 && !requestedPage) {
+    url = $('.datarows').attr('data-href');
+    console.log('NEXT URL', url);
+    if (url) {
+      bookList();
+      requestedPage == true;
+    } else {
+    requestedPage = true;
+  };
+}
+});
 
 
 function QuoteListHandler (data) {
@@ -31,9 +43,10 @@ function QuoteListHandler (data) {
   //     $('.datarows').attr('data-href', data.next);
   //     $('.datarows').append('<tr class="infinite-item"><td><a href="'+row.book_id+'">'+row.title+'</a></td><td>'+row.quotes_count+'</td><td>'+bookVisibility(row.visibility, row.book_id)+'</td></tr>');
   // }
-  $(".book-title").html(data[0].book);
+  $('.datarows').attr('data-href', data.next);
+  $(".book-title").html(data.results[0].book);
 
-  $.each(data, function (i, row) {
+  $.each(data.results, function (i, row) {
     if (row.comment) {
       $('.datarows').append(
         '<tr><td><div id="'+row.quote_id+'">'+row.text+'</div>\
