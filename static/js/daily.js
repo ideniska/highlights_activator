@@ -253,7 +253,6 @@ function saveToServer(quote_id, editedQuote, addedNote) {
       },
       success: function(data) {
           console.log("success", data);
-          window.location.reload();
       },
       error: function(data) {
           console.log("error", data)
