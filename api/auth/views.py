@@ -9,6 +9,7 @@ from .services import LoginService
 
 class SignInView(GenericAPIView):
     serializer_class = SignInSerializer
+    permission_classes = ()
 
     def post(self, request):
         print(request.data)

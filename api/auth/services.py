@@ -19,11 +19,8 @@ class LoginService:
         return user
 
     def response(self, user):
-        token = Token.objects.get_or_create(user=user)
+        token = Token.objects.get_or_create(user=user)[0]
         data = {
             "token": token.key,
         }
         return Response(data)
-
-
-# TODO create user token with auth.token,

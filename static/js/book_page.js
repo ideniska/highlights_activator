@@ -24,15 +24,11 @@ function bookList () {
 $(window).scroll(function() {
   var pagination = $(".datarows")
   console.log($(this).height()/3, $(this).scrollTop(), pagination.height()/3)
-  if ($(this).scrollTop() >= pagination.height()/3 && !requestedPage) {
+  if ($(this).scrollTop() > pagination.height()/3 && !requestedPage) {
     url = $('.datarows').attr('data-href');
     console.log('NEXT URL', url);
-    if (url) {
-      bookList();
-      requestedPage == true;
-    } else {
-    requestedPage = true;
-  };
+    requestedPage == true;
+    if (url) {bookList();} 
 }
 });
 

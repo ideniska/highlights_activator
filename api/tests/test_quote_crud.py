@@ -14,7 +14,7 @@ def book(user) -> Book:
 
 
 @pytest.fixture
-def books(user):
+def books(user) -> list[Book]:
     return Book.objects.bulk_create(
         [
             Book(title="Test book", owner=user),
@@ -73,13 +73,15 @@ def quotes(user, book):
 
 
 # DELETE A QUOTE
-def test_quote_delete_with_auth(user, quote, client):
+def test_quote_delete_with_auth(user, quote, api_client):
     """Authorized user deletes a quote"""
 
     url = reverse("quote_delete", kwargs={"pk": quote.id})
-    client.force_login(user)
-    response = client.delete(url)
+    response = api_client.delete(url)
+
     assert response.status_code == 204, response.data
+    assert not Quote.objects.filter(id=quote.id).exists()
+    # TODO CAN ONE USER DELETE QUOTE OF OTHER USER
 
 
 def test_quote_delete_no_auth(quote, client):
@@ -186,6 +188,7 @@ def test_get_book_page_quote_list(user, book, quotes, client):
     url = reverse("book_page", kwargs={"pk": book.id})
     client.force_login(user)
     response = client.get(url)
+    print(f"{client=}")
     assert response.status_code == 200, response.data
     assert len(response.data) == len(quotes)
 

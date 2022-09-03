@@ -10,7 +10,7 @@ schema_view_param = {
     "public": True,
     # 'permission_classes': (permissions.IsAdminUser,),
     "url": getattr(settings, "SWAGGER_URL", None),
-    # 'authentication_classes': (SessionAuthentication,),
+    "authentication_classes": (SessionAuthentication,),
 }
 
 schema_view = get_schema_view(

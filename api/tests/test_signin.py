@@ -13,11 +13,18 @@ def test_signin_success(user, client):
     assert response.status_code == 200
 
 
-def test_signin_fail(user, client):
-    url = reverse("account_login")
-    data = {"email": "test@mail.com", "password": "7721pass!Wd"}
+@pytest.mark.parametrize(
+    ["email", "password", "status_code"],
+    (
+        ("test@mail.com", "7721pass!Wd", 400),
+        ("test2@mail.com", "1234pass!Wd", 400),
+    ),
+)
+def test_signin_fail(user, client, email, password, status_code):
+    url = reverse("api_login")
+    data = {"email": email, "password": password}
     response = client.post(url, data)
     print(response)
-    assert response.status_code == 400
+    assert response.status_code == status_code
 
     # TODO How to test that user typed wrong password (7721pass instead of 1234pass)? Current test gives 200 ok status
