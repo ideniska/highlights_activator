@@ -4,13 +4,13 @@ from django.urls import path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 
 schema_view_param = {
     "public": True,
     # 'permission_classes': (permissions.IsAdminUser,),
     "url": getattr(settings, "SWAGGER_URL", None),
-    "authentication_classes": (SessionAuthentication,),
+    "authentication_classes": (SessionAuthentication, TokenAuthentication),
 }
 
 schema_view = get_schema_view(

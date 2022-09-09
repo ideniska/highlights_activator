@@ -13,6 +13,7 @@ function bookList () {
   $.ajax( {
       url: url,
       type: 'get',
+      headers: {"Authorization": localStorage.getItem('token')},
       success: function (data) {
         console.log(data);
         if (QuoteListHandler(data)) requestedPage=false;

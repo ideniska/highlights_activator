@@ -50,4 +50,7 @@ urlpatterns = [
     ),
     path("by-tag/", ByTagView.as_view(), name="by_tag"),
     path("logout/", logout_user, name="logout"),
+    path(
+        "login/", TemplateAPIView.as_view(template_name="login.html"), name="login_page"
+    ),
 ]

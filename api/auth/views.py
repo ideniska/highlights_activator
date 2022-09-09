@@ -5,6 +5,9 @@ from rest_framework.generics import GenericAPIView
 from .serializers import SignInSerializer
 from api.auth import serializers
 from .services import LoginService
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth import logout
+from rest_framework.reverse import reverse
 
 
 class SignInView(GenericAPIView):
@@ -21,3 +24,17 @@ class SignInView(GenericAPIView):
         )
 
         return service.response(user)
+
+
+class SignOutView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        request.user.auth_token.delete()
+        logout(request)
+        data = {"landing-url": reverse("landing", request=request)}
+        return Response(data)
+
+
+# TODO create SignUp view
+# TODO update to simple JWT

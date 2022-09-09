@@ -47,12 +47,12 @@
           <a class="nav-link" href="{% url 'upload' %}">Upload</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+          <a class="nav-link" href="{% url 'api_logout' %}?next={% url 'landing' %}">Logout</a>
       </ul>
       {% else %}
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <a class="nav-link" id="login" href="{% url 'account_login' %}">Login</a>
+          <a class="nav-link" id="login" href="{% url 'login_page' %}">Login</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{% url 'account_signup' %}">Register</a>

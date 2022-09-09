@@ -27,4 +27,5 @@ def test_signin_fail(user, client, email, password, status_code):
     print(response)
     assert response.status_code == status_code
 
-    # TODO How to test that user typed wrong password (7721pass instead of 1234pass)? Current test gives 200 ok status
+
+# TODO update tests for API login/logout
