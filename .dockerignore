@@ -1,2 +1,9 @@
-venv
+venv/
 db.sqlite3
+.git
+.gitignore
+.docker
+__pycache__/
+.pytest_cache/
+.vscode/
+.env/
