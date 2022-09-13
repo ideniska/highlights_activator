@@ -2,12 +2,32 @@ from distutils.log import Log
 from logging import raiseExceptions
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
-from .serializers import SignInSerializer
+from .serializers import SignInSerializer, SignUpSerializer
 from api.auth import serializers
 from .services import LoginService
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import logout
 from rest_framework.reverse import reverse
+from rest_framework.authtoken.models import Token
+
+
+class SignUpView(GenericAPIView):
+    serializer_class = SignUpSerializer
+    permission_classes = ()
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        data = {}
+        if serializer.is_valid():
+            user = serializer.save()
+            data["response"] = "User registered"
+            data["email"] = user.email
+            token = Token.objects.get_or_create(user=user)[0]
+            data["token"] = token.key
+        else:
+            data = serializer.errors
+
+        return Response(data)
 
 
 class SignInView(GenericAPIView):

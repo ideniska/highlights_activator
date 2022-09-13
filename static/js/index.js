@@ -20,6 +20,7 @@ $.ajaxSetup
                cache:false,
                beforeSend: function (xhr) { 
 let token = localStorage.getItem('token')
+console.log(token)
 if (token) {
 xhr.setRequestHeader('Authorization',`Token ${token}`) }
 }}

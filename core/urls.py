@@ -53,4 +53,9 @@ urlpatterns = [
     path(
         "login/", TemplateAPIView.as_view(template_name="login.html"), name="login_page"
     ),
+    path(
+        "register/",
+        TemplateAPIView.as_view(template_name="register.html"),
+        name="register_page",
+    ),
 ]

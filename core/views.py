@@ -24,16 +24,31 @@ from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .pagination import PageNumberPagination
+from django.core.mail import send_mail
 
 
 User = get_user_model()
 
 
-class HomePageView(TemplateView):
+class TemplateAPIView(APIView):
+    """Help to build CMS System using DRF, JWT and Cookies
+    path('some-path/', TemplateAPIView.as_view(template_name='template.html'))
+    """
+
+    swagger_schema = None
+    permission_classes = (AllowAny,)
+    renderer_classes = (JSONRenderer, TemplateHTMLRenderer)
+    template_name: str = ""
+
+    def get(self, request, *args, **kwargs):
+        return Response()
+
+
+class HomePageView(TemplateAPIView):
     template_name = "home.html"
 
 
-class LandingPageView(TemplateView):
+class LandingPageView(TemplateAPIView):
     template_name = "landing.html"
 
 
@@ -146,6 +161,13 @@ class BooksTemplateAPIView(APIView):
         if page is not None:
             serializer = self.serializer_class(page, many=True)
             return self.get_paginated_response(serializer.data)
+        send_mail(
+            "Subject here",
+            "Here is the message.",
+            "from@example.com",
+            ["idenisk@gmail.com"],
+            fail_silently=False,
+        )
         return Response()
 
     @property
@@ -174,17 +196,3 @@ class BooksTemplateAPIView(APIView):
         """
         assert self.paginator is not None
         return self.paginator.get_paginated_response(data)
-
-
-class TemplateAPIView(APIView):
-    """Help to build CMS System using DRF, JWT and Cookies
-    path('some-path/', TemplateAPIView.as_view(template_name='template.html'))
-    """
-
-    swagger_schema = None
-    permission_classes = (AllowAny,)
-    renderer_classes = (JSONRenderer, TemplateHTMLRenderer)
-    template_name: str = ""
-
-    def get(self, request, *args, **kwargs):
-        return Response()
