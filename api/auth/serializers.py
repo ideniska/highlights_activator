@@ -22,6 +22,7 @@ class SignUpSerializer(serializers.ModelSerializer):
     def save(self):
         user = CustomUser(
             email=self.validated_data["email"],
+            username=self.validated_data["email"],
         )
         password = self.validated_data["password"]
         password2 = self.validated_data["password2"]
@@ -29,5 +30,6 @@ class SignUpSerializer(serializers.ModelSerializer):
         if password != password2:
             raise serializers.ValueError({"password": "Passwords must match."})
         user.set_password(password)
+        user.is_active = False
         user.save()
         return user

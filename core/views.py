@@ -161,13 +161,6 @@ class BooksTemplateAPIView(APIView):
         if page is not None:
             serializer = self.serializer_class(page, many=True)
             return self.get_paginated_response(serializer.data)
-        send_mail(
-            "Subject here",
-            "Here is the message.",
-            "from@example.com",
-            ["idenisk@gmail.com"],
-            fail_silently=False,
-        )
         return Response()
 
     @property

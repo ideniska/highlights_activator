@@ -1,0 +1,47 @@
+[tool.poetry]
+name = "highlights-activator"
+version = "0.1.0"
+description = ""
+authors = ["Denis Sakhno <97180503+ideniska@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "highlights_activator"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Django = "4.1"
+django-restframework = "^0.0.1"
+djangorestframework = "^3.13.1"
+psycopg2 = "^2.9.3"
+pytest = "^7.1.3"
+gunicorn = "^20.1.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.coverage.run]
+omit = [
+  "*/migrations/*",
+  "*/settings*",
+  "manage.py",
+  "*/apps.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "^\\s*@(abc.)?abstractmethod",
+  "^\\s*@(typing.)?overload",
+  "^\\s*if (typing.)?TYPE_CHECKING:",
+  "^\\s*if (settings.)?DEBUG:",
+  "pragma: no ?cover",
+  "def __repr__",
+  "def __str__",
+  "if self.debug:",
+  "raise AssertionError",
+  "raise NotImplementedError",
+  "if __name__ == .__main__.:",
+]
+
+[tool.coverage.xml]
+output = "coverage.xml"

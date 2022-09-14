@@ -39,6 +39,12 @@ function randomQuote () {
                <li><a class="dropdown-item" href="#">Twitter</a></li><li><a class="dropdown-item" href="#">Facebook</a></li>\
                <li><a class="dropdown-item" href="#">Copy</a></li></ul></div>'
               );
+          },
+        error: function () {
+          $(".card-header").html('');
+          $("#quote-text").html("You don't have any quotes yet.");
+          $(".btn").attr("href", "/upload");
+          $(".btn").html('Click to upload your file');
         }
     });
 }
