@@ -25,6 +25,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .pagination import PageNumberPagination
 from django.core.mail import send_mail
+from core.tasks import celery_get_book_covers
 
 
 User = get_user_model()
@@ -110,7 +111,6 @@ class ByTagView(LoginRequiredMixin, TemplateView):
     template_name = "by_tag.html"
 
 
-@login_required
 def book_inside_view(request, id):
     list_of_quotes = get_list_or_404(Quote, book=id)
     book_title = get_object_or_404(Book, id=id)
@@ -119,7 +119,6 @@ def book_inside_view(request, id):
 
 
 # FILE UPLOAD
-@login_required
 def upload_file(request):
     if request.method == "POST":
         form = FileForm(request.POST, request.FILES)
@@ -131,11 +130,16 @@ def upload_file(request):
             user_file_name_obj = UserFile.objects.latest("uploaded_at")
             field_name = "file"
             user_file_path = getattr(user_file_name_obj, field_name)
-            start_kindle_parser("media/" + str(user_file_path), request.user)
+            start_kindle_parser(str(user_file_path), request.user)
+            # celery_get_book_covers(request.user.id)
             return redirect("dashboard")
     else:
         form = FileForm()
     return render(request, "upload.html", {"form": form})
+
+
+class UploadView(TemplateAPIView):
+    template_name = "upload.html"
 
 
 def logout_user(request):

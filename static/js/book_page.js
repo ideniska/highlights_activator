@@ -2,7 +2,7 @@
 var requestedPage=false;
 var parts=$(location).attr('href').split('/');
 var lastSegment=parts.pop() || parts.pop(); // handle potential trailing slash
-var url='http://127.0.0.1:8000/api/by-book/'+lastSegment+'/'
+var url='/api/by-book/'+lastSegment+'/'
 
 $(function () {
   bookList();
@@ -13,7 +13,6 @@ function bookList () {
   $.ajax( {
       url: url,
       type: 'get',
-      headers: {"Authorization": localStorage.getItem('token')},
       success: function (data) {
         console.log(data);
         if (QuoteListHandler(data)) requestedPage=false;

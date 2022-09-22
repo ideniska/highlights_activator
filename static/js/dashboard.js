@@ -17,7 +17,9 @@ function randomQuote () {
             quote_date = data[randItem].date_added
             book = data[randItem].book
             like = data[randItem].like
+            cover_url = data[randItem].cover
             $(".card-header").html(book);
+            $(".book-cover").html('<img src='+cover_url+'>');
             $("#quote-text").html(quote);
             if (comment) {
               console.log(comment);

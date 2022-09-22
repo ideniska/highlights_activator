@@ -1,14 +1,20 @@
 FROM python:3.10
 
-WORKDIR /usr/src/app
+ENV HOME=/usr/src/app
+WORKDIR $HOME
 
 ENV PYTHONUNBUFFERED 1
 
-RUN pip install --upgrade pip
+RUN pip install --upgrade pip poetry
 
-COPY ./requirements.txt /usr/src/app
+COPY ["pyproject.toml", "poetry.lock", "$HOME/"]
 
-RUN pip install -r requirements.txt
+RUN POETRY_VIRTUALENVS_CREATE=false poetry install --no-interaction --no-ansi
 
-COPY . /usr/src/app
+
+# RUN adduser 
+
+# USER app
+
+COPY . $HOME
 

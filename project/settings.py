@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "dj_rest_auth",
     "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
 ]
 
 MIDDLEWARE = [
@@ -131,7 +132,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = "users.CustomUser"
 
-LOGIN_REDIRECT_URL = "dashboard-api"
+LOGIN_REDIRECT_URL = "dashboard"
 ACCOUNT_LOGOUT_REDIRECT_URL = "landing"
 
 # Internationalization
@@ -165,18 +166,28 @@ MEDIA_URL = "/media/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_USE_TLS = True
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_HOST_USER = "codeforpython@gmail.com"
-EMAIL_HOST_PASSWORD = "zqzpnrujdfyeehip"
+# EMAIL_USE_TLS = True
+# EMAIL_HOST = "smtp.gmail.com"
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = "codeforpython@gmail.com"
+# EMAIL_HOST_PASSWORD = "zqzpnrujdfyeehip"
+EMAIL_USE_TLS = False
+EMAIL_HOST = "localhost"
+EMAIL_PORT = 1025
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
+DEFAULT_FROM_EMAIL = "Localhost <info@test.com>"
 
 # REDIS_HOST = "0.0.0.0"
 REDIS_HOST = "127.0.0.1"
 REDIS_PORT = "6379"
-CELERY_BROKER_URL = "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/0"
+CELERY_BROKER_URL = os.environ.get(
+    "CELERY_BROKER_URL", "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/0"
+)
 CELERY_BROKER_TRANSPORT_OPTIONS = {"visibility_timeout": 36000}
-CELERY_RESULT_BACKEND = "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/0"
+CELERY_RESULT_BACKEND = os.environ.get(
+    "CELERY_RESULT_BACKEND", "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/0"
+)
 CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
@@ -190,10 +201,10 @@ AUTHENTICATION_BACKENDS = (
 )
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "ROTATE_REFRESH_TOKENS": False,
-    "BLACKLIST_AFTER_ROTATION": False,
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=90),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": False,
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
@@ -216,6 +227,8 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 }
 
+JWT_AUTH_RETURN_EXPIRATION = True
+
 SITE_ID = 1
 
 ACCOUNT_EMAIL_REQUIRED = True
@@ -233,9 +246,10 @@ REST_FRAMEWORK = {
         # "rest_framework.permissions.AllowAny",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.TokenAuthentication",
-        #'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # "rest_framework.authentication.SessionAuthentication",
+        # "rest_framework.authentication.TokenAuthentication",
+        # "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
     ],
 }
 
@@ -265,11 +279,16 @@ SWAGGER_SETTINGS = {
     "DEFAULT_MODEL_RENDERING": "example",
 }
 
-# CORS_ALLOWED_HOSTS = [
-#     "http://localhost",
-#     "http://localhost:8000",
-#     "http://127.0.0.1:8000",
-#     "http://127.0.0.1",
-# ]
+CORS_ALLOWED_HOSTS = [
+    "http://localhost",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://127.0.0.1",
+]
 
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+
+JWT_AUTH_REFRESH_COOKIE = "refresh"
+JWT_AUTH_COOKIE = "jwt-auth"
+JWT_AUTH_HTTPONLY = False

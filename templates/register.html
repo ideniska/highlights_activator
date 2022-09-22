@@ -1,51 +1,35 @@
 {% extends "base.html" %}
 
-{% load i18n account socialaccount static %}
-{% block head_title %}{% trans "Sign In" %}{% endblock %}
+{% load static %}
 {% block content %}
 
-<h1>{% trans "Sign Up" %}</h1>
 
-{% get_providers as socialaccount_providers %}
 
-{% if socialaccount_providers %}
-<p>{% blocktrans with site.name as site_name %}Please sign in with one
-  of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>
-  for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
+<div class="container register">
+  <h2>Sign Up</h2>
 
-<div class="socialaccount_ballot">
+  <p>Have an account?
+    <a href="{% url 'login_page' %}">Sign In</a>
+  </p>
 
-  <ul class="socialaccount_providers">
-    {% include "socialaccount/snippets/provider_list.html" with process="login" %}
-  </ul>
+  <form id="registerForm" class="register" method="POST" action="">
+    <div class="mb-3">
+      <input type="email" name="email" class="form-control" aria-describedby="emailHelp" placeholder="Email" required>
+    </div>
+    <div class="mb-3">
+      <input type="password" name="password" class="form-control" placeholder="Password" required>
+    </div>
+    <div class="mb-3">
+      <input type="password" name="password2" class="form-control" placeholder="Confirm password" required>
+    </div>
+    <span id="register-error"></span>
+    <button type="submit" class="btn btn-primary">Register</button>
 
-  <div class="login-or">{% trans 'or' %}</div>
-
+  </form>
 </div>
-
-{% include "socialaccount/snippets/login_extra.html" %}
-
-{% else %}
-<p>{% blocktrans %}If you have not created an account yet, then please
-  <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}
-</p>
-{% endif %}
-
-<form id="loginForm" class="login" method="POST" action="">
-  <div id="emailGroup" class="form-group">
-    <input type="email" name="email" id="email" class="form-control input-sm" placeholder="Email Address" required>
-  </div>
-  <div id="passwordGroup" class="form-group">
-    <input type="password" name="password" id="password" class="form-control input-sm" placeholder="Password" required>
-    <input type="password" name="password2" id="password" class="form-control input-sm" placeholder="Confirm password"
-      required>
-  </div>
-  <a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
-  <button class="primaryAction" type="submit">{% trans "Sign In" %}</button>
-</form>
 
 {% endblock %}
 
 {% block jquery %}
-$.getScript('{% static 'js/login.js' %}');
+$.getScript('{% static 'js/register.js' %}');
 {% endblock %}

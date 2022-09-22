@@ -1,3 +1,4 @@
+from email.policy import default
 from turtle import up
 from django.db import models
 from django.conf import settings
@@ -25,7 +26,9 @@ class UserFile(models.Model):
 
 class Book(models.Model):
     title = models.CharField(max_length=350)
+    author = models.CharField(max_length=350, default="")
     visibility = models.BooleanField(default=True)
+    cover = models.CharField(max_length=150, default="")
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="books")
 
     def __str__(self):

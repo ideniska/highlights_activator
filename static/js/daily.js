@@ -10,7 +10,6 @@ function bookList () {
 
       url: 'http://127.0.0.1:8000/api/daily/',
       type: 'get',
-      headers: {"Authorization": localStorage.getItem('token')},
       success: function (data) {
         console.log(data);
         if (data.length == 0) {

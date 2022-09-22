@@ -8,7 +8,6 @@ function quoteList () {
     $.ajax({
         url: '/api/favorites/',
         type: 'get',
-        headers: {"Authorization": localStorage.getItem('token')},
         success: function (data) {
             console.log(data);
             QuoteListHandler(data);

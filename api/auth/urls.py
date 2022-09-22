@@ -6,7 +6,7 @@ urlpatterns = [
     path("logout/", views.SignOutView.as_view(), name="api_logout"),
     path("register/", views.SignUpView.as_view(), name="api_register"),
     path(
-        "activate/<uid>/<token>/",
+        "activate/",
         views.ActivateView.as_view(),
         name="activate",
     ),

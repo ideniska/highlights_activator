@@ -8,15 +8,10 @@ def start_kindle_parser(file_path, user_id):
     notes_list = []
     notes_dict = {}
 
-    # TODO implement file extension check - if it is TXT then start parser if it is not - show alert "wrong file"
-
     with open(file_path, "r", encoding="utf-8") as kindle_file:
         for line in kindle_file:
             if len(line) > 1:
                 notes_line_list.append(line)
-
-    # with open('/Users/denissakhno/Downloads/kindle_notes.txt', 'w') as notes_file:
-    #     notes_file.write('\n'.join(notes_line_list))
 
     brake_index_list = []
     for index in range(0, len(notes_line_list)):
@@ -39,9 +34,24 @@ def start_kindle_parser(file_path, user_id):
             notes_sublist.append(notes_line_list[index])
         notes_list.append(notes_sublist)
 
+    print("notes_list", notes_list)
+    print("--------------------------------")
+    print("--------------------------------")
+    print(
+        "notes_sublist ",
+        notes_sublist,
+    )
+    print("--------------------------------")
+    print("--------------------------------")
+
     for sublist in notes_list:
         try:
-            book_title = sublist[1].strip("\ufeff")
+            book_title = sublist[1].split("(")[0].strip("\ufeff")
+            # print("book_title ", sublist[1])
+            author = sublist[1].split("(")[1].strip()[:-1]
+            if "," in author:
+                author = author.replace(",", "")
+            # print("author ", author)
             if sublist[2].count("|") == 1:
                 start_slice = sublist[2].find("|") + 2
                 stop_slice = None
@@ -50,29 +60,76 @@ def start_kindle_parser(file_path, user_id):
                 stop_slice = None
             date_added = sublist[2][start_slice:stop_slice]
             quote = sublist[3].strip("\xa0")
-            if book_title.strip() in notes_dict:
-                notes_dict[f"{book_title.strip()}"][
-                    f"{date_added.strip()}"
-                ] = quote.strip()
+            # if book_title.strip() in notes_dict:
+            #     notes_dict[f"{book_title.strip()}"][
+            #         f"{date_added.strip()}"
+            #     ] = quote.strip()
+            # else:
+            #     notes_dict[f"{book_title.strip()}"] = {}
+            #     notes_dict[f"{book_title.strip()}"][
+            #         f"{date_added.strip()}"
+            #     ] = quote.strip()
+            if author in notes_dict:
+                if book_title.strip() in notes_dict[author]:
+                    notes_dict[author][book_title.strip()][
+                        date_added.strip()
+                    ] = quote.strip()
+                else:
+                    pass
             else:
-                notes_dict[f"{book_title.strip()}"] = {}
-                notes_dict[f"{book_title.strip()}"][
-                    f"{date_added.strip()}"
+                notes_dict[author] = {}
+                print(f"{notes_dict=}")
+                notes_dict[author][book_title.strip()] = {}
+                # print(f"{notes_dict[author][book_title.strip()]=}")
+                print(f"{notes_dict=}")
+                notes_dict[author][book_title.strip()][
+                    date_added.strip()
                 ] = quote.strip()
+                print(f"{notes_dict=}")
         except IndexError:
             continue
 
-    ## --- ADD PARSED TXT TO DATABASE --- ##
-    for book in notes_dict:
-        new_book_entry = Book(title=book, owner=user_id)
-        new_book_entry.save()
-        # TODO GOOGLE bulk create
-        # TODO GOOGLE db transaction
-        for date_added, note in notes_dict[book].items():
-            new_quote_entry = Quote(
-                date_added=date_added,
-                text=note,
-                book=new_book_entry,
-                owner=user_id,
-            )
-            new_quote_entry.save()
+    # print(notes_dict)
+    # print("notes_dict ", {k: notes_dict[k] for k in list(notes_dict)[:2]})
+
+    # --- ADD PARSED TXT TO DATABASE --- ##
+    # for author in notes_dict:
+    #     for book in author:
+    #         new_book_entry = Book(title=book, author=author, owner=user_id)
+    #         new_book_entry.save()
+    #         # TODO GOOGLE bulk create
+    #         # TODO GOOGLE db transaction
+    #         for date_added, note in notes_dict[book].items():
+    #             print("date_added ", date_added)
+    #             print("note ", note)
+    #             new_quote_entry = Quote(
+    #                 date_added=date_added,
+    #                 text=note,
+    #                 book=new_book_entry,
+    #                 owner=user_id,
+    #             )
+    #             new_quote_entry.save()
+
+    new_book_entry_list = []
+    new_quote_entry_list = []
+
+    for author in notes_dict:
+        # print(f"{author=}")
+        for book in notes_dict[author]:
+            # print(f"{book=}")
+            book_obj = Book(title=book, author=author, owner=user_id)
+            new_book_entry_list.append(book_obj)
+            for date_added, note in notes_dict[author][book].items():
+                # print("notes_dict[author][book] ", notes_dict[author][book])
+                # print("date_added, note ", date_added, note)
+                new_quote_entry_list.append(
+                    Quote(
+                        date_added=date_added,
+                        text=note,
+                        book=book_obj,
+                        owner=user_id,
+                    )
+                )
+
+    Book.objects.bulk_create(new_book_entry_list)
+    Quote.objects.bulk_create(new_quote_entry_list)

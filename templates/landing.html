@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+
 <h1>
     <p class="text-center">Get the most out of what you read</p>
 </h1>
@@ -78,4 +79,8 @@
 
 </body>
 
+{% endblock %}
+
+{% block jquery %}
+$.getScript('{% static 'js/landing.js' %}');
 {% endblock %}

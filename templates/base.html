@@ -36,33 +36,54 @@
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
-
-
     <div class="collapse navbar-collapse" id="navbarNav">
       {% if user.is_authenticated %}
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
 
-          <a class="nav-link" href="{% url 'dashboard-api' %}">Dasboard ></a>
+          <a class="nav-link" href="{% url 'dashboard' %}">Dasboard ></a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{% url 'upload' %}">Upload</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'api_logout' %}?next={% url 'landing' %}">Logout</a>
+          <a class="nav-link" href="{% url 'logout_page' %}?next={% url 'landing' %}">Logout</a>
       </ul>
       {% else %}
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a class="nav-link" id="login" href="{% url 'login_page' %}">Login</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'account_signup' %}">Register</a>
+          <a class="nav-link" href="{% url 'register_page' %}">Register</a>
+        </li> -->
+        <li class="nav-item">
+          <a class="nav-link" id="signin">Sign In</a>
         </li>
       </ul>
       {% endif %}
     </div>
   </nav>
+
+  <div class="login-popup">
+    <form id="loginForm" class="login" method="POST">
+      <div class="mb-3">
+        <input type="email" name="email" class="form-control" aria-describedby="emailHelp" placeholder="Email" required>
+      </div>
+      <div class="mb-3">
+        <input type="password" name="password" class="form-control" placeholder="Password" required
+          aria-describedby="passwordHelpBlock">
+      </div>
+      <span id="error"></span>
+      <button type="submit" class="btn btn-primary">Sign In</button>
+      <div id="passwordHelpBlock" class="form-text">
+        <p>Don't have an account?
+          <a href="{% url 'register_page' %}">Register</a>
+        </p>
+      </div>
+    </form>
+  </div>
+
   {% block content %}
   {% endblock %}
 
@@ -74,11 +95,16 @@
     crossorigin="anonymous"></script>
 </body>
 
+<script>
+
+</script>
 
 <script src="{% static 'js/index.js' %}"></script>
 
 <script>$(document).ready(function () {
     {% block jquery %} {% endblock jquery %};
   });</script>
+
+
 
 </html>

@@ -9,7 +9,6 @@ function bookList () {
     $.ajax({
         url: $('.datarows').attr('data-href'),
         type: 'get',
-        headers: {"Authorization": localStorage.getItem('token')},
         success: function(data) {
           if (BookListHandler(data)) requestedPage = false;
         },

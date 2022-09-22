@@ -14,10 +14,11 @@ class BookSerializer(serializers.ModelSerializer):
 class QuoteSerializer(serializers.ModelSerializer):
     book = serializers.CharField(source="book.title")
     quote_id = serializers.IntegerField(source="id")
+    cover = serializers.CharField(source="book.cover")
 
     class Meta:
         model = Quote
-        fields = ["book", "date_added", "text", "like", "quote_id", "comment"]
+        fields = ["book", "cover", "date_added", "text", "like", "quote_id", "comment"]
 
 
 class QuoteUpdateSerializer(serializers.ModelSerializer):
