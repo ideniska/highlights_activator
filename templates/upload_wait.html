@@ -3,8 +3,6 @@
 
 {% block title %}Dashboard{% endblock %}
 {% block content %}
-
-{% if user.is_authenticated %}
 <div style="background-color: #F2F5F8;">
     <br>
     <div class="row justify-content-center">
@@ -13,17 +11,10 @@
                 <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
                     Quote of the day
                 </a>
-                {% if user.active_subscription %}
                 <a href="{% url 'daily' %}" class="list-group-item list-group-item-action">Daily review</a>
                 <a href="{% url 'favorite' %}" class="list-group-item list-group-item-action">Favorites</a>
                 <a href="{% url 'by-book-api' %}" class="list-group-item list-group-item-action">My books</a>
                 <a href="{% url 'by_tag' %}" class="list-group-item list-group-item-action">By tag</a>
-                {% else %}
-                <a href="" class="list-group-item list-group-item-action disabled">Daily review</a>
-                <a href="" class="list-group-item list-group-item-action disabled">Favorites</a>
-                <a href="" class="list-group-item list-group-item-action disabled">My books</a>
-                <a href="" class="list-group-item list-group-item-action disabled">By tag</a>
-                {% endif %}
             </div>
         </div>
         <br>
@@ -38,7 +29,8 @@
                     <h5 class="card-title"></h5>
                     <p class="card-text"></p>
                     <blockquote class="blockquote mb-0">
-                        <p id="quote-text"></p>
+                        <p id="quote-text">Your notes will be ready in 1 minute.
+                        </p>
                         <footer class="blockquote-footer"><cite title="Source Title">
                         </footer>
                         <div class="comment-box"></div>
@@ -64,12 +56,7 @@
     <br>
     <br>
 </div>
-{% else %}
-<script>
-    window.location.replace("{% url 'landing' %}")
-</script>
-{% endif%}
 {% endblock %}
 {% block jquery %}
-$.getScript('{% static 'js/dashboard.js' %}');
+$.getScript('{% static 'js/upload_wait.js' %}');
 {% endblock %}

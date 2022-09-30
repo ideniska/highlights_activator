@@ -25,7 +25,7 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("accounts/", include("allauth.urls")),
+    # path("accounts/", include("allauth.urls")),
     path("", include("core.urls")),
     path("api/", include("api.urls")),
     path("api/auth/", include("dj_rest_auth.urls")),

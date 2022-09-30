@@ -1,5 +1,9 @@
+from dataclasses import fields
+from turtle import update
 from rest_framework import serializers
 from core.models import Book, Quote
+from users.models import CustomUser
+from datetime import datetime
 
 
 class BookSerializer(serializers.ModelSerializer):
@@ -27,3 +31,17 @@ class QuoteUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Quote
         fields = ["quote_id", "text", "comment"]
+
+
+# class UserUpdateSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = CustomUser
+#         fields = ["paid", "paid_start", "paid_end"]
+
+#     def update(self, instance, validated_data):
+#         if self.context["request"].user.paid:
+#             return instance
+#         self.paid_start = datetime.now()
+#         self.paid_end = datetime.now()
+#         self.paid = True
+#         return super().update(instance, validated_data)

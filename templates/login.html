@@ -3,6 +3,12 @@
 {% load static %}
 {% block content %}
 
+{% if user.is_authenticated %}
+<script>
+  window.location.replace("{% url 'landing' %}")
+</script>
+
+{% else %}
 <div class="container register">
   <h2>Sign in</h2>
 
@@ -28,7 +34,7 @@
   </form>
 </div>
 
-
+{% endif %}
 {% endblock %}
 
 {% block jquery %}

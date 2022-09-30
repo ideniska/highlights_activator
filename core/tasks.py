@@ -10,6 +10,8 @@ from django.utils.translation import activate
 
 from core.send_email import send_html_activation_email
 from core.get_book_covers import get_book_covers
+from core.kindle_parser import start_kindle_parser
+from core.models import UserFile
 
 
 # @app.task
@@ -25,6 +27,12 @@ def celery_send_html_activation_email(user_id):
 @app.task
 def celery_get_book_covers(user_id):
     get_book_covers(user_id)
+
+
+@app.task
+def celery_start_kindle_parser(userfile_id: int):
+    userfile = UserFile.objects.get(id=userfile_id)
+    start_kindle_parser(userfile)
 
 
 class SendingEmailTaskArgs(app.Task):

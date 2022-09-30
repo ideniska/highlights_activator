@@ -14,19 +14,15 @@ function getCookie(name) {
     return cookieValue;
 }
 
-$("#signin").click(function () {
-    console.log("inside click")
-    $(".login-popup").addClass("active");
-    console.log($('.login-popup').attr('class').split(' ')[1])
-});
 
 $(function () {
     $("#loginForm").submit(loginHandler);
+    $("#logout").click(logoutHandler);
 });
 
 
 
-function loginHandler (event) {
+function loginHandler(event) {
     console.log('start login handler')
     let form = $(this)
     console.log(form.serialize())
@@ -36,19 +32,35 @@ function loginHandler (event) {
         type: 'post',
         data: form.serialize(),
         success: function (data) {
-            console.log('success',data);
+            console.log('success', data);
             window.location.href = '/dashboard/'
-            },
+        },
         error: function (data) {
-            console.log('error',data);
+            console.log('error', data);
             var error = document.getElementById("error");
             $("#error").html("")
             var errors = data.responseJSON;
             for (const [key, value] of Object.entries(errors)) {
-                 console.log(`${key}: ${value}`);
-                 $("#error").append(`${value} <br>`);
-                };
+                console.log(`${key}: ${value}`);
+                $("#error").append(`${value} <br>`);
+            };
             error.style.color = "red";
-            },
+        },
+    })
+};
+
+
+function logoutHandler() {
+    $.ajax({
+        url: '/api/logout/',
+        type: 'post',
+        data: {},
+        success: function (data) {
+            console.log('success', data);
+            window.location.href = '/'
+        },
+        error: function (data) {
+            console.log('error', data);
+        },
     })
 };

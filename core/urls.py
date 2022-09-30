@@ -1,3 +1,4 @@
+from re import template
 from django.urls import path
 from . import views
 
@@ -23,7 +24,16 @@ urlpatterns = [
         name="daily",
     ),
     path("", views.LandingPageView.as_view(), name="landing"),
-    path("upload/", views.upload_file, name="upload"),
+    path(
+        "upload/",
+        views.TemplateAPIView.as_view(template_name="upload.html"),
+        name="upload",
+    ),
+    path(
+        "upload-progress/",
+        views.TemplateAPIView.as_view(template_name="upload_wait.html"),
+        name="upload-progress",
+    ),
     path("smart_feed/", views.SmartFeedView.as_view(), name="smart_feed"),
     path("by_book/", views.ByBookView.as_view(), name="by_book"),
     path(
@@ -44,7 +54,7 @@ urlpatterns = [
     ),
     path(
         "login/",
-        views.TemplateAPIView.as_view(template_name="login.html"),
+        views.LoginPageView.as_view(),
         name="login_page",
     ),
     path(
@@ -54,12 +64,37 @@ urlpatterns = [
     ),
     path(
         "register/",
-        views.TemplateAPIView.as_view(template_name="register.html"),
+        views.RegisterPageView.as_view(),
         name="register_page",
     ),
     path(
         "activation/",
         views.TemplateAPIView.as_view(template_name="confirm_email.html"),
         name="activation",
+    ),
+    path(
+        "settings/",
+        views.SettingsPageView.as_view(),
+        name="settings",
+    ),
+    path(
+        "create-checkout-session/",
+        views.CreateCheckoutSessionView.as_view(),
+        name="create-checkout-session",
+    ),
+    path(
+        "checkout/",
+        views.TemplateAPIView.as_view(template_name="stripe/checkout.html"),
+        name="checkout",
+    ),
+    path(
+        "stripe/success/",
+        views.TemplateAPIView.as_view(template_name="stripe/success.html"),
+        name="success",
+    ),
+    path(
+        "stripe/cancel/",
+        views.TemplateAPIView.as_view(template_name="stripe/dashboard_api.html"),
+        name="cancel",
     ),
 ]

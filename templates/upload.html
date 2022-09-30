@@ -20,9 +20,15 @@
       <p>Here, search for the <strong>“My Clippings.txt”</strong> file.</p>
       <p>You can drag it to "Choose file" area below or click and choose it.</p>
 
-      <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
+      <form id="upload-form" method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+          <input type="file" name="file" id="file" required>
+          <select name="type" id="type">
+            <option value="kindle">Kindle</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <span id="upload-error"></span>
         <button type="submit" class="btn btn-primary">Upload</button>
       </form>
     </div>
@@ -31,4 +37,9 @@
 </div>
 
 
+{% endblock %}
+
+
+{% block jquery %}
+$.getScript('{% static 'js/upload.js' %}');
 {% endblock %}

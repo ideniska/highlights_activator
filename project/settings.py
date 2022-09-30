@@ -25,6 +25,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY", "very_secret_key")
+STRIPE_SECRET_KEY = os.environ.get(
+    "STRIPE_SECRET_KEY",
+    "sk_test_51HUbRSL00h3ctAIbxVXwW3QyCIgz7tuvndipLv5IiX702yy5OEqbeHYLxPU98fJPPm1FNWvMT3IgQVGFSvrcvLlO00wFkqcISb",
+)
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ.get("DEBUG", 1)))
@@ -132,7 +137,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = "users.CustomUser"
 
-LOGIN_REDIRECT_URL = "dashboard"
+LOGIN_REDIRECT_URL = "/login/"
 ACCOUNT_LOGOUT_REDIRECT_URL = "landing"
 
 # Internationalization
@@ -201,7 +206,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=90),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
@@ -253,6 +258,8 @@ REST_FRAMEWORK = {
     ],
 }
 
+REST_USE_JWT = True
+
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {
         "basic": {"type": "basic"},
@@ -291,4 +298,3 @@ CORS_ALLOW_CREDENTIALS = True
 
 JWT_AUTH_REFRESH_COOKIE = "refresh"
 JWT_AUTH_COOKIE = "jwt-auth"
-JWT_AUTH_HTTPONLY = False

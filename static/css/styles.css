@@ -19,11 +19,20 @@ h4 {
 
 .navbar {
     font-family: "Ubuntu";
-    padding-bottom: 2rem;
 }
 
+.nonmember-warning {
+
+    padding: 10px;
+
+    color: #059;
+    background-color: #BEF;
+    text-align: center;
+}
+
+
 /*Padding*/
-.container-fluid {
+.landing {
     padding: 1% 12.6%;
 }
 
@@ -191,30 +200,21 @@ h4 {
 
 
 /* Login pop up */
-.login-popup {
+/* .login-popup.active {
     position: absolute;
-    top: -150%;
+    top: 5%;
     left: 75%;
-    opacity: 0;
-    /* transform: translate (-50%, -50%) scale(1.25); */
+    opacity: 1;
     width: 380px;
     padding: 20px 30px;
     background: #fff;
     box-shadow: 2px 2px 5px 5px rgba(0, 0, 0, 0.15);
     border-radius: 10px;
-    transition: top 0ms ease-in-out 200ms,
-        opacity 200ms ease-in-out 0ms,
-        transform 20ms ease-in-out 0ms;
-}
+} */
 
-.login-popup.active {
-    top: 5%;
-    opacity: 1;
-    /* transform: translate (-50%, -50%) scale(1); */
-    transition: top 0ms ease-in-out 0ms,
-        opacity 200ms ease-in-out 0ms,
-        transform 20ms ease-in-out 0ms;
-}
+/* .dropdown-menu.show {
+    right: 95%;
+} */
 
 .register {
     width: 380px;

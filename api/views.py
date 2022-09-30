@@ -1,10 +1,18 @@
 import json
+from re import U
 from urllib import response
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import generics, mixins, permissions, authentication
+from api.auth.serializers import UploadSerializer
 from core.models import Book, Quote
-from .serializers import BookSerializer, QuoteSerializer, QuoteUpdateSerializer
+from .serializers import (
+    BookSerializer,
+    QuoteSerializer,
+    QuoteUpdateSerializer,
+)
+from users.models import CustomUser
+from core.models import Orders
 
 from core.pagination import BasePageNumberPagination
 from django.db.models import Count
@@ -12,6 +20,12 @@ import random
 from django.core.exceptions import ValidationError
 from django.http import Http404
 from django.shortcuts import get_object_or_404 as _get_object_or_404
+from rest_framework.generics import GenericAPIView
+from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
+from rest_framework import status
+from datetime import datetime, timedelta
+from django.utils import timezone
 
 
 def get_object_or_404(queryset, *filter_args, **filter_kwargs):
@@ -222,3 +236,39 @@ class DailyTenAPIView(
 
         queryset = queryset1.union(queryset2)
         return queryset
+
+
+class UploadApiView(GenericAPIView):
+    parser_classes = [MultiPartParser]
+    serializer_class = UploadSerializer
+
+    def post(self, request):
+        print(request.data)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ActivateTrialApiView(APIView):
+    def get(self, request):
+        user = request.user
+        if not user.active_subscription and not user.trial_used:
+            user.active_subscription = True
+            user.trial_used = True
+            order = Orders.objects.create(
+                user=user.id,
+                order_type="Trial",
+                subscription_period=14,
+                price=0,
+                payment_date=timezone.now(),
+                payment_status="active",
+            )
+            # user.paid_end = timezone.now() + timedelta(days=14)
+            user.save()
+            order.save()
+            return Response(status=status.HTTP_200_OK)
+        return Response(
+            {"Fail": "Trial already in use or finished"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )

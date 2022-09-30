@@ -1,4 +1,5 @@
 from email.policy import default
+from sqlite3 import Timestamp
 from turtle import up
 from django.db import models
 from django.conf import settings
@@ -14,6 +15,7 @@ class FileType(models.TextChoices):
 
 
 def upload_file_path(obj: "UserFile", filename):
+    print(obj, filename)
     return f"user_files/{obj.owner_id}/{obj.type}/{filename}"
 
 
@@ -42,3 +44,17 @@ class Quote(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="quotes")
     like = models.BooleanField(default=False)
     comment = models.CharField(max_length=1500, default="")
+
+
+class Orders(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders")
+    order_type = models.CharField(max_length=15)  # Trial / Subscription
+    stripe_order_id = models.CharField(max_length=35)
+    subscription_period = (
+        models.IntegerField()
+    )  # trial = 14 days, stripe = 30 days / 365 days
+    price = models.DecimalField(max_digits=10, decimal_places=3)
+    payment_date = (
+        models.DateTimeField()
+    )  # for trial = trial_start_date, for stripe = subscription_start_date
+    payment_status = models.CharField(max_length=15)  # Active / Incomplete / Canceled

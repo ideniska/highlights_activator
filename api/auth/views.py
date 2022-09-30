@@ -1,5 +1,6 @@
 from distutils.log import Log
 from logging import raiseExceptions
+from urllib import response
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from .serializers import (
@@ -10,7 +11,7 @@ from .serializers import (
 )
 from api.auth import serializers
 from .services import LoginService
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import logout
 from rest_framework.reverse import reverse
 from rest_framework.authtoken.models import Token
@@ -24,11 +25,14 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from .services import full_logout
 
 
 class SignUpView(GenericAPIView):
     serializer_class = SignUpSerializer
-    permission_classes = ()
+    permission_classes = [
+        AllowAny,
+    ]
 
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
@@ -36,7 +40,7 @@ class SignUpView(GenericAPIView):
         user = serializer.save()
         current_site = get_current_site(request)
         # celery_send_html_activation_email.delay(user_id=user.id)
-        send_information_email(
+        send_information_email.delay(
             subject="Confirm registration",
             template_name="emails/email_confirmation.html",
             context={
@@ -57,7 +61,9 @@ User = get_user_model()
 
 class ActivateView(GenericAPIView):
     serializer_class = ActivationSerializer
-    permission_classes = ()
+    permission_classes = [
+        AllowAny,
+    ]
 
     def post(self, request):
         user_id = force_str(urlsafe_base64_decode(request.data["user_id"]))
@@ -79,7 +85,9 @@ class ActivateView(GenericAPIView):
 
 class SignInView(GenericAPIView):
     serializer_class = SignInSerializer
-    permission_classes = ()
+    permission_classes = [
+        AllowAny,
+    ]
 
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
@@ -98,14 +106,15 @@ class SignOutView(GenericAPIView):
     serializer_class = RefreshTokenSerializer
 
     def post(self, request, *args):
-        serializer = self.get_serializer(data=request.data)
+        print(request.COOKIES)
+        data = {"refresh": request.COOKIES["refresh"]}
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        response = full_logout(request)
+
+        # return Response(status=status.HTTP_204_NO_CONTENT)
+        return response
 
 
 # TODO update to simple JWT
-
-
-class UploadApiView(GenericAPIView):
-    pass

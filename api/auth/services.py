@@ -6,29 +6,11 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.settings import api_settings as jwt_settings
 from api.auth.serializers import LoginResponseSerializer
-
-# class LoginService:
-#     def __init__(self, request):
-#         self.request = request
-
-#     def _authenticate(self, **kwargs):
-#         return authenticate(self.request, **kwargs)
-
-#     def validate(self, email: str, password: str):
-#         user = self._authenticate(email=email, password=password)
-#         if not user:
-#             raise ValidationError("Wrong email or password")
-#         return user
-
-#     def response(self, user):
-#         token = Token.objects.get_or_create(user=user)[0]
-#         data = {
-#             "token": token.key,
-#         }
-#         return Response(data)
+from rest_framework import status
+from django.utils.translation import gettext_lazy as _
 
 
 class LoginService:
@@ -66,3 +48,15 @@ class LoginService:
         response = Response(serializer.data, status=HTTP_200_OK)
         set_jwt_cookies(response, access_token, refresh_token)
         return response
+
+
+def full_logout(request):
+    response = Response(
+        {"detail": _("Successfully logged out.")}, status=status.HTTP_200_OK
+    )
+    if cookie_name := getattr(settings, "JWT_AUTH_COOKIE", None):
+        response.delete_cookie(cookie_name)
+    refresh_cookie_name = getattr(settings, "JWT_AUTH_REFRESH_COOKIE", None)
+    if refresh_cookie_name:
+        response.delete_cookie(refresh_cookie_name)
+    return response
