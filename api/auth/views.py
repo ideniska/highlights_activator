@@ -3,91 +3,76 @@ from logging import raiseExceptions
 from urllib import response
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
+
+from users.models import CustomUser
 from .serializers import (
     SignInSerializer,
     SignUpSerializer,
     RefreshTokenSerializer,
     ActivationSerializer,
+    RestorePasswordSerializer,
+    SetPasswordSerializer,
 )
-from api.auth import serializers
-from .services import LoginService
+from .services import LoginService, EmailService, PasswordService, ActivationService
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from django.contrib.auth import logout
-from rest_framework.reverse import reverse
-from rest_framework.authtoken.models import Token
-from core.tasks import celery_send_html_activation_email, send_information_email
-from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth import login
-from django.http import HttpResponseRedirect
-from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from .services import full_logout
+from django.contrib.sites.shortcuts import get_current_site
+
+
+User = get_user_model()
 
 
 class SignUpView(GenericAPIView):
     serializer_class = SignUpSerializer
-    permission_classes = [
-        AllowAny,
-    ]
+    permission_classes = (AllowAny,)
 
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         current_site = get_current_site(request)
-        # celery_send_html_activation_email.delay(user_id=user.id)
-        send_information_email.delay(
-            subject="Confirm registration",
-            template_name="emails/email_confirmation.html",
-            context={
-                "user": user.email,
-                "domain": current_site.domain,
-                "uid": urlsafe_base64_encode(force_bytes(user.id)),
-                "token": default_token_generator.make_token(user),
-            },
-            to_email=user.email,
-            letter_language="en",
-        )
-
+        email = EmailService()
+        email.send_activation_link(user, current_site)
         return Response({"detail": True})
-
-
-User = get_user_model()
 
 
 class ActivateView(GenericAPIView):
     serializer_class = ActivationSerializer
-    permission_classes = [
-        AllowAny,
-    ]
+    permission_classes = (AllowAny,)
 
     def post(self, request):
-        user_id = force_str(urlsafe_base64_decode(request.data["user_id"]))
-        confirmation_token = request.data["token"]
-        user = User.objects.get(id=user_id)
+        # user_id = force_str(urlsafe_base64_decode(request.data["user_id"]))
+        # confirmation_token = request.data["token"]
+        # user = User.objects.get(id=user_id)
 
-        if not default_token_generator.check_token(user, confirmation_token):
-            return Response(
-                "Token is invalid or expired. Please request another confirmation email by signing in.",
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        user.is_active = True
-        user.save()
+        # if not default_token_generator.check_token(user, confirmation_token):
+        #     return Response(
+        #         "Token is invalid or expired. Please request another confirmation email by signing in.",
+        #         status=status.HTTP_400_BAD_REQUEST,
+        #     )
+        # user.is_active = True
+        # user.save()
 
-        service = LoginService(request)
-
-        return service.response(user)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        activation_service = ActivationService()
+        user = activation_service.check_email_link(
+            uid=serializer.validated_data["uid"],
+            token=serializer.validated_data["token"],
+        )
+        activation_service.set_active(user)
+        login_service = LoginService(request)
+        return login_service.response(user)
 
 
 class SignInView(GenericAPIView):
     serializer_class = SignInSerializer
-    permission_classes = [
-        AllowAny,
-    ]
+    permission_classes = (AllowAny,)
 
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
@@ -96,13 +81,11 @@ class SignInView(GenericAPIView):
         user = service.validate(
             email=serializer.data["email"], password=serializer.data["password"]
         )
-
         return service.response(user)
 
 
 class SignOutView(GenericAPIView):
-    permission_classes = [IsAuthenticated]
-
+    permission_classes = (IsAuthenticated,)
     serializer_class = RefreshTokenSerializer
 
     def post(self, request, *args):
@@ -112,9 +95,34 @@ class SignOutView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         response = full_logout(request)
-
-        # return Response(status=status.HTTP_204_NO_CONTENT)
         return response
 
 
-# TODO update to simple JWT
+class RestorePassword(GenericAPIView):
+    serializer_class = RestorePasswordSerializer
+    permission_classes = (AllowAny,)
+
+    def post(self, request, *args):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        current_site = get_current_site(request)
+        email = EmailService()
+        email.send_password_reset(user, current_site)
+        return Response({"detail": True})
+
+
+class SetNewPassword(GenericAPIView):
+    serializer_class = SetPasswordSerializer
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        service = PasswordService()
+        user = service.check_email_link(
+            uid=serializer.validated_data["uid"],
+            token=serializer.validated_data["token"],
+        )
+        service.set_new_password(user, password=serializer.validated_data["password"])
+        return Response({"detail": True})

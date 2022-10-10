@@ -10,7 +10,7 @@ urlpatterns = [
     ),
     path(
         "dashboard/",
-        views.TemplateAPIView.as_view(template_name="dashboard_api.html"),
+        views.DashboardPageView.as_view(),
         name="dashboard",
     ),
     path(
@@ -34,8 +34,8 @@ urlpatterns = [
         views.TemplateAPIView.as_view(template_name="upload_wait.html"),
         name="upload-progress",
     ),
-    path("smart_feed/", views.SmartFeedView.as_view(), name="smart_feed"),
-    path("by_book/", views.ByBookView.as_view(), name="by_book"),
+    path("smart-feed/", views.SmartFeedView.as_view(), name="smart_feed"),
+    path("by-book/", views.ByBookView.as_view(), name="by_book"),
     path(
         "by-book-api/",
         views.BooksTemplateAPIView.as_view(template_name="by_book_api.html"),
@@ -59,7 +59,7 @@ urlpatterns = [
     ),
     path(
         "activate/<uid>/<token>/",
-        views.TemplateAPIView.as_view(template_name="email_activate.html"),
+        views.EmailActivatePageView.as_view(),
         name="email_activate",
     ),
     path(
@@ -69,8 +69,23 @@ urlpatterns = [
     ),
     path(
         "activation/",
-        views.TemplateAPIView.as_view(template_name="confirm_email.html"),
+        views.ActivationPageView.as_view(),
         name="activation",
+    ),
+    path(
+        "forgot-password/",
+        views.ForgotPasswordPageView.as_view(),
+        name="forgot_password",
+    ),
+    path(
+        "check-email-for-password/",
+        views.CheckEmailPasswordPageView.as_view(),
+        name="check_email_for_password",
+    ),
+    path(
+        "set-new-password/<uid>/<token>/",
+        views.SetNewPassPageView.as_view(),
+        name="set_new_password",
     ),
     path(
         "settings/",
@@ -94,7 +109,8 @@ urlpatterns = [
     ),
     path(
         "stripe/cancel/",
-        views.TemplateAPIView.as_view(template_name="stripe/dashboard_api.html"),
+        views.TemplateAPIView.as_view(template_name="dashboard_api.html"),
         name="cancel",
     ),
+    path("stripe-webhook/", views.stripe_webhook, name="stripe_webhook"),
 ]

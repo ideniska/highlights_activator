@@ -6,6 +6,7 @@ from django.conf import settings
 from users.models import CustomUser
 from django.contrib.auth import get_user_model
 
+
 User = get_user_model()
 
 
@@ -49,7 +50,7 @@ class Quote(models.Model):
 class Orders(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders")
     order_type = models.CharField(max_length=15)  # Trial / Subscription
-    stripe_order_id = models.CharField(max_length=35)
+    stripe_order_id = models.CharField(max_length=35)  # invoice_id
     subscription_period = (
         models.IntegerField()
     )  # trial = 14 days, stripe = 30 days / 365 days

@@ -10,4 +10,14 @@ urlpatterns = [
         views.ActivateView.as_view(),
         name="activate",
     ),
+    path(
+        "restore/",
+        views.RestorePassword.as_view(),
+        name="restore",
+    ),
+    path(
+        "set-new-password/",
+        views.SetNewPassword.as_view(),
+        name="set_new_password",
+    ),
 ]

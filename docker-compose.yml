@@ -2,28 +2,33 @@ version: '3.9'
 
 services:
   web:
-    build: ./
+    build: 
+      context: . 
+      dockerfile: Dockerfile
     container_name: highlights_activator
     restart: always
-    command: bash entrypoint.sh
     volumes:
-      - .:/usr/src/app
-      - ./static:/usr/src/app/static
+      - .:/app  
+      - ./static:/app/static
       #- static_data:/usr/src/app/static
-      - media_data:/usr/src/app/media
+      - media_data:/app/media
     env_file:
       - ./.env.dev
     depends_on:
       - db
-      - redis
+      - rabbitmq
   
   celery:
-    build: ./
+    build: .
     volumes:
-      - .:/usr/src/app
+      - .:/app
+    env_file:
+      - ./.env.dev
+    command: celery -A project worker -l info
+    entrypoint: ""
     depends_on:
       - web
-      - redis
+      - rabbitmq
 
   db:
     image: postgres:14
@@ -34,10 +39,10 @@ services:
     env_file:
       - ./.env.dev
     ports:
-      - 5432:5432
+      - 5433:5432
 
-  redis:
-    image: "redis:alpine"
+  rabbitmq:
+    image: "rabbitmq:alpine"
 
   nginx:
     build: ./nginx

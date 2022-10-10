@@ -26,6 +26,7 @@ from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from rest_framework import status
 from datetime import datetime, timedelta
 from django.utils import timezone
+from core.tasks import celery_stop_membership
 
 
 def get_object_or_404(queryset, *filter_args, **filter_kwargs):
@@ -257,16 +258,18 @@ class ActivateTrialApiView(APIView):
             user.active_subscription = True
             user.trial_used = True
             order = Orders.objects.create(
-                user=user.id,
+                user=user,
                 order_type="Trial",
-                subscription_period=14,
+                subscription_period=60,
                 price=0,
                 payment_date=timezone.now(),
                 payment_status="active",
             )
-            # user.paid_end = timezone.now() + timedelta(days=14)
             user.save()
             order.save()
+            celery_stop_membership.apply_async(
+                kwargs={"user_id": user.id}, countdown=order.subscription_period
+            )
             return Response(status=status.HTTP_200_OK)
         return Response(
             {"Fail": "Trial already in use or finished"},

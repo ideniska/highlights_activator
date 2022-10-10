@@ -4,7 +4,7 @@ $(function () {
     let user_id = url.split("/")[4]
     let token = url.split("/")[5]
     let data = {
-        "user_id":user_id,
+        "uid": user_id,
         "token": token,
     }
     console.log(user_id, token)
@@ -13,19 +13,18 @@ $(function () {
 
 
 
-function validateEmail (data) {
+function validateEmail(data) {
     console.log('start validation handler')
     $.ajax({
         url: '/api/activate/',
         type: 'post',
         data: data,
         success: function (data) {
-            console.log('success',data);
+            console.log('success', data);
             window.location.href = '/dashboard/'
-            },
+        },
         error: function (data) {
-            console.log('error',data);
-            },
+            console.log('error', data);
+        },
     })
 };
-

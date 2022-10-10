@@ -4,7 +4,6 @@ version = "0.1.0"
 description = ""
 authors = ["Denis Sakhno <97180503+ideniska@users.noreply.github.com>"]
 readme = "README.md"
-packages = [{include = "highlights_activator"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"

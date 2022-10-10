@@ -11,6 +11,14 @@ from rest_framework_simplejwt.settings import api_settings as jwt_settings
 from api.auth.serializers import LoginResponseSerializer
 from rest_framework import status
 from django.utils.translation import gettext_lazy as _
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth import get_user_model
+from users.models import CustomUser, UserType
+from core.tasks import send_information_email
+
+User: UserType = get_user_model()
 
 
 class LoginService:
@@ -60,3 +68,56 @@ def full_logout(request):
     if refresh_cookie_name:
         response.delete_cookie(refresh_cookie_name)
     return response
+
+
+class ActivationAndPasswordService:
+    def check_email_link(self, uid: str, token: str):
+        user_id = force_str(urlsafe_base64_decode(uid))
+        user = User.objects.get(id=user_id)
+        if not default_token_generator.check_token(user, token):
+            raise ValidationError(
+                "Token is invalid or expired. Please request another confirmation email by signing in.",
+            )
+        return user
+
+
+class PasswordService(ActivationAndPasswordService):
+    def set_new_password(self, user: CustomUser, password: str):
+        user.set_password(password)
+        user.save(update_fields=["password"])
+
+
+class ActivationService(ActivationAndPasswordService):
+    def set_active(self, user: CustomUser):
+        user.is_active = True
+        user.save()
+
+
+class EmailService:
+    def send_password_reset(self, user, current_site):
+        send_information_email.delay(
+            subject="Password recovery",
+            template_name="emails/set_new_password.html",
+            context={
+                "user": user.email,
+                "domain": current_site.domain,
+                "uid": urlsafe_base64_encode(force_bytes(user.id)),
+                "token": default_token_generator.make_token(user),
+            },
+            to_email=user.email,
+            letter_language="en",
+        )
+
+    def send_activation_link(self, user, current_site):
+        send_information_email.delay(
+            subject="Confirm registration",
+            template_name="emails/email_confirmation.html",
+            context={
+                "user": user.email,
+                "domain": current_site.domain,
+                "uid": urlsafe_base64_encode(force_bytes(user.id)),
+                "token": default_token_generator.make_token(user),
+            },
+            to_email=user.email,
+            letter_language="en",
+        )

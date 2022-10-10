@@ -1,15 +1,16 @@
 from gc import get_objects
 from multiprocessing import context
+from os import PRIO_USER
 from urllib import request
 from django.views.generic import TemplateView, DetailView
 from django.views.generic.list import ListView
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from .kindle_parser import start_kindle_parser
 from .forms import FileForm
 from django.core.files.storage import FileSystemStorage
-from .models import UserFile, Quote, Book
+from .models import Orders, UserFile, Quote, Book
 from api.serializers import BookSerializer
 import random
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -23,15 +24,19 @@ from rest_framework.permissions import AllowAny, BasePermission
 from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view, permission_classes
 from .pagination import PageNumberPagination
 from django.core.mail import send_mail
 from core.tasks import celery_get_book_covers
 from .permissions import PaidUser
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 import stripe
 from django.conf import settings
+from typing import TypeVar
+from django.utils import timezone
 
-
+UserType = TypeVar("UserType", bound="CustomUser")
 User = get_user_model()
 
 
@@ -51,71 +56,69 @@ class TemplateAPIView(APIView):
         return Response()
 
 
+class AuthenticatedTemplateAPIView(TemplateAPIView):
+    def dispatch(self, *args, **kwargs):
+        a = super().dispatch(*args, **kwargs)
+        if not self.request.user.is_authenticated:
+            return redirect("landing")
+        return a
+
+
 class HomePageView(TemplateAPIView):
-    template_name = "home.html"
+    template_name: str = "home.html"
 
 
-class SettingsPageView(TemplateAPIView):
+class DashboardPageView(AuthenticatedTemplateAPIView):
+    template_name: str = "dashboard_api.html"
+
+
+class SettingsPageView(AuthenticatedTemplateAPIView):
     # permission_classes = (PaidUser,)
-    template_name = "settings.html"
+    template_name: str = "settings.html"
 
 
 class LoginPageView(TemplateAPIView):
     permission_classes = (AllowAny,)
-    template_name = "login.html"
+    template_name: str = "login.html"
+
+
+class ActivationPageView(TemplateAPIView):
+    permission_classes = (AllowAny,)
+    template_name: str = "confirm_email.html"
+
+
+class SetNewPassPageView(TemplateAPIView):
+    permission_classes = (AllowAny,)
+    template_name: str = "set_password.html"
+
+
+class ForgotPasswordPageView(TemplateAPIView):
+    permission_classes = (AllowAny,)
+    template_name: str = "forgot_password.html"
+
+
+class CheckEmailPasswordPageView(TemplateAPIView):
+    permission_classes = (AllowAny,)
+    template_name: str = "check_email_for_password.html"
+
+
+class EmailActivatePageView(TemplateAPIView):
+    permission_classes = (AllowAny,)
+    template_name: str = "email_activate.html"
 
 
 class RegisterPageView(TemplateAPIView):
     permission_classes = (AllowAny,)
-    template_name = "register.html"
+    template_name: str = "register.html"
 
 
 class LandingPageView(TemplateAPIView):
     permission_classes = (AllowAny,)
-    template_name = "landing.html"
+    template_name: str = "landing.html"
 
 
-class DashboardPageView(LoginRequiredMixin, ListView):
-    template_name = "dashboard.html"
-    model = Quote
-    context_object_name = "random_quote"
-
-    # Get all quotes whos owner is current user, pick random,
-    # return when context_object_name is called in a template
-    def get_queryset(self):
-        items = list(Quote.objects.filter(owner=self.request.user.id))
-        if items:
-            return random.choice(items)
-
-
-class SmartFeedView(LoginRequiredMixin, TemplateView):
-    template_name = "smart_feed.html"
-
-
-# class ByBookView(LoginRequiredMixin, ListView):
-#     template_name = "by_book.html"
-#     model = Quote
-#     context_object_name = "highlights_count"
-
-#     def get_queryset(self):
-#         quotes_list = list(Quote.objects.filter(owner=self.request.user.id))
-
-#         # Count how many highlights in each book
-#         highlights = {}
-#         for record in quotes_list:
-#             book_title = record.book_title_db
-#             quote = record.quote_db
-#             if book_title not in highlights:
-#                 highlights[book_title] = [quote]
-#             else:
-#                 highlights[book_title].append(quote)
-
-#         highlights_count = {}
-#         for key in highlights:
-#             highlights_count[key] = len(highlights[key])
-
-#         # Return dict with books as keys and highlights count as values
-#         return highlights_count.items()
+class SmartFeedView(ActivationPageView):
+    template_name: str = "smart_feed.html"
 
 
 class ByBookView(LoginRequiredMixin, ListView):
@@ -140,33 +143,8 @@ def book_inside_view(request, id):
     return render(request, "book_page.html", context)
 
 
-# # FILE UPLOAD
-# def upload_file(request):
-#     if request.method == "POST":
-#         form = FileForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             form.instance.owner = (
-#                 request.user
-#             )  # gets the file file owner from current user
-#             form.save()
-#             user_file_name_obj = UserFile.objects.latest("uploaded_at")
-#             field_name = "file"
-#             user_file_path = getattr(user_file_name_obj, field_name)
-#             start_kindle_parser(str(user_file_path), request.user)
-#             # celery_get_book_covers(request.user.id)
-#             return redirect("dashboard")
-#     else:
-#         form = FileForm()
-#     return render(request, "upload.html", {"form": form})
-
-
-class UploadView(TemplateAPIView):
-    template_name = "upload.html"
-
-
-# def logout_user(request):
-#     logout(request)
-#     return HttpResponseRedirect(reverse("landing"))
+class UploadView(ActivationPageView):
+    template_name: str = "upload.html"
 
 
 class BooksTemplateAPIView(APIView):
@@ -218,9 +196,7 @@ class BooksTemplateAPIView(APIView):
 
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
-# stripe.api_key = "sk_test_51HUbRSL00h3ctAIbxVXwW3QyCIgz7tuvndipLv5IiX702yy5OEqbeHYLxPU98fJPPm1FNWvMT3IgQVGFSvrcvLlO00wFkqcISb"
-YOUR_DOMAIN = "http://127.0.0.1:8000/"
-# TODO move to settings.py
+YOUR_DOMAIN = settings.YOUR_DOMAIN
 
 
 class CreateCheckoutSessionView(View):
@@ -263,3 +239,57 @@ class CreatePortalSessionView(View):
             return_url=return_url,
         )
         return HttpResponseRedirect(portalSession.url)
+
+
+@csrf_exempt
+def stripe_webhook(request):
+    payload = request.body
+    sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
+    event = None
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
+        )
+    except ValueError as e:
+        # Invalid payload
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        return HttpResponse(status=400)
+
+    # if event["type"] == "invoice.paid":
+    #     stripe_invoice_id = event["data"]["object"]["id"]
+
+    if event["type"] == "checkout.session.completed":
+        session = event["data"]["object"]
+        stripe_user_email = session["customer_details"]["email"]
+        stripe_payment_status = session["payment_status"]
+        stripe_payment_data = stripe.checkout.Session.list_line_items(
+            session["id"], limit=1
+        )
+        product = stripe_payment_data["data"][0]["description"]
+        price_paid = stripe_payment_data["data"][0]["amount_total"] / 100
+        print(stripe_payment_status)
+
+        if stripe_payment_status == "paid":
+            user = User.objects.get(email=stripe_user_email)
+            user.active_subscription = True
+            user.save()
+            if "1 month" in product:
+                subscription_period = 30
+            else:
+                subscription_period = 365
+            order = Orders.objects.create(
+                user=user,
+                stripe_order_id=1,
+                order_type="Subscription",
+                price=price_paid,
+                payment_status="active",
+                subscription_period=subscription_period,
+                payment_date=timezone.now(),
+            )
+
+            order.save()
+
+    return HttpResponse(status=200)

@@ -11,12 +11,23 @@ from django.utils.translation import activate
 from core.send_email import send_html_activation_email
 from core.get_book_covers import get_book_covers
 from core.kindle_parser import start_kindle_parser
-from core.models import UserFile
+from core.models import UserFile, CustomUser, Orders
 
 
 # @app.task
 # def celery_send_activation_email(user_email):
 #     send_activation_email(user_email)
+
+
+@app.task
+def celery_stop_membership(user_id):
+    user = CustomUser.objects.get(id=user_id)
+    user.active_subscription = False
+    user.trial_used = True
+    user.save()
+    order = Orders.objects.filter(user_id=user_id).last()
+    order.payment_status = "Canceled"
+    order.save()
 
 
 @app.task
