@@ -1,0 +1,66 @@
+version: '3.9'
+
+services:
+  web:
+    build: 
+      context: . 
+      dockerfile: Dockerfile
+    container_name: highlights_activator
+    restart: always
+    volumes:
+      - .:/app  
+      - ./static:/app/static
+      #- static_data:/usr/src/app/static
+      - media_data:/app/media
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - db
+      - rabbitmq
+  
+  celery:
+    build: .
+    volumes:
+      - .:/app
+    env_file:
+      - ./.env.dev
+    command: celery -A project worker -l info
+    entrypoint: ""
+    depends_on:
+      - web
+      - rabbitmq
+
+  db:
+    image: postgres:14
+    container_name: highlights_activator_db
+    restart: always
+    volumes:
+     - highlights_activator_postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ./.env.dev
+    ports:
+      - 5433:5432
+
+  rabbitmq:
+    image: "rabbitmq:alpine"
+
+  nginx:
+    build: ./nginx
+    container_name: highlights_activator_nginx
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      #- static_data:/static
+      - ./static:/static
+      - media_data:/media
+      - ./media:/media
+    depends_on:
+      - web
+
+volumes:
+  highlights_activator_postgres_data:
+  static_data:
+  media_data:
+
+

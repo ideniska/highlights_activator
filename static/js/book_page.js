@@ -2,7 +2,7 @@
 var requestedPage=false;
 var parts=$(location).attr('href').split('/');
 var lastSegment=parts.pop() || parts.pop(); // handle potential trailing slash
-var url='http://127.0.0.1:8000/api/by-book/'+lastSegment+'/'
+var url='/api/by-book/'+lastSegment+'/'
 
 $(function () {
   bookList();

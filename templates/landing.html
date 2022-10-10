@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+
 <h1>
     <p class="text-center">Get the most out of what you read</p>
 </h1>
@@ -20,7 +21,7 @@
 </div>
 
 
-<div class="container-fluid">
+<div class="container-fluid landing">
     <h1>Here's how <mark>Highlights Activator</mark> works:</h1>
 </div>
 </div>
@@ -78,4 +79,8 @@
 
 </body>
 
+{% endblock %}
+
+{% block jquery %}
+$.getScript('{% static 'js/landing.js' %}');
 {% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block content %}
+
+
+
+<div class="container register">
+  <h2>Sign Up</h2>
+
+  <p>Have an account?
+    <a href="{% url 'login_page' %}">Sign In</a>
+  </p>
+
+  <form id="registerForm" class="register" method="POST" action="">
+    <div class="mb-3">
+      <input type="email" name="email" class="form-control" aria-describedby="emailHelp" placeholder="Email" required>
+    </div>
+    <div class="mb-3">
+      <input type="password" name="password" class="form-control" placeholder="Password" required>
+    </div>
+    <div class="mb-3">
+      <input type="password" name="password2" class="form-control" placeholder="Confirm password" required>
+    </div>
+    <span id="register-error"></span>
+    <button type="submit" class="btn btn-primary">Register</button>
+
+  </form>
+</div>
+
+{% endblock %}
+
+{% block jquery %}
+$.getScript('{% static 'js/register.js' %}');
+{% endblock %}

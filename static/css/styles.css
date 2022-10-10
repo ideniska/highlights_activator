@@ -19,11 +19,28 @@ h4 {
 
 .navbar {
     font-family: "Ubuntu";
-    padding-bottom: 2rem;
 }
 
+.navbar-brand {
+    margin-left: 25%;
+}
+
+.navbar-nav {
+    margin-right: 25%;
+}
+
+.nonmember-warning {
+
+    padding: 10px;
+
+    color: #059;
+    background-color: #BEF;
+    text-align: center;
+}
+
+
 /*Padding*/
-.container-fluid {
+.landing {
     padding: 1% 12.6%;
 }
 
@@ -66,6 +83,10 @@ h4 {
 .upload {
     padding-top: 5%;
 }
+
+/* #upload-screenshots {
+    width: auto;
+} */
 
 /* .dashboard-books {
     max-height: 450px;
@@ -182,4 +203,35 @@ h4 {
     visibility: hidden;
     height: 0;
     text-align: right;
+}
+
+.book-cover {
+    size: 30px;
+    border-radius: 3px;
+}
+
+
+/* Login pop up */
+/* .login-popup.active {
+    position: absolute;
+    top: 5%;
+    left: 75%;
+    opacity: 1;
+    width: 380px;
+    padding: 20px 30px;
+    background: #fff;
+    box-shadow: 2px 2px 5px 5px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+} */
+
+/* .dropdown-menu.show {
+    right: 95%;
+} */
+
+.register {
+    width: 380px;
+}
+
+#forgot-pass {
+    text-align: left;
 }

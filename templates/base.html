@@ -32,36 +32,62 @@
   <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v14.0"
     nonce="GCC90AvO"></script>
   <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-    <a class="navbar-brand" href="/">Highlights Activator</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      {% if user.is_authenticated %}
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
+    <div class="container-fluid justify-content-between">
+      <a class="navbar-brand" href="/">Highlights Activator</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-bs-target="#navbar-nav"
+        aria-controls="navbar-nav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbar-nav">
+        {% if user.is_authenticated %}
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
 
-          <a class="nav-link" href="{% url 'dashboard-api' %}">Dasboard ></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'upload' %}">Upload</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-      </ul>
-      {% else %}
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link" id="login" href="{% url 'account_login' %}">Login</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'account_signup' %}">Register</a>
-        </li>
-      </ul>
-      {% endif %}
+            <a class="nav-link" href="{% url 'dashboard' %}">Dasboard ></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'settings' %}">Settings</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'upload' %}">Upload</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="logout">Logout</a>
+        </ul>
+        {% else %}
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" id="signin" data-bs-toggle="dropdown" aria-expanded="false"
+              data-bs-auto-close="outside">Sign In</a>
+            <div class="dropdown-menu dropdown-menu-end">
+              <form id="loginForm" class="login px-4 py-3" method="POST">
+                <div class="mb-3">
+                  <input type="email" name="email" class="form-control" aria-describedby="emailHelp" placeholder="Email"
+                    required>
+                </div>
+                <div class="mb-3">
+                  <input type="password" name="password" class="form-control" placeholder="Password" required
+                    aria-describedby="passwordHelpBlock">
+                </div>
+                <span id="error"></span>
+                <button type="submit" class="btn btn-primary">Sign In</button>
+              </form>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="{% url 'register_page' %}">New around here? Sign up</a>
+              <a class="dropdown-item" href="{% url 'forgot_password' %}">Forgot password?</a>
+            </div>
+
+          </li>
+        </ul>
+        {% endif %}
+      </div>
     </div>
   </nav>
-
+  {% if not user.active_subscription and user.is_authenticated %}
+  <div class="nonmember-warning">Please renew your <a href="{% url 'settings' %}">subscription</a> to
+    use all features
+  </div>
+  {% endif %}
 
   {% block content %}
   {% endblock %}
@@ -74,11 +100,16 @@
     crossorigin="anonymous"></script>
 </body>
 
+<script>
+
+</script>
 
 <script src="{% static 'js/index.js' %}"></script>
 
 <script>$(document).ready(function () {
     {% block jquery %} {% endblock jquery %};
   });</script>
+
+
 
 </html>

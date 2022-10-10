@@ -1,12 +1,3 @@
-// var content = document.querySelector(".dashboard-books");
-// var button = document.getElementById("show-more");
-
-
-// // button.onclick = function() {
-// //     content.classList.toggle('dashboard-books');
-// //     console.log('click');
-// // }
-
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -23,20 +14,53 @@ function getCookie(name) {
     return cookieValue;
 }
 
-// document.addEventListener("DOMContentLoaded", function (event) {
-//     var _selector = document.querySelector('input[type=checkbox]');
-//     _selector.addEventListener('change', function (event) {
-//         if (_selector.checked) {
-//             console.log('Checkbox changed')
-//         };
-//     });
-// });
 
-// fetch(request).then(function(response) {
-    
-// });
+$(function () {
+    $("#loginForm").submit(loginHandler);
+    $("#logout").click(logoutHandler);
+});
 
 
 
-// создать вью которое будет обрабатывать этот запрос
-// TODO как сделать запрос на сервер из js/ jquery ajax
+function loginHandler(event) {
+    console.log('start login handler')
+    let form = $(this)
+    console.log(form.serialize())
+    event.preventDefault()
+    $.ajax({
+        url: '/api/login/',
+        type: 'post',
+        data: form.serialize(),
+        success: function (data) {
+            console.log('success', data);
+            window.location.href = '/dashboard/'
+        },
+        error: function (data) {
+            console.log('error', data);
+            var error = document.getElementById("error");
+            $("#error").html("")
+            var errors = data.responseJSON;
+            for (const [key, value] of Object.entries(errors)) {
+                console.log(`${key}: ${value}`);
+                $("#error").append(`${value} <br>`);
+            };
+            error.style.color = "red";
+        },
+    })
+};
+
+
+function logoutHandler() {
+    $.ajax({
+        url: '/api/logout/',
+        type: 'post',
+        data: {},
+        success: function (data) {
+            console.log('success', data);
+            window.location.href = '/'
+        },
+        error: function (data) {
+            console.log('error', data);
+        },
+    })
+};

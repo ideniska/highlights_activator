@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block content %}
+
+{% if user.is_authenticated %}
+<script>
+  window.location.replace("{% url 'landing' %}")
+</script>
+
+{% else %}
+<div class="container register">
+  <h2>Sign in</h2>
+
+  <p>If you have not created an account yet, then please
+    <a href="{% url 'register_page' %}">sign up</a> first.
+  </p>
+
+  <form id="loginForm2" class="login" method="POST">
+    <div class="mb-3">
+      <input type="email" name="email" class="form-control" aria-describedby="emailHelp" placeholder="Email" required>
+    </div>
+    <div class="mb-3">
+      <input type="password" name="password" class="form-control" placeholder="Password" required>
+    </div>
+    <span id="error"></span>
+
+    <a id="forgot-pass" class="button secondaryAction" href="{% url 'forgot_password' %}">Forgot Password?</a>
+    <div id="register-button">
+
+      <button type="submit" class="btn btn-primary">Log In</button>
+    </div>
+
+  </form>
+</div>
+
+{% endif %}
+{% endblock %}
+
+{% block jquery %}
+$.getScript('{% static 'js/login.js' %}');
+{% endblock %}

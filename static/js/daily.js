@@ -12,10 +12,17 @@ function bookList () {
       type: 'get',
       success: function (data) {
         console.log(data);
+        if (data.length == 0) {
+          $("#quote-text").html("You don't have any quotes yet.");
+          $("#quote-text2").html("");
+        };
         QuoteListHandler (data);
-      }
+      },
+      error: function () {
+        $("#quote-text").html("You don't have any quotes yet.");
+        $("#quote-text2").html("");
     }
-  )
+  })
 };
 
 
