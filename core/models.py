@@ -16,7 +16,6 @@ class FileType(models.TextChoices):
 
 
 def upload_file_path(obj: "UserFile", filename):
-    print(obj, filename)
     return f"user_files/{obj.owner_id}/{obj.type}/{filename}"
 
 
@@ -41,10 +40,10 @@ class Book(models.Model):
 class Quote(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="quotes")
     date_added = models.CharField(max_length=250)
-    text = models.CharField(max_length=1500)
+    text = models.TextField()
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="quotes")
     like = models.BooleanField(default=False)
-    comment = models.CharField(max_length=1500, default="")
+    comment = models.TextField(default="")
 
 
 class Orders(models.Model):

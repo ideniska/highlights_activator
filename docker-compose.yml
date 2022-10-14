@@ -22,6 +22,7 @@ services:
     build: .
     volumes:
       - .:/app
+      - media_data:/app/media
     env_file:
       - ./.env.dev
     command: celery -A project worker -l info
@@ -38,8 +39,6 @@ services:
      - highlights_activator_postgres_data:/var/lib/postgresql/data
     env_file:
       - ./.env.dev
-    ports:
-      - 5433:5432
 
   rabbitmq:
     image: "rabbitmq:alpine"
@@ -49,7 +48,7 @@ services:
     container_name: highlights_activator_nginx
     restart: always
     ports:
-      - 80:80
+      - 8000:80
     volumes:
       #- static_data:/static
       - ./static:/static

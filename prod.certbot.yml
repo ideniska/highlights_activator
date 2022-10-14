@@ -3,6 +3,7 @@ version: "3.7"
 services:
   nginx:
     image: staticfloat/nginx-certbot
+    network_mode: host
     container_name: nginx
     volumes:
       - letsencrypt:/etc/letsencrypt

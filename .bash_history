@@ -30,3 +30,27 @@ ls
 python manage.py makemigrations
 python manage.py migrate
 exit
+ls
+cd media
+ls
+cd user_files/
+ls
+cd 1
+ls
+cd kindle/
+ls
+exit
+ls
+cd media/
+ls
+cd user_files/
+ls
+cd 1
+ls
+cd kindle/
+ls
+exi
+exit
+python manage.py makemigrations
+python manage.py migrate
+exit
