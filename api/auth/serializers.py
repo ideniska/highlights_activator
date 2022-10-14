@@ -15,7 +15,7 @@ from core.tasks import celery_start_kindle_parser
 
 class SignInSerializer(serializers.Serializer):
     email = serializers.EmailField()
-    password = serializers.CharField(min_length=8)
+    password = serializers.CharField(min_length=4)
 
 
 class ActivationSerializer(serializers.Serializer):
