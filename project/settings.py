@@ -296,6 +296,7 @@ CORS_ALLOWED_HOSTS = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
     "http://127.0.0.1",
+    "https://ha.dendev.ca/",
 ]
 
 # CORS_ALLOW_ALL_ORIGINS = True
