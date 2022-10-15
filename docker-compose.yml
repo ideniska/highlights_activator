@@ -2,6 +2,7 @@ version: '3.9'
 
 services:
   web:
+    image: ideniska/highlights_activator
     build: 
       context: . 
       dockerfile: Dockerfile
@@ -19,6 +20,7 @@ services:
       - rabbitmq
   
   celery:
+    image: ideniska/highlights_activator
     build: .
     volumes:
       - .:/app
