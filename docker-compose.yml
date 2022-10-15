@@ -44,7 +44,7 @@ services:
     image: "rabbitmq:alpine"
 
   nginx:
-    build: ./nginx
+    image: nginx:1.19.8-alpine
     container_name: highlights_activator_nginx
     restart: always
     ports:
@@ -54,6 +54,7 @@ services:
       - ./static:/static
       - media_data:/media
       - ./media:/media
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - web
 
