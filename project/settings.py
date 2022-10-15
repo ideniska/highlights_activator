@@ -296,13 +296,13 @@ CORS_ALLOWED_HOSTS = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
     "http://127.0.0.1",
-    "https://ha.dendev.ca/",
+    "https://ha.dendev.ca",
 ]
 
 # CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
-    "https://ha.dendev.ca/",
+    "https://ha.dendev.ca",
 ]
 
 JWT_AUTH_REFRESH_COOKIE = "refresh"
