@@ -35,8 +35,9 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
-          # password: ${{ secrets.PASSWORD }}
-          # port: ${{ secrets.PORT }}
           script: |
-            whoami
-            pwd
+            docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+            cd highlights_activator/
+            docker-compose down
+            docker pull ideniska/highlights_activator:latest
+            docker-compose up -d
