@@ -300,6 +300,9 @@ CORS_ALLOWED_HOSTS = [
 
 # CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = [
+    "https://ha.dendev.ca/",
+]
 
 JWT_AUTH_REFRESH_COOKIE = "refresh"
 JWT_AUTH_COOKIE = "jwt-auth"
