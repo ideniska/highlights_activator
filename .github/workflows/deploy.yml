@@ -1,0 +1,14 @@
+name: docker ci/cd
+
+on: 
+  push: 
+    branches: ["main"]
+
+jobs:
+  build: 
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: filelist
+        run: ls -la
