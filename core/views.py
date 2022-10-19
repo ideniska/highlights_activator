@@ -28,6 +28,7 @@ from rest_framework.decorators import api_view, permission_classes
 from .pagination import PageNumberPagination
 from django.core.mail import send_mail
 from core.tasks import celery_get_book_covers
+from core.notifications import EmailService
 from .permissions import PaidUser
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -35,6 +36,8 @@ import stripe
 from django.conf import settings
 from typing import TypeVar
 from django.utils import timezone
+import datetime
+from project.settings import YOUR_DOMAIN
 
 UserType = TypeVar("UserType", bound="CustomUser")
 User = get_user_model()
@@ -216,23 +219,18 @@ class CreateCheckoutSessionView(View):
             cancel_url=YOUR_DOMAIN + "stripe/cancel",
         )
         return HttpResponseRedirect(checkout_session.url)
-        # return JsonResponse(
-        #     {
-        #         "id": checkout_session.id,
-        #     }
-        # )
 
 
-class CreatePortalSessionView(View):
+class CreatePortalSessionView(APIView):
     def post(self, request, *args, **kwargs):
         # For demonstration purposes, we're using the Checkout session to retrieve the customer ID.
         # Typically this is stored alongside the authenticated user in your database.
-        checkout_session_id = request.form.get("session_id")
+        checkout_session_id = request.user.stripe_session_id
         checkout_session = stripe.checkout.Session.retrieve(checkout_session_id)
 
         # This is the URL to which the customer will be redirected after they are
         # done managing their billing with the portal.
-        return_url = YOUR_DOMAIN + "/dashboard"
+        return_url = YOUR_DOMAIN + "dashboard"
 
         portalSession = stripe.billing_portal.Session.create(
             customer=checkout_session.customer,
@@ -270,26 +268,35 @@ def stripe_webhook(request):
         )
         product = stripe_payment_data["data"][0]["description"]
         price_paid = stripe_payment_data["data"][0]["amount_total"] / 100
-        print(stripe_payment_status)
 
         if stripe_payment_status == "paid":
             user = User.objects.get(email=stripe_user_email)
             user.active_subscription = True
-            user.save()
+
             if "1 month" in product:
                 subscription_period = 30
             else:
                 subscription_period = 365
+            if user.paid_until == None:
+                user.paid_until = timezone.now() + datetime.timedelta(
+                    days=subscription_period
+                )
+            else:
+                user.paid_until += datetime.timedelta(days=subscription_period)
+            user.stripe_session_id = session["id"]
+            user.save()
+
             order = Orders.objects.create(
                 user=user,
-                stripe_order_id=1,
+                stripe_user_email=stripe_user_email,
                 order_type="Subscription",
                 price=price_paid,
                 payment_status="active",
                 subscription_period=subscription_period,
                 payment_date=timezone.now(),
             )
-
             order.save()
-
+            email = EmailService()
+            email.send_payment_confirmation(user, YOUR_DOMAIN)
+            print(request.user)
     return HttpResponse(status=200)

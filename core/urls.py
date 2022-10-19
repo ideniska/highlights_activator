@@ -98,19 +98,47 @@ urlpatterns = [
         name="create-checkout-session",
     ),
     path(
-        "checkout/",
-        views.TemplateAPIView.as_view(template_name="stripe/checkout.html"),
-        name="checkout",
+        "create-portal-session/",
+        views.CreatePortalSessionView.as_view(),
+        name="create-portal-session",
+    ),
+    path(
+        "checkout/monthly/",
+        views.AuthenticatedTemplateAPIView.as_view(
+            template_name="stripe/checkout_monthly.html"
+        ),
+        name="checkout_monthly",
+    ),
+    path(
+        "checkout/annual/",
+        views.AuthenticatedTemplateAPIView.as_view(
+            template_name="stripe/checkout_annual.html"
+        ),
+        name="checkout_annual",
     ),
     path(
         "stripe/success/",
-        views.TemplateAPIView.as_view(template_name="stripe/success.html"),
+        views.AuthenticatedTemplateAPIView.as_view(template_name="stripe/success.html"),
         name="success",
     ),
     path(
         "stripe/cancel/",
-        views.TemplateAPIView.as_view(template_name="dashboard_api.html"),
+        views.AuthenticatedTemplateAPIView.as_view(template_name="dashboard_api.html"),
         name="cancel",
     ),
     path("stripe-webhook/", views.stripe_webhook, name="stripe_webhook"),
+    path(
+        "settings/account/",
+        views.AuthenticatedTemplateAPIView.as_view(
+            template_name="settings/account_settings.html"
+        ),
+        name="account_settings",
+    ),
+    path(
+        "settings/subscription/",
+        views.AuthenticatedTemplateAPIView.as_view(
+            template_name="settings/subscription.html"
+        ),
+        name="subscription",
+    ),
 ]

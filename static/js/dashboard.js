@@ -47,8 +47,7 @@ function randomQuote() {
       // $("#quote-text").html("You don't have any quotes yet.");
       // $(".btn").attr("href", "/upload");
       // $(".btn").html('Click to upload your file');
-      console.log(error.responcs.status)
-      window.location.href = '/upload-progress/'
+      console.log(error.response.status)
     }
   });
 }

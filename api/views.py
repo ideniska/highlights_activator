@@ -10,6 +10,9 @@ from .serializers import (
     BookSerializer,
     QuoteSerializer,
     QuoteUpdateSerializer,
+    OrdersSerializer,
+    UserSerializer,
+    UpdateUserSerializer,
 )
 from users.models import CustomUser
 from core.models import Orders
@@ -149,7 +152,45 @@ class BookVisibilityView(generics.GenericAPIView):
         return Response({"detail": True})
 
 
-# TODO Ask Nazarii to update BookVisibilityView: filter.exists() if yes .update() -- more optimal way update visibility status from db
+class EmailNotificationSettingsView(generics.GenericAPIView):
+
+    serializer_class = UserSerializer
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        user = CustomUser.objects.filter(id=self.request.user.id)
+        return Response({"detail": True})
+
+
+class NotificationsSettingsApiView(generics.ListAPIView):
+
+    serializer_class = UserSerializer
+
+    def get_queryset(self):
+        queryset = CustomUser.objects.filter(id=self.request.user.id)
+        return queryset
+
+
+class ChangeNotificationsSettingsApiView(GenericAPIView):
+    serializer_class = UpdateUserSerializer
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = request.user
+        user.send_emails = serializer.data["send_emails"]
+        user.send_telegrams = serializer.data["send_telegrams"]
+        user.save()
+        return Response({"detail": True})
+
+
+class TelegramNotificationSettingsView(generics.UpdateAPIView):
+
+    serializer_class = UserSerializer
+
+    def get_queryset(self):
+        queryset = CustomUser.objects.filter(id=self.request.user.id)
+        return queryset
 
 
 class QuoteLikeView(generics.GenericAPIView):
@@ -275,3 +316,14 @@ class ActivateTrialApiView(APIView):
             {"Fail": "Trial already in use or finished"},
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+
+class LastOrderAPIView(
+    generics.ListCreateAPIView,
+):
+
+    serializer_class = OrdersSerializer
+
+    def get_queryset(self):
+        queryset = Orders.objects.filter(user=self.request.user)
+        return queryset

@@ -93,31 +93,33 @@ class ActivationService(ActivationAndPasswordService):
         user.save()
 
 
-class EmailService:
-    def send_password_reset(self, user, current_site):
-        send_information_email.delay(
-            subject="Password recovery",
-            template_name="emails/set_new_password.html",
-            context={
-                "user": user.email,
-                "domain": current_site.domain,
-                "uid": urlsafe_base64_encode(force_bytes(user.id)),
-                "token": default_token_generator.make_token(user),
-            },
-            to_email=user.email,
-            letter_language="en",
-        )
+### MOVED TO NOTIFICATIONS ###
 
-    def send_activation_link(self, user, current_site):
-        send_information_email.delay(
-            subject="Confirm registration",
-            template_name="emails/email_confirmation.html",
-            context={
-                "user": user.email,
-                "domain": current_site.domain,
-                "uid": urlsafe_base64_encode(force_bytes(user.id)),
-                "token": default_token_generator.make_token(user),
-            },
-            to_email=user.email,
-            letter_language="en",
-        )
+# class EmailService:
+#     def send_password_reset(self, user, current_site):
+#         send_information_email.delay(
+#             subject="Password recovery",
+#             template_name="emails/set_new_password.html",
+#             context={
+#                 "user": user.email,
+#                 "domain": current_site.domain,
+#                 "uid": urlsafe_base64_encode(force_bytes(user.id)),
+#                 "token": default_token_generator.make_token(user),
+#             },
+#             to_email=user.email,
+#             letter_language="en",
+#         )
+
+#     def send_activation_link(self, user, current_site):
+#         send_information_email.delay(
+#             subject="Confirm registration",
+#             template_name="emails/email_confirmation.html",
+#             context={
+#                 "user": user.email,
+#                 "domain": current_site.domain,
+#                 "uid": urlsafe_base64_encode(force_bytes(user.id)),
+#                 "token": default_token_generator.make_token(user),
+#             },
+#             to_email=user.email,
+#             letter_language="en",
+#         )

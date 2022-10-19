@@ -9,14 +9,15 @@
 <p>Paid: {{user.active_subscription}}</p>
 <p>Paid until: {{user.paid_end}}</p>
 
-<!-- TODO if trial true - button is not active -->
+
 
 {% if user.active_subscription or user.trial_used %}
 <a href="{% url 'checkout' %}" class="btn btn-primary">Upgrade/Subscription</a>
 
 {% else %}
 <button class="btn btn-primary" id="start-trial">Start 5 min free trial</button>
-<a href="{% url 'checkout' %}" class="btn btn-primary">Upgrade/Subscription</a>
+<a href="{% url 'checkout' %}" class="btn btn-primary">Upgrade/Subscription 1 month</a>
+<a href="{% url 'checkout' %}" class="btn btn-primary">Upgrade/Subscription </a>
 {% endif %}
 
 {% endblock %}

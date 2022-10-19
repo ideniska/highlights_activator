@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+{% if user.is_authenticated %}
+<div style="background-color: #F2F5F8;">
+    <br>
+    <div class="row justify-content-center">
+        <div class="col-md-2">
+            <div class="list-group">
+                <a href="{% url 'account_settings' %}" class="list-group-item list-group-item-action active">Account
+                    Settings</a>
+                <a href="{% url 'subscription' %}" class="list-group-item list-group-item-action">Subscription</a>
+            </div>
+        </div>
+        <br>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <a href="{% url 'forgot_password' %}">Change password</a>
+                    <br>
+                    <br>
+                    <p>Notification settigs:</p>
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td>Email</td>
+                                <td>
+                                    <select class="form-select" name="Daily email" id="emailSetting">
+
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Telegram message</td>
+                                <td>
+                                    <select class="form-select" name="Daily Telegram" id="telegramSetting">
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button class="btn btn-primary" id="save-settings">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+<br>
+<br>
+</div>
+{% else %}
+<script>
+    window.location.replace("{% url 'landing' %}")
+</script>
+{% endif%}
+{% endblock %}
+{% block jquery %}
+$.getScript('{% static 'js/notification_settings.js' %}');
+{% endblock %}

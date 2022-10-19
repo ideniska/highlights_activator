@@ -13,7 +13,8 @@ from .serializers import (
     RestorePasswordSerializer,
     SetPasswordSerializer,
 )
-from .services import LoginService, EmailService, PasswordService, ActivationService
+from .services import LoginService, PasswordService, ActivationService
+from core.notifications import EmailService
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth import get_user_model
