@@ -4,7 +4,7 @@ import logging
 from telegram import Update
 from telegram.ext import CallbackContext
 from telegram.ext import CommandHandler
-from api.views import pick_random_object
+from api.services import pick_random_quote_id
 from core.models import Quote
 from users.models import CustomUser
 from django.conf import settings

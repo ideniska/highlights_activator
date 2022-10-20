@@ -4,12 +4,12 @@ $(function () {
 
 function getSettings() {
     $.ajax({
-        url: '/api/get-notifications-settings/',
+        url: '/api/notifications-settings/',
         type: 'get',
         success: function (data) {
             console.log("SUCCESS", data);
-            var email_option = data[0]["send_emails"];
-            var telegram_option = data[0]["send_telegrams"];
+            var email_option = data["send_emails"];
+            var telegram_option = data["send_telegrams"];
             console.log(email_option);
             if (email_option == 1) {
                 $("#emailSetting").html('<option value="1" selected>Daily</option><option value="2">Weekly (Monday)</option><option value="3">Disabled</option>')
@@ -44,8 +44,8 @@ $(document).on('click', '#save-settings', function () {
 function saveToServer(data) {
     const csrftoken = getCookie('csrftoken');
     $.ajax({
-        type: "POST",
-        url: `/api/change-notifications-settings/`,
+        type: "PUT",
+        url: `/api/notifications-settings/`,
         headers: {
             "X-CSRFToken": csrftoken
         },

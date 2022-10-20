@@ -77,7 +77,7 @@ class DashboardPageView(AuthenticatedTemplateAPIView):
 
 class SettingsPageView(AuthenticatedTemplateAPIView):
     # permission_classes = (PaidUser,)
-    template_name: str = "settings.html"
+    template_name: str = "settings/subscription.html"
 
 
 class LoginPageView(TemplateAPIView):
@@ -260,7 +260,10 @@ def stripe_webhook(request):
     #     stripe_invoice_id = event["data"]["object"]["id"]
 
     if event["type"] == "checkout.session.completed":
+        print(f"{event=}")
         session = event["data"]["object"]
+        print(f"{session=}")
+
         stripe_user_email = session["customer_details"]["email"]
         stripe_payment_status = session["payment_status"]
         stripe_payment_data = stripe.checkout.Session.list_line_items(

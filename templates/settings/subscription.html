@@ -99,6 +99,8 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <button class="btn btn-primary" id="start-trial">Start a free trial (1 week, no credit card
+                            needed)</button>
                     </div>
                     {% else %}
                     <p>Status: <strong>Active (Pro)</strong> <i class="fa-solid fa-circle fa-xs"></i></p>
@@ -127,5 +129,5 @@
 {% endif%}
 {% endblock %}
 {% block jquery %}
-
+$.getScript('{% static 'js/settings.js' %}');
 {% endblock %}
