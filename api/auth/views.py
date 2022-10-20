@@ -47,17 +47,6 @@ class ActivateView(GenericAPIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
-        # user_id = force_str(urlsafe_base64_decode(request.data["user_id"]))
-        # confirmation_token = request.data["token"]
-        # user = User.objects.get(id=user_id)
-
-        # if not default_token_generator.check_token(user, confirmation_token):
-        #     return Response(
-        #         "Token is invalid or expired. Please request another confirmation email by signing in.",
-        #         status=status.HTTP_400_BAD_REQUEST,
-        #     )
-        # user.is_active = True
-        # user.save()
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)

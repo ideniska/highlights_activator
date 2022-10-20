@@ -38,6 +38,8 @@ from typing import TypeVar
 from django.utils import timezone
 import datetime
 from project.settings import YOUR_DOMAIN
+from .services import CreateCheckoutSessionService, CreatePortalSessionService
+
 
 UserType = TypeVar("UserType", bound="CustomUser")
 User = get_user_model()
@@ -67,61 +69,9 @@ class AuthenticatedTemplateAPIView(TemplateAPIView):
         return a
 
 
-class HomePageView(TemplateAPIView):
-    template_name: str = "home.html"
-
-
-class DashboardPageView(AuthenticatedTemplateAPIView):
-    template_name: str = "dashboard_api.html"
-
-
-class SettingsPageView(AuthenticatedTemplateAPIView):
-    # permission_classes = (PaidUser,)
-    template_name: str = "settings/subscription.html"
-
-
-class LoginPageView(TemplateAPIView):
-    permission_classes = (AllowAny,)
-    template_name: str = "login.html"
-
-
 class ActivationPageView(TemplateAPIView):
     permission_classes = (AllowAny,)
     template_name: str = "confirm_email.html"
-
-
-class SetNewPassPageView(TemplateAPIView):
-    permission_classes = (AllowAny,)
-    template_name: str = "set_password.html"
-
-
-class ForgotPasswordPageView(TemplateAPIView):
-    permission_classes = (AllowAny,)
-    template_name: str = "forgot_password.html"
-
-
-class CheckEmailPasswordPageView(TemplateAPIView):
-    permission_classes = (AllowAny,)
-    template_name: str = "check_email_for_password.html"
-
-
-class EmailActivatePageView(TemplateAPIView):
-    permission_classes = (AllowAny,)
-    template_name: str = "email_activate.html"
-
-
-class RegisterPageView(TemplateAPIView):
-    permission_classes = (AllowAny,)
-    template_name: str = "register.html"
-
-
-class LandingPageView(TemplateAPIView):
-    permission_classes = (AllowAny,)
-    template_name: str = "landing.html"
-
-
-class SmartFeedView(ActivationPageView):
-    template_name: str = "smart_feed.html"
 
 
 class ByBookView(LoginRequiredMixin, ListView):
@@ -137,17 +87,6 @@ class ByBookView(LoginRequiredMixin, ListView):
 
 class ByTagView(LoginRequiredMixin, TemplateView):
     template_name = "by_tag.html"
-
-
-def book_inside_view(request, id):
-    list_of_quotes = get_list_or_404(Quote, book=id)
-    book_title = get_object_or_404(Book, id=id)
-    context = {"quotes_by_book": list_of_quotes, "book_title": book_title.title}
-    return render(request, "book_page.html", context)
-
-
-class UploadView(ActivationPageView):
-    template_name: str = "upload.html"
 
 
 class BooksTemplateAPIView(APIView):
@@ -198,45 +137,84 @@ class BooksTemplateAPIView(APIView):
         return self.paginator.get_paginated_response(data)
 
 
-stripe.api_key = settings.STRIPE_SECRET_KEY
-YOUR_DOMAIN = settings.YOUR_DOMAIN
+def book_inside_view(request, id):
+    list_of_quotes = get_list_or_404(Quote, book=id)
+    book_title = get_object_or_404(Book, id=id)
+    context = {"quotes_by_book": list_of_quotes, "book_title": book_title.title}
+    return render(request, "book_page.html", context)
+
+
+class CheckEmailPasswordPageView(TemplateAPIView):
+    permission_classes = (AllowAny,)
+    template_name: str = "check_email_for_password.html"
+
+
+class DashboardPageView(AuthenticatedTemplateAPIView):
+    template_name: str = "dashboard_api.html"
+
+
+class EmailActivatePageView(TemplateAPIView):
+    permission_classes = (AllowAny,)
+    template_name: str = "email_activate.html"
+
+
+class ForgotPasswordPageView(TemplateAPIView):
+    permission_classes = (AllowAny,)
+    template_name: str = "forgot_password.html"
+
+
+class LandingPageView(TemplateAPIView):
+    permission_classes = (AllowAny,)
+    template_name: str = "landing.html"
+
+
+class LoginPageView(TemplateAPIView):
+    permission_classes = (AllowAny,)
+    template_name: str = "login.html"
+
+
+class HomePageView(TemplateAPIView):
+    template_name: str = "home.html"
+
+
+class RegisterPageView(TemplateAPIView):
+    permission_classes = (AllowAny,)
+    template_name: str = "register.html"
+
+
+class SmartFeedView(ActivationPageView):
+    template_name: str = "smart_feed.html"
+
+
+class SetNewPassPageView(TemplateAPIView):
+    permission_classes = (AllowAny,)
+    template_name: str = "set_password.html"
+
+
+class SettingsPageView(AuthenticatedTemplateAPIView):
+    # permission_classes = (PaidUser,)
+    template_name: str = "settings/subscription.html"
+
+
+class UploadView(ActivationPageView):
+    template_name: str = "upload.html"
+
+
+###------------------------------- STRIPE -------------------------------###
 
 
 class CreateCheckoutSessionView(View):
     def post(self, request, *args, **kwargs):
-        prices = stripe.Price.list(
-            lookup_keys=[request.POST["lookup_key"]], expand=["data.product"]
-        )
-        checkout_session = stripe.checkout.Session.create(
-            line_items=[
-                {
-                    "price": prices.data[0].id,
-                    "quantity": 1,
-                },
-            ],
-            mode="subscription",
-            success_url=YOUR_DOMAIN + "stripe/success?session_id={CHECKOUT_SESSION_ID}",
-            cancel_url=YOUR_DOMAIN + "stripe/cancel",
-        )
-        return HttpResponseRedirect(checkout_session.url)
+        service = CreateCheckoutSessionService()
+        response = service.create_checkout_session(request)
+        return response
 
 
 class CreatePortalSessionView(APIView):
     def post(self, request, *args, **kwargs):
-        # For demonstration purposes, we're using the Checkout session to retrieve the customer ID.
-        # Typically this is stored alongside the authenticated user in your database.
-        checkout_session_id = request.user.stripe_session_id
-        checkout_session = stripe.checkout.Session.retrieve(checkout_session_id)
-
-        # This is the URL to which the customer will be redirected after they are
-        # done managing their billing with the portal.
-        return_url = YOUR_DOMAIN + "dashboard"
-
-        portalSession = stripe.billing_portal.Session.create(
-            customer=checkout_session.customer,
-            return_url=return_url,
-        )
-        return HttpResponseRedirect(portalSession.url)
+        service = CreatePortalSessionService()
+        response = service.create_portal_session(request)
+        return response
 
 
 @csrf_exempt
