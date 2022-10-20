@@ -1,18 +1,18 @@
-from gc import get_objects
-from multiprocessing import context
-from os import PRIO_USER
-from urllib import request
+from .pagination import PageNumberPagination
+from .permissions import PaidUser
+from .models import Orders, UserFile, Quote, Book
+from .services import (
+    CreateCheckoutSessionService,
+    CreatePortalSessionService,
+    StripeCheckPaymentService,
+)
+from api.serializers import BookSerializer
+from core.tasks import celery_get_book_covers
+from core.notifications import EmailService
 from django.views.generic import TemplateView, DetailView
 from django.views.generic.list import ListView
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
-from .kindle_parser import start_kindle_parser
-from .forms import FileForm
-from django.core.files.storage import FileSystemStorage
-from .models import Orders, UserFile, Quote, Book
-from api.serializers import BookSerializer
-import random
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -20,25 +20,16 @@ from django.urls import reverse
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.contrib.auth import get_user_model
 from django.db.models import Count
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.core.mail import send_mail
+from project.settings import YOUR_DOMAIN
 from rest_framework.permissions import AllowAny, BasePermission
 from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
-from .pagination import PageNumberPagination
-from django.core.mail import send_mail
-from core.tasks import celery_get_book_covers
-from core.notifications import EmailService
-from .permissions import PaidUser
-from django.views import View
-from django.views.decorators.csrf import csrf_exempt
-import stripe
-from django.conf import settings
 from typing import TypeVar
-from django.utils import timezone
-import datetime
-from project.settings import YOUR_DOMAIN
-from .services import CreateCheckoutSessionService, CreatePortalSessionService
 
 
 UserType = TypeVar("UserType", bound="CustomUser")
@@ -201,9 +192,7 @@ class UploadView(ActivationPageView):
 
 
 ###------------------------------- STRIPE -------------------------------###
-
-
-class CreateCheckoutSessionView(View):
+class CreateCheckoutSessionView(APIView):
     def post(self, request, *args, **kwargs):
         service = CreateCheckoutSessionService()
         response = service.create_checkout_session(request)
@@ -217,67 +206,11 @@ class CreatePortalSessionView(APIView):
         return response
 
 
-@csrf_exempt
-def stripe_webhook(request):
-    payload = request.body
-    sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
-    event = None
+@method_decorator(csrf_exempt, name="dispatch")
+class StripeWebhook(APIView):
+    permission_classes = (AllowAny,)
 
-    try:
-        event = stripe.Webhook.construct_event(
-            payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
-        )
-    except ValueError as e:
-        # Invalid payload
-        return HttpResponse(status=400)
-    except stripe.error.SignatureVerificationError as e:
-        # Invalid signature
-        return HttpResponse(status=400)
-
-    # if event["type"] == "invoice.paid":
-    #     stripe_invoice_id = event["data"]["object"]["id"]
-
-    if event["type"] == "checkout.session.completed":
-        print(f"{event=}")
-        session = event["data"]["object"]
-        print(f"{session=}")
-
-        stripe_user_email = session["customer_details"]["email"]
-        stripe_payment_status = session["payment_status"]
-        stripe_payment_data = stripe.checkout.Session.list_line_items(
-            session["id"], limit=1
-        )
-        product = stripe_payment_data["data"][0]["description"]
-        price_paid = stripe_payment_data["data"][0]["amount_total"] / 100
-
-        if stripe_payment_status == "paid":
-            user = User.objects.get(email=stripe_user_email)
-            user.active_subscription = True
-
-            if "1 month" in product:
-                subscription_period = 30
-            else:
-                subscription_period = 365
-            if user.paid_until == None:
-                user.paid_until = timezone.now() + datetime.timedelta(
-                    days=subscription_period
-                )
-            else:
-                user.paid_until += datetime.timedelta(days=subscription_period)
-            user.stripe_session_id = session["id"]
-            user.save()
-
-            order = Orders.objects.create(
-                user=user,
-                stripe_user_email=stripe_user_email,
-                order_type="Subscription",
-                price=price_paid,
-                payment_status="active",
-                subscription_period=subscription_period,
-                payment_date=timezone.now(),
-            )
-            order.save()
-            email = EmailService()
-            email.send_payment_confirmation(user, YOUR_DOMAIN)
-            print(request.user)
-    return HttpResponse(status=200)
+    def post(self, request):
+        service = StripeCheckPaymentService()
+        response = service.check_payment(request)
+        return response

@@ -126,7 +126,7 @@ urlpatterns = [
         views.AuthenticatedTemplateAPIView.as_view(template_name="dashboard_api.html"),
         name="cancel",
     ),
-    path("stripe-webhook/", views.stripe_webhook, name="stripe_webhook"),
+    path("stripe-webhook/", views.StripeWebhook.as_view(), name="stripe_webhook"),
     path(
         "settings/account/",
         views.AuthenticatedTemplateAPIView.as_view(

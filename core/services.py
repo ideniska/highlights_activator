@@ -1,12 +1,20 @@
 import stripe
-from django.conf import settings
-from typing import TypeVar
-from django.utils import timezone
 import datetime
+
+from core.models import Orders
+from core.notifications import EmailService
+from django.utils import timezone
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.http import HttpResponseRedirect, HttpResponse
 from project.settings import YOUR_DOMAIN
-from django.http import HttpResponseRedirect
+from typing import TypeVar
+
+UserType = TypeVar("UserType", bound="CustomUser")
+User = get_user_model()
 
 
+###------------------------------- STRIPE -------------------------------###
 stripe.api_key = settings.STRIPE_SECRET_KEY
 YOUR_DOMAIN = settings.YOUR_DOMAIN
 
@@ -44,3 +52,66 @@ class CreatePortalSessionService:
             return_url=return_url,
         )
         return HttpResponseRedirect(portalSession.url)
+
+
+class StripeCheckPaymentService:
+    def check_payment(self, request):
+        payload = request.body
+        sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
+        event = None
+
+        try:
+            event = stripe.Webhook.construct_event(
+                payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
+            )
+        except ValueError as e:
+            # Invalid payload
+            return HttpResponse(status=400)
+        except stripe.error.SignatureVerificationError as e:
+            # Invalid signature
+            return HttpResponse(status=400)
+
+        if event["type"] == "checkout.session.completed":
+            print(f"{event=}")
+            session = event["data"]["object"]
+            print(f"{session=}")
+
+            stripe_user_email = session["customer_details"]["email"]
+            stripe_payment_status = session["payment_status"]
+            stripe_payment_data = stripe.checkout.Session.list_line_items(
+                session["id"], limit=1
+            )
+            product = stripe_payment_data["data"][0]["description"]
+            price_paid = stripe_payment_data["data"][0]["amount_total"] / 100
+
+            if stripe_payment_status == "paid":
+                user = User.objects.get(email=stripe_user_email)
+                user.active_subscription = True
+
+                if "1 month" in product:
+                    subscription_period = 30
+                else:
+                    subscription_period = 365
+                if user.paid_until == None:
+                    user.paid_until = timezone.now() + datetime.timedelta(
+                        days=subscription_period
+                    )
+                else:
+                    user.paid_until += datetime.timedelta(days=subscription_period)
+                user.stripe_session_id = session["id"]
+                user.save()
+
+                order = Orders.objects.create(
+                    user=user,
+                    stripe_user_email=stripe_user_email,
+                    order_type="Subscription",
+                    price=price_paid,
+                    payment_status="active",
+                    subscription_period=subscription_period,
+                    payment_date=timezone.now(),
+                )
+                order.save()
+
+                email = EmailService()
+                email.send_payment_confirmation(user, YOUR_DOMAIN)
+        return HttpResponse(status=200)
