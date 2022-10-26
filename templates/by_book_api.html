@@ -4,51 +4,123 @@
 {% block title %}Dashboard{% endblock %}
 {% block content %}
 
+<div class="wrapper">
 
-<div style="background-color: #F2F5F8;">
-    <br>
-    <div class="row justify-content-center">
-        <div class="col-md-2">
-            <div class="list-group">
-                <a href="{% url 'dashboard' %}" class="list-group-item list-group-item-action" aria-current="true">
-                    Random quote
-                </a>
-                <a href="{% url 'daily' %}" class="list-group-item list-group-item-action">Daily review</a>
-                <a href="{% url 'smart_feed' %}" class="list-group-item list-group-item-action">Feed</a>
-                <a href="{% url 'favorite' %}" class="list-group-item list-group-item-action">Favorites</a>
-                <a href="{% url 'by-book-api' %}" class="list-group-item list-group-item-action active">My books</a>
-                <a href="{% url 'by_tag' %}" class="list-group-item list-group-item-action">By tag</a>
-            </div>
+    <!-- ========== Left Sidebar Start ========== -->
+    <div class="leftside-menu">
+        <!-- Sidebar Hover Menu Toggle Button -->
+        <button type="button" class="btn button-sm-hover p-0" data-bs-toggle="tooltip" data-bs-placement="right"
+            title="Show Full Sidebar">
+            <i class="ri-checkbox-blank-circle-line align-middle"></i>
+        </button>
+
+        <!-- Sidebar -left -->
+        <div class="h-100" id="leftside-menu-container" data-simplebar>
+
+            <!--- Sidemenu -->
+            <ul class="side-nav">
+
+                <li class="side-nav-item">
+                    <a href="{% url 'dashboard' %}" class="side-nav-link">
+                        <i class="uil-home-alt"></i>
+                        <span> Quote of the day </span>
+                    </a>
+                </li>
+                {% if user.active_subscription %}
+                <li class="side-nav-item">
+                    <a href="{% url 'daily' %}" class="side-nav-link">
+                        <i class="uil-calender"></i>
+                        <span> Daily review </span>
+                    </a>
+                </li>
+
+                <li class="side-nav-item">
+                    <a href="{% url 'favorite' %}" class="side-nav-link">
+                        <i class=" ri-star-line"></i>
+                        <span> Favorites </span>
+                    </a>
+                </li>
+
+                <li class="side-nav-item">
+                    <a href="{% url 'by-book-api' %}" class="side-nav-link">
+                        <i class="ri-menu-line"></i>
+                        <span> My books <i class="ri-arrow-drop-right-fill"></i></span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="side-nav-item">
+                    <a href="" class="side-nav-link">
+                        <i class="uil-calender"></i>
+                        <span> Daily review </span><i class="ri-lock-2-line"></i>
+                    </a>
+                </li>
+
+                <li class="side-nav-item">
+                    <a href="" class="side-nav-link">
+                        <i class=" ri-star-line"></i>
+                        <span> Favorites </span><i class="ri-lock-2-line"></i>
+                    </a>
+                </li>
+
+                <li class="side-nav-item">
+                    <a href="" class="side-nav-link">
+                        <i class="ri-menu-line"></i>
+                        <span> My books </span><i class="ri-lock-2-line"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+            <!--- End Sidemenu -->
+
+            <div class="clearfix"></div>
         </div>
-        <br>
-        <div class="col-md-4">
-            <div class="infinite-container">
-                <div class="dashboard-books">
-                    <table class="table table-hover table-bordered" id="table">
-                        <thead>
-                            <tr>
-                                <th scope=" col">Title</th>
-                                <th scope="col">Highlights</th>
-                                <th scope="col">Visibilty</th>
-                            </tr>
-                        </thead>
-                        <tbody class="datarows" data-href="/api/by-book/?page=1&page_size=20">
-                            <tr>
-                            </tr>
-                        </tbody>
-                    </table>
+    </div>
+    <!-- ========== Left Sidebar End ========== -->
+    <div class="content-page">
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="page-title-box">
+                        <h4 class="page-title"></h4>
+                        <div class="col-xxl-6 col-lg-12 order-lg-2 order-xxl-1">
+
+                            <div class="infinite-container">
+                                <div class="dashboard-books">
+                                    <table class="table table-hover table-centered mb-0" id="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope=" col">Title</th>
+                                                <th scope="col">Highlights</th>
+                                                <th scope="col">Visibilty</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="datarows" data-href="/api/by-book/?page=1&page_size=20">
+                                            <tr>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <br>
-        <br>
-        <br>
-        <br>
     </div>
-    {% if is_paginated %}
-    <a class="infinite-more-link" href="?page={{ page.next_page_number  }}">More</a>
-    {% endif %}
-    {% endblock %}
-    {% block jquery %}
-    $.getScript('{% static 'js/by_book.js' %}');
-    {% endblock %}
+    <!--end row -->
+</div>
+
+
+<!-- Vendor js -->
+<script src="{% static 'assets/js/vendor.min.js' %}"></script>
+
+<!-- App js -->
+<script src="{% static 'assets/js/app.min.js' %}"></script>
+
+
+
+
+{% endblock %}
+{% block jquery %}
+$.getScript('{% static 'js/by_book.js' %}');
+{% endblock %}

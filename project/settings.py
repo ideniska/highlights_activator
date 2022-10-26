@@ -35,8 +35,9 @@ STRIPE_WEBHOOK_SECRET = os.environ.get(
 )
 
 TELEGRAM_TOKEN = os.environ.get(
-    "TELEGRAM_TOKEN", "5143838024:AAFxjxkBrsF27UQm3UY2ekQyCG63r7-sX3w"
+    "TELEGRAM_TOKEN", "5446374976:AAHwD0UZQKJRLdBRxUE3rRGkdIYGthGToLc"
 )
+TELEGRAM_BOT_NAME = "https://t.me/HighlightsActivator_bot?start={}"
 
 # YOUR_DOMAIN = "http://ha.dendev.ca"
 YOUR_DOMAIN = "http://127.0.0.1:8000/"
@@ -57,6 +58,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # "django.contrib.sites",
+    # TODO sites
     "users",
     "core",
     "api",
@@ -109,23 +112,17 @@ WSGI_APPLICATION = "project.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": os.environ.get("POSTGRES_ENGINE", "django.db.backends.sqlite3"),
+        "NAME": os.environ.get("POSTGRES_DB", os.path.join(BASE_DIR, "db.sqlite3")),
+        "USER": os.environ.get("POSTGRES_USER", "user"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "password"),
+        "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
+        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
     }
 }
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE": os.environ.get("POSTGRES_ENGINE", "django.db.backends.sqlite3"),
-#         "NAME": os.environ.get("POSTGRES_DB", os.path.join(BASE_DIR, "db.sqlite3")),
-#         "USER": os.environ.get("POSTGRES_USER", "user"),
-#         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "password"),
-#         "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
-#         "PORT": os.environ.get("POSTGRES_PORT", "5432"),
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

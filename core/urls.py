@@ -141,4 +141,9 @@ urlpatterns = [
         ),
         name="subscription",
     ),
+    path(
+        "test/",
+        views.TemplateAPIView.as_view(template_name="dashboard_api_new.html"),
+        name="test",
+    ),
 ]

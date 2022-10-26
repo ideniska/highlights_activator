@@ -116,3 +116,7 @@ class SetNewPassword(GenericAPIView):
         )
         service.set_new_password(user, password=serializer.validated_data["password"])
         return Response({"detail": True})
+
+
+class SetTgDeepLink:
+    pass

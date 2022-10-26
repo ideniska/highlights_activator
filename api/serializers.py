@@ -64,3 +64,8 @@ class OrdersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Orders
         fields = ["order_type", "subscription_period", "payment_date"]
+
+
+class ActivateTelegramUserSerializer(serializers.Serializer):
+    telegram_key = serializers.CharField()
+    telegram_id = serializers.IntegerField()

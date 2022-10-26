@@ -49,9 +49,6 @@ class Quote(models.Model):
 class Orders(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders")
     order_type = models.CharField(max_length=15)  # Trial / Subscription
-    stripe_user_email = models.CharField(
-        max_length=100
-    )  # user email from checkout form
     subscription_period = (
         models.IntegerField()
     )  # trial = 14 days, stripe = 30 days / 365 days

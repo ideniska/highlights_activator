@@ -4,19 +4,21 @@ from api.serializers import UserSerializer, QuoteSerializer, BookSerializer
 from core.models import Quote, Orders, Book
 from core.tasks import celery_stop_membership
 from django.contrib.auth import get_user_model
+from django.utils.http import urlsafe_base64_decode
 from django.utils import timezone
+from django.utils.encoding import force_bytes, force_str
 from users.models import CustomUser, UserType
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.exceptions import NotFound
 
 
 User: UserType = get_user_model()
 
 
 def pick_random_quote_id(user):
-    start = Quote.objects.filter(owner=user).first().id
-    end = Quote.objects.filter(owner=user).last().id
-    return random.randrange(start, end)
+    id_list = Quote.objects.filter(owner=user).values_list("id", flat=True)
+    return random.choice(id_list)
 
 
 class ActivateTrialService:
@@ -44,6 +46,17 @@ class ActivateTrialService:
         )
 
 
+class ActivateTelegramUserService:
+    def check_telegram_link(self, telegram_key: str):
+        decoded_email = force_str(urlsafe_base64_decode(telegram_key))
+        user = User.objects.get(email=decoded_email)
+        return user
+
+    def save_telegram_id(self, user: CustomUser, telegram_id: str):
+        user.telegram_id = telegram_id
+        user.save()
+
+
 class ChangeUserSettingsService:
     serializer = UserSerializer
 
@@ -54,13 +67,11 @@ class ChangeUserSettingsService:
 
 
 class ChangeQuoteLikeStatusService:
-    serializer = QuoteSerializer
-
     def change_quote_like_status(self, pk: int):
         try:
             quote = Quote.objects.get(id=pk)
         except Quote.DoesNotExist:
-            return Response({"detail": "not found"}, status=404)
+            raise NotFound("Quote not found")
 
         quote.like = not quote.like
         quote.save()
@@ -68,13 +79,11 @@ class ChangeQuoteLikeStatusService:
 
 
 class ChangeBookVisibilityService:
-    serializer = BookSerializer
-
     def change_book_visibility(self, pk: int):
         try:
             book = Book.objects.get(id=pk)
         except Book.DoesNotExist:
-            return Response({"detail": "not found"}, status=404)
+            raise NotFound("Book not found")
 
         book.visibility = not book.visibility
         book.save()

@@ -18,9 +18,9 @@ function randomQuote() {
       book = data[randItem].book
       like = data[randItem].like
       cover_url = data[randItem].cover
-      $(".card-header").html(book);
+      $("#book-title").html('From: ' + book);
       $(".book-cover").html('<img src=' + cover_url + '>');
-      $("#quote-text").html(quote);
+      $("#quote-text").html('<i class="mdi mdi-format-quote-open font-20"></i>' + quote);
       if (comment) {
         console.log(comment);
         $(".comment-box").html(comment);
@@ -29,10 +29,10 @@ function randomQuote() {
           "height": "100px",
         })
       };
-      $(".blockquote-footer").html(quote_date);
+      $("#date-added").html(quote_date);
       current_quote = data[randItem].quote_id;
       console.log(current_quote);
-      $(".like-button").html('<div id="like">' + showCurrentLike(like, current_quote) + '</div>');
+      $("#like-button").html('<div id="like">' + showCurrentLike(like, current_quote) + '</div>');
       $(".dashboard-delete").html('<div id="dash-delete" data-quoteId="' + current_quote + '"><i class="fa-solid fa-ban"></i></div>');
       $(".dashboard-edit").html('<div id="dash-edit" data-quoteId="' + current_quote + '"><i class="fa-solid fa-pen-to-square"></i></div>');
       $(".dashboard-share").html(
@@ -56,10 +56,12 @@ function randomQuote() {
 function showCurrentLike(like, current_quote) {
   if (like) {
     console.log(current_quote);
-    return '<span class="liked" id ="heart" data-quoteId="' + current_quote + '"><i class="fa fa-heart fa-lg" aria-hidden="true"></i></span>'
+    //return '<span class="liked" id ="heart" data-quoteId="' + current_quote + '"><i class="fa fa-heart fa-lg" aria-hidden="true"></i></span>'
+    return '<span class="liked" id ="heart" data-quoteId="' + current_quote + '"><i class="ri-heart-fill"></i></span>'
+    return ''
   }
   console.log(current_quote);
-  return '<span id ="heart" data-quoteId="' + current_quote + '"><i class="fa fa-heart-o fa-lg" aria-hidden="true"></i></span>'
+  return '<span id ="heart" data-quoteId="' + current_quote + '"><i class="ri-heart-line"></i></span>'
 };
 
 

@@ -1,63 +1,156 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static telegram %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}Settings{% endblock %}
 {% block content %}
 
 {% if user.is_authenticated %}
-<div style="background-color: #F2F5F8;">
-    <br>
-    <div class="row justify-content-center">
-        <div class="col-md-2">
-            <div class="list-group">
-                <a href="{% url 'account_settings' %}" class="list-group-item list-group-item-action active">Account
-                    Settings</a>
-                <a href="{% url 'subscription' %}" class="list-group-item list-group-item-action">Subscription</a>
-            </div>
-        </div>
-        <br>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <a href="{% url 'forgot_password' %}">Change password</a>
-                    <br>
-                    <br>
-                    <p>Notification settigs:</p>
-                    <table class="table">
-                        <tbody>
-                            <tr>
-                                <td>Email</td>
-                                <td>
-                                    <select class="form-select" name="Daily email" id="emailSetting">
+<div class="wrapper">
 
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Telegram message</td>
-                                <td>
-                                    <select class="form-select" name="Daily Telegram" id="telegramSetting">
-                                    </select>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <button class="btn btn-primary" id="save-settings">Save</button>
+    <!-- ========== Left Sidebar Start ========== -->
+    <div class="leftside-menu">
+        <!-- Sidebar Hover Menu Toggle Button -->
+        <button type="button" class="btn button-sm-hover p-0" data-bs-toggle="tooltip" data-bs-placement="right"
+            title="Show Full Sidebar">
+            <i class="ri-checkbox-blank-circle-line align-middle"></i>
+        </button>
+
+        <!-- Sidebar -left -->
+        <div class="h-100" id="leftside-menu-container" data-simplebar>
+
+            <!--- Sidemenu -->
+            <ul class="side-nav">
+
+                <li class="side-nav-item">
+                    <a href="#" class="side-nav-link">
+                        <i class="uil-home-alt"></i>
+                        <span> Quote of the day </span>
+                    </a>
+                </li>
+                {% if user.active_subscription %}
+                <li class="side-nav-item">
+                    <a href="{% url 'daily' %}" class="side-nav-link">
+                        <i class="uil-calender"></i>
+                        <span> Daily review </span>
+                    </a>
+                </li>
+
+                <li class="side-nav-item">
+                    <a href="{% url 'favorite' %}" class="side-nav-link">
+                        <i class=" ri-star-line"></i>
+                        <span> Favorites </span>
+                    </a>
+                </li>
+
+                <li class="side-nav-item">
+                    <a href="{% url 'by-book-api' %}" class="side-nav-link">
+                        <i class="ri-menu-line"></i>
+                        <span> My books </span>
+                    </a>
+                </li>
+                {% else %}
+                <li class="side-nav-item">
+                    <a href="" class="side-nav-link">
+                        <i class="uil-calender"></i>
+                        <span> Daily review </span><i class="ri-lock-2-line"></i>
+                    </a>
+                </li>
+
+                <li class="side-nav-item">
+                    <a href="" class="side-nav-link">
+                        <i class=" ri-star-line"></i>
+                        <span> Favorites </span><i class="ri-lock-2-line"></i>
+                    </a>
+                </li>
+
+                <li class="side-nav-item">
+                    <a href="" class="side-nav-link">
+                        <i class="ri-menu-line"></i>
+                        <span> My books </span><i class="ri-lock-2-line"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+            <!--- End Sidemenu -->
+
+            <div class="clearfix"></div>
+        </div>
+    </div>
+    <!-- ========== Left Sidebar End ========== -->
+    <div class="content-page">
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="page-title-box">
+                        <h4 class="page-title">Account settings</h4>
+                        <div class="col-xxl-6 col-lg-12 order-lg-2 order-xxl-1">
+                            <!-- ========== Quote Card Start ========== -->
+                            <div class="card">
+                                <div class="card-body pb-1">
+                                    <div class="card-body">
+                                        <a href="{% url 'forgot_password' %}">Change password</a>
+                                        <br>
+                                        <br>
+                                        <a class="btn btn-primary" href="{% telegram_deep_link user %}"><i
+                                                class="fa-brands fa-telegram fa-l"></i> Connect
+                                            Telegram
+                                            Bot</a>
+                                        <br>
+                                        <br>
+                                        <p>Notification settigs:</p>
+                                        <table class="table">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Email</td>
+                                                    <td>
+                                                        <select class="form-select" name="Daily email"
+                                                            id="emailSetting">
+
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Telegram message</td>
+                                                    <td>
+                                                        <select class="form-select" name="Daily Telegram"
+                                                            id="telegramSetting">
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <button class="btn btn-primary" id="save-settings">Save</button>
+                                    </div>
+                                </div> <!-- end card-body -->
+                            </div> <!-- end card -->
+                            <div class="d-grid">
+                                <a href="{% url 'subscription' %}" type="button" class="btn btn-lg btn-soft-primary">
+                                    Membership</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    <!--end row -->
 </div>
-<br>
-<br>
-<br>
-<br>
-</div>
+
+
+
+
 {% else %}
 <script>
     window.location.replace("{% url 'landing' %}")
 </script>
 {% endif%}
+
+<!-- Vendor js -->
+<script src="{% static 'assets/js/vendor.min.js' %}"></script>
+
+<!-- App js -->
+<script src="{% static 'assets/js/app.min.js' %}"></script>
 {% endblock %}
 {% block jquery %}
 $.getScript('{% static 'js/notification_settings.js' %}');

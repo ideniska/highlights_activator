@@ -1,4 +1,3 @@
-import json
 from urllib import request, response
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -6,6 +5,7 @@ from rest_framework import generics, mixins, permissions, authentication
 from api.auth.serializers import UploadSerializer
 from core.models import Book, Quote
 from .serializers import (
+    ActivateTelegramUserSerializer,
     BookSerializer,
     QuoteSerializer,
     QuoteUpdateSerializer,
@@ -17,7 +17,6 @@ from core.models import Orders
 
 from core.pagination import BasePageNumberPagination
 from django.db.models import Count
-import random
 from django.core.exceptions import ValidationError
 from django.http import Http404
 from django.shortcuts import get_object_or_404 as _get_object_or_404
@@ -25,10 +24,11 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.utils import timezone
 from core.tasks import celery_stop_membership
 from .services import (
-    ChangeUserSettingsService,
+    ActivateTelegramUserService,
     ChangeQuoteLikeStatusService,
     pick_random_quote_id,
     ActivateTrialService,

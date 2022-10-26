@@ -50,3 +50,6 @@ class EmailService:
             to_email=user.email,
             letter_language="en",
         )
+
+
+# TODO get rid of current site: YOUR_DOMAIN, change your_domain to frontend_url

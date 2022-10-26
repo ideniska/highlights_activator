@@ -23,6 +23,7 @@ urlpatterns = [
     path("favorites/", views.FavoriteQuotesAPIView.as_view(), name="favorite_quote"),
     path("daily/", views.DailyTenAPIView.as_view(), name="daily_quotes"),
     path("", include("api.auth.urls")),
+    path("telegram/", include("api.telegram.urls")),
     path("upload/", views.UploadApiView.as_view(), name="upload_file"),
     path(
         "user/trial/",

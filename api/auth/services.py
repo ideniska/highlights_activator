@@ -88,6 +88,15 @@ class PasswordService(ActivationAndPasswordService):
 
 
 class ActivationService(ActivationAndPasswordService):
+    def check_email_link(self, uid: str, token: str):
+        user_id = force_str(urlsafe_base64_decode(uid))
+        user = User.objects.get(id=user_id)
+        if not default_token_generator.check_token(user, token):
+            raise ValidationError(
+                "Token is invalid or expired. Please request another confirmation email by signing in.",
+            )
+        return user
+
     def set_active(self, user: CustomUser):
         user.is_active = True
         user.save()

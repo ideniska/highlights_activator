@@ -31,6 +31,7 @@ class CreateCheckoutSessionService:
                     "quantity": 1,
                 },
             ],
+            customer_email=request.user.email,
             mode="subscription",
             success_url=YOUR_DOMAIN + "stripe/success?session_id={CHECKOUT_SESSION_ID}",
             cancel_url=YOUR_DOMAIN + "stripe/cancel",
@@ -76,7 +77,7 @@ class StripeCheckPaymentService:
             session = event["data"]["object"]
             print(f"{session=}")
 
-            stripe_user_email = session["customer_details"]["email"]
+            # stripe_user_email = session["customer_details"]["email"]
             stripe_payment_status = session["payment_status"]
             stripe_payment_data = stripe.checkout.Session.list_line_items(
                 session["id"], limit=1
@@ -85,7 +86,7 @@ class StripeCheckPaymentService:
             price_paid = stripe_payment_data["data"][0]["amount_total"] / 100
 
             if stripe_payment_status == "paid":
-                user = User.objects.get(email=stripe_user_email)
+                user = User.objects.get(email=session["customer_email"])
                 user.active_subscription = True
 
                 if "1 month" in product:
@@ -103,7 +104,6 @@ class StripeCheckPaymentService:
 
                 order = Orders.objects.create(
                     user=user,
-                    stripe_user_email=stripe_user_email,
                     order_type="Subscription",
                     price=price_paid,
                     payment_status="active",
