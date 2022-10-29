@@ -2,7 +2,8 @@ import random
 from urllib import response
 from api.serializers import UserSerializer, QuoteSerializer, BookSerializer
 from core.models import Quote, Orders, Book
-from core.tasks import celery_stop_membership
+
+# from core.tasks import celery_stop_membership
 from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_decode
 from django.utils import timezone

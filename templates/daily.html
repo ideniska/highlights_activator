@@ -3,6 +3,8 @@
 
 {% block title %}Dashboard{% endblock %}
 {% block content %}
+
+
 <div class="wrapper">
 
     <!-- ========== Left Sidebar Start ========== -->
@@ -22,12 +24,12 @@
                 <li class="side-nav-item">
                     <a href="{% url 'dashboard' %}" class="side-nav-link">
                         <i class="uil-home-alt"></i>
-                        <span> Quote of the day </span>
+                        <span> Quote of the day</i></span>
                     </a>
                 </li>
                 {% if user.active_subscription %}
                 <li class="side-nav-item">
-                    <a href="{% url 'dashboard' %}" class="side-nav-link">
+                    <a href="{% url 'daily' %}" class="side-nav-link">
                         <i class="uil-calender"></i>
                         <span> Daily review <i class="ri-arrow-drop-right-fill"></i></span>
                     </a>
@@ -75,82 +77,62 @@
         </div>
     </div>
     <!-- ========== Left Sidebar End ========== -->
-    <div style="background-color: #F2F5F8;">
-        <br>
-        <div class="row justify-content-center">
-            <div class="col-md-2">
-                <div class="list-group">
-                    <a href="{% url 'dashboard' %}" class="list-group-item list-group-item-action" aria-current="true">
-                        Random quote
-                    </a>
-                    <a href="{% url 'daily' %}" class="list-group-item list-group-item-action active">Daily review</a>
-                    <a href="{% url 'favorite' %}" class="list-group-item list-group-item-action">Favorites</a>
-                    <a href="{% url 'by-book-api' %}" class="list-group-item list-group-item-action">My books</a>
-                    <a href="{% url 'by_tag' %}" class="list-group-item list-group-item-action">By tag</a>
-                </div>
-            </div>
-            <br>
-            <div class="col-md-4">
-                <!-- <div class="card">
-                <div class="card-header">
-
-                    Quote of the day
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title"></h5>
-                    <p class="card-text"></p>
-                    <blockquote class="blockquote mb-0">
-                        <p id="quote-text"></p>
-                        <footer class="blockquote-footer"><cite title="Source Title">
-                        </footer>
-                    </blockquote>
-                    <br>
-                    <div>
-                        <a href="{% url 'dashboard' %}" class="btn btn-primary">SHOW NEW RANDOM QUOTE</a>
-                        <div class="like-button" style="display: inline-block;"></div>
-                    </div>
-                </div>
-            </div> -->
-                <div id="carouselControls" class="carousel carousel-dark slide">
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <div class="card">
-                                <div class="card-header">
-
+    <div class="content-page">
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="page-title-box">
+                        <h4 class="page-title">Daily review</h4>
+                        <div class="col-xxl-6 col-lg-12 order-lg-2 order-xxl-1">
+                            <div id="carouselControls" class="carousel slide">
+                                <div class="carousel-inner" role="listbox">
+                                    <div class="carousel-item active">
+                                        <div class="card">
+                                            <div class="card-header">
+                                            </div>
+                                            <div class="card-body">
+                                                <h5 class="card-title"></h5>
+                                                <p class="card-text"></p>
+                                                <blockquote class="blockquote mb-0">
+                                                    <p id="quote-text">Here is your daily dose of highlights.</p>
+                                                    <p id="quote-text2">Click the right button to show the first
+                                                        quote.</p>
+                                                </blockquote>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    <h5 class="card-title"></h5>
-                                    <p class="card-text"></p>
-                                    <blockquote class="blockquote mb-0">
-                                        <p id="quote-text">Here is your daily dose of highlights.</p>
-                                        <p id="quote-text2">Click the right button to show the first quote.</p>
-                                    </blockquote>
-                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselControls"
+                                    data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#carouselControls"
+                                    data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+
                             </div>
                         </div>
-
-
                     </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselControls"
-                        data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselControls"
-                        data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
                 </div>
             </div>
         </div>
-        <br>
-        <br>
-        <br>
-        <br>
     </div>
+    <!--end row -->
 </div>
+
+
+<!-- Vendor js -->
+<script src="{% static 'assets/js/vendor.min.js' %}"></script>
+
+<!-- App js -->
+<script src="{% static 'assets/js/app.min.js' %}"></script>
+
+
+
 {% endblock %}
 {% block jquery %}
-$.getScript('{% static 'js/daily.js' %}');
+$.getScript('{% static 'js/dashboard.js' %}');
 {% endblock %}

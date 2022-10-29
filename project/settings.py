@@ -39,14 +39,13 @@ TELEGRAM_TOKEN = os.environ.get(
 )
 TELEGRAM_BOT_NAME = "https://t.me/HighlightsActivator_bot?start={}"
 
-# YOUR_DOMAIN = "http://ha.dendev.ca"
-YOUR_DOMAIN = "http://127.0.0.1:8000/"
+YOUR_DOMAIN = os.environ.get("YOUR_DOMAIN", "http://127.0.0.1:8000/")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ.get("DEBUG", 1)))
 
-ALLOWED_HOSTS = []
-# ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1 localhost").split(" ")
 
 
 # Application definition
@@ -74,6 +73,7 @@ INSTALLED_APPS = [
     "dj_rest_auth",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
@@ -163,13 +163,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = "/static/"
-# STATIC_ROOT = os.path.join(BASE_DIR, "static")
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
 
 MEDIA_URL = "/media/"
-# MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -177,17 +175,12 @@ MEDIA_URL = "/media/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-# EMAIL_USE_TLS = True
-# EMAIL_HOST = os.environ.get("EMAIL_HOST")
-# EMAIL_PORT = os.environ.get("EMAIL_PORT")
-# EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
-# EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
-EMAIL_USE_TLS = False
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", False)
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "localhost")
 EMAIL_PORT = os.environ.get("EMAIL_PORT", 1025)
-EMAIL_HOST_USER = ""
-EMAIL_HOST_PASSWORD = ""
-DEFAULT_FROM_EMAIL = "Localhost <info@test.com>"
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "Localhost <info@test.com>")
 
 # REDIS_HOST = "0.0.0.0"
 # REDIS_HOST = "127.0.0.1"

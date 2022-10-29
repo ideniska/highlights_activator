@@ -16,7 +16,7 @@ from users.models import CustomUser
 from core.models import Orders
 
 from core.pagination import BasePageNumberPagination
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.core.exceptions import ValidationError
 from django.http import Http404
 from django.shortcuts import get_object_or_404 as _get_object_or_404
@@ -65,9 +65,13 @@ class BookListAPIView(
     def get_queryset(self):
         queryset = (
             Book.objects.filter(owner=self.request.user)
-            .annotate(quotes_count=Count("quotes"))
+            .annotate(
+                quotes_count=Count("quotes"),
+                liked_quotes_count=Count("quotes", filter=Q(quotes__like=True)),
+            )
             .order_by("-quotes_count")
         )
+        print(str(queryset.query))
         return queryset
 
 

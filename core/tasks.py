@@ -9,7 +9,11 @@ from django.template import loader
 from django.utils.translation import activate
 from core.get_book_covers import get_book_covers
 from core.kindle_parser import start_kindle_parser
-from core.models import UserFile, CustomUser, Orders
+from core.models import Quote, UserFile, CustomUser, Orders
+from api.services import GetDailyQuotesQueryset
+from users.models import NotificationSetting
+
+YOUR_DOMAIN = settings.YOUR_DOMAIN
 
 
 @app.task
@@ -76,3 +80,63 @@ def send_information_email(
         email_message.attach_file(file_path, kwargs.get("mimetype"))
     email_message.send()
     return True
+
+
+@app.task
+def daily_email():
+    users = CustomUser.objects.filter(send_emails=NotificationSetting.DAILY)
+    for user in users:
+        service = GetDailyQuotesQueryset()
+        quotes = service.get_daily_quotes_queryset(user)
+        quotes_list = list(quotes)
+        if len(quotes_list) == 10:
+            send_information_email(
+                subject="Your daily highlights",
+                template_name="emails/ten_highlights.html",
+                context={
+                    "user": user.email,
+                    "domain": YOUR_DOMAIN,
+                    "quote1": quotes_list[0].text,
+                    "quote2": quotes_list[1].text,
+                    "quote3": quotes_list[2].text,
+                    "quote4": quotes_list[3].text,
+                    "quote5": quotes_list[4].text,
+                    "quote6": quotes_list[5].text,
+                    "quote7": quotes_list[6].text,
+                    "quote8": quotes_list[7].text,
+                    "quote9": quotes_list[8].text,
+                    "quote10": quotes_list[9].text,
+                },
+                to_email=user.email,
+                letter_language="en",
+            )
+
+
+@app.task
+def weekly_email():
+    users = CustomUser.objects.filter(send_emails=NotificationSetting.WEEKLY)
+    for user in users:
+        service = GetDailyQuotesQueryset()
+        quotes = service.get_daily_quotes_queryset(user)
+        quotes_list = list(quotes)
+        if len(quotes_list) == 10:
+            send_information_email(
+                subject="Your daily highlights",
+                template_name="emails/ten_highlights.html",
+                context={
+                    "user": user.email,
+                    "domain": YOUR_DOMAIN,
+                    "quote1": quotes_list[0].text,
+                    "quote2": quotes_list[1].text,
+                    "quote3": quotes_list[2].text,
+                    "quote4": quotes_list[3].text,
+                    "quote5": quotes_list[4].text,
+                    "quote6": quotes_list[5].text,
+                    "quote7": quotes_list[6].text,
+                    "quote8": quotes_list[7].text,
+                    "quote9": quotes_list[8].text,
+                    "quote10": quotes_list[9].text,
+                },
+                to_email=user.email,
+                letter_language="en",
+            )

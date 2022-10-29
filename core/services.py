@@ -3,6 +3,8 @@ import datetime
 
 from core.models import Orders
 from core.notifications import EmailService
+
+# from core.tasks import celery_stop_membership
 from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -114,4 +116,7 @@ class StripeCheckPaymentService:
 
                 email = EmailService()
                 email.send_payment_confirmation(user, YOUR_DOMAIN)
+                # celery_stop_membership.apply_async(
+                #     kwargs={"user_id": user.id}, countdown=user.paid_until
+                # )
         return HttpResponse(status=200)
