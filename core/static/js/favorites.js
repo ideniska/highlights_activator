@@ -21,11 +21,11 @@ function QuoteListHandler(data) {
   $.each(data, function (i, row) {
     let card = `<div class="card" id="${row.quote_id}"><div class="card-body pb-1"><div class="d-flex"><div class="w-100"><div class="dropdown float-end text-muted">\
       <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-horizontal"></i>\
-      </a><div class="dropdown-menu dropdown-menu-end"><a href="javascript:void(0);" class="dropdown-item">Edit</a><a href="javascript:void(0);" class="dropdown-item">Delete</a>\
+      </a><div class="dropdown-menu dropdown-menu-end"><a href="" class="dropdown-item">Edit</a><a href="" class="dropdown-item" id="dashboard-delete" quoteid=${row.quote_id}>Delete</a>\
       </div></div><h5 class="m-0" id="book-title">${row.book}</h5><p class="text-muted" id="date-added"><small>${row.date_added}</small></p></div></div><hr class="m-0" />\
       <div class="font-16 text-center text-dark my-3" id="quote-text"><i class="mdi mdi-format-quote-open font-20"></i> ${row.text}T</div><hr class="m-0" />\
-      <div class="my-1"><a id="like-button" href="" class="btn btn-sm btn-link text-muted ps-0"></a><a href="javascript: void(0);" class="btn btn-sm btn-link text-muted"><i\
-      class='uil uil-comments-alt'></i> Comment</a><a href="javascript: void(0);" class="btn btn-sm btn-link text-muted"><i class='uil uil-share-alt'></i> Share</a>\
+      <div class="my-1"><a id="like-button" href="" class="btn btn-sm btn-link text-muted ps-0"><div id="like">${showCurrentLike(row.like, row.quote_id)}</div></a><a href="" class="btn btn-sm btn-link text-muted"><i\
+      class='uil uil-comments-alt'></i> Comment</a><a href="" class="btn btn-sm btn-link text-muted"><i class='uil uil-share-alt'></i> Share</a>\
       </div></div></div>`
 
     if (row.comment) {
@@ -43,10 +43,13 @@ function QuoteListHandler(data) {
 
 function showCurrentLike(like, current_quote) {
   if (like) {
-    return '<span class="liked" id ="heart" data-quoteId="' + current_quote + '"><i class="fa fa-heart fa-lg" aria-hidden="true"></i></span>'
+    console.log(current_quote);
+    //return '<span class="liked" id ="heart" data-quoteId="' + current_quote + '"><i class="fa fa-heart fa-lg" aria-hidden="true"></i></span>'
+    return '<span class="liked" id ="heart" data-quoteId="' + current_quote + '"><i class="ri-heart-fill"></i></span>'
+    return ''
   }
   console.log(current_quote);
-  return '<span id ="heart" data-quoteId="' + current_quote + '"><i class="fa fa-heart-o fa-lg" aria-hidden="true"></i></span>'
+  return '<span id ="heart" data-quoteId="' + current_quote + '"><i class="ri-heart-line"></i></span>'
 };
 
 
@@ -83,8 +86,8 @@ function changeLikeStatus(quoteId) {
 
 
 // DELETE BUTTON
-$(document).on('click', '#fav-delete', function () {
-  deleteQuote($(this).data("quoteid"));
+$(document).on('click', '#dashboard-delete', function () {
+  deleteQuote($(this).attr("quoteid"));
 });
 
 

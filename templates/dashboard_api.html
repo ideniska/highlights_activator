@@ -5,143 +5,63 @@
 {% block content %}
 
 
-<div class="wrapper">
-
-    <!-- ========== Left Sidebar Start ========== -->
-    <div class="leftside-menu">
-        <!-- Sidebar Hover Menu Toggle Button -->
-        <button type="button" class="btn button-sm-hover p-0" data-bs-toggle="tooltip" data-bs-placement="right"
-            title="Show Full Sidebar">
-            <i class="ri-checkbox-blank-circle-line align-middle"></i>
-        </button>
-
-        <!-- Sidebar -left -->
-        <div class="h-100" id="leftside-menu-container" data-simplebar>
-
-            <!--- Sidemenu -->
-            <ul class="side-nav">
-
-                <li class="side-nav-item">
-                    <a href="{% url 'dashboard' %}" class="side-nav-link">
-                        <i class="uil-home-alt"></i>
-                        <span> Quote of the day <i class="ri-arrow-drop-right-fill"></i></span>
-                    </a>
-                </li>
-                {% if user.active_subscription %}
-                <li class="side-nav-item">
-                    <a href="{% url 'daily' %}" class="side-nav-link">
-                        <i class="uil-calender"></i>
-                        <span> Daily review </span>
-                    </a>
-                </li>
-
-                <li class="side-nav-item">
-                    <a href="{% url 'favorite' %}" class="side-nav-link">
-                        <i class=" ri-star-line"></i>
-                        <span> Favorites </span>
-                    </a>
-                </li>
-
-                <li class="side-nav-item">
-                    <a href="{% url 'by-book-api' %}" class="side-nav-link">
-                        <i class="ri-menu-line"></i>
-                        <span> My books </span>
-                    </a>
-                </li>
-                {% else %}
-                <li class="side-nav-item">
-                    <a href="" class="side-nav-link">
-                        <i class="uil-calender"></i>
-                        <span> Daily review </span><i class="ri-lock-2-line"></i>
-                    </a>
-                </li>
-
-                <li class="side-nav-item">
-                    <a href="" class="side-nav-link">
-                        <i class=" ri-star-line"></i>
-                        <span> Favorites </span><i class="ri-lock-2-line"></i>
-                    </a>
-                </li>
-
-                <li class="side-nav-item">
-                    <a href="" class="side-nav-link">
-                        <i class="ri-menu-line"></i>
-                        <span> My books </span><i class="ri-lock-2-line"></i>
-                    </a>
-                </li>
-                {% endif %}
-            </ul>
-            <!--- End Sidemenu -->
-
-            <div class="clearfix"></div>
-        </div>
-    </div>
-    <!-- ========== Left Sidebar End ========== -->
-    <div class="content-page">
-        <div class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="page-title-box">
-                        <h4 class="page-title">Quote of the day</h4>
-                        <div class="col-xxl-6 col-lg-12 order-lg-2 order-xxl-1">
-                            <!-- ========== Quote Card Start ========== -->
-                            <div class="card">
-                                <div class="card-body pb-1">
-                                    <div class="d-flex">
-                                        <div class="w-100">
-                                            <div class="dropdown float-end text-muted">
-                                                <a href="#" class="dropdown-toggle arrow-none card-drop"
-                                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <i class="mdi mdi-dots-horizontal"></i>
-                                                </a>
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    <!-- item-->
-                                                    <a href="javascript:void(0);" class="dropdown-item">Edit</a>
-                                                    <!-- item-->
-                                                    <a href="javascript:void(0);" class="dropdown-item">Delete</a>
-                                                </div>
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="page-title-box">
+                    <h4 class="page-title">Quote of the day</h4>
+                    <div class="col-xxl-6 col-lg-12 order-lg-2 order-xxl-1">
+                        <!-- ========== Quote Card Start ========== -->
+                        <div class="card">
+                            <div class="card-body pb-1">
+                                <div class="d-flex">
+                                    <div class="w-100">
+                                        <div class="dropdown float-end text-muted">
+                                            <a href="#" class="dropdown-toggle arrow-none card-drop"
+                                                data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="mdi mdi-dots-horizontal"></i>
+                                            </a>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <!-- item-->
+                                                <a class="dropdown-item" id="dashboard-edit">Edit</a>
+                                                <!-- item-->
+                                                <a class="dropdown-item" id="dashboard-delete">Delete</a>
                                             </div>
-                                            <h5 class="m-0" id="book-title">BOOK TITLE</h5>
-                                            <p class="text-muted" id="date-added"><small>DATE ADDED</small></p>
                                         </div>
+                                        <h5 class="m-0" id="book-title">BOOK TITLE</h5>
+                                        <p class="text-muted" id="date-added"><small>DATE ADDED</small></p>
                                     </div>
+                                </div>
 
-                                    <hr class="m-0" />
+                                <hr class="m-0" />
 
-                                    <div class="font-16 text-center text-dark my-3" id="quote-text">
-                                        <i class="mdi mdi-format-quote-open font-20"></i> QUOTE TEXT
-                                    </div>
+                                <div class="font-16 text-center text-dark my-3" id="quote-text">
+                                    <i class="mdi mdi-format-quote-open font-20"></i> QUOTE TEXT
+                                </div>
 
-                                    <hr class="m-0" />
+                                <hr class="m-0" />
 
-                                    <div class="my-1">
-                                        <a id="like-button" href="" class="btn btn-sm btn-link text-muted ps-0"></a>
-                                        <a href="javascript: void(0);" class="btn btn-sm btn-link text-muted"><i
-                                                class='uil uil-comments-alt'></i> Comment</a>
-                                        <a href="javascript: void(0);" class="btn btn-sm btn-link text-muted"><i
-                                                class='uil uil-share-alt'></i> Share</a>
-                                    </div>
-                                </div> <!-- end card-body -->
-                            </div> <!-- end card -->
-                            <div class="d-grid">
-                                <a href="{% url 'dashboard' %}" type="button" class="btn btn-lg btn-soft-primary">
-                                    <i class="ri-refresh-line"></i></a>
-                            </div>
+                                <div class="my-1">
+                                    <a id="like-button" href="" class="btn btn-sm btn-link text-muted ps-0"></a>
+                                    <a class="btn btn-sm btn-link text-muted"><i class='uil uil-comments-alt'></i>
+                                        Comment</a>
+                                    <a class="btn btn-sm btn-link text-muted"><i class='uil uil-share-alt'></i>
+                                        Share</a>
+                                </div>
+                            </div> <!-- end card-body -->
+                        </div> <!-- end card -->
+                        <div class="d-grid">
+                            <a href="{% url 'dashboard' %}" type="button" class="btn btn-lg btn-soft-primary">
+                                <i class="ri-refresh-line"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!--end row -->
 </div>
 
-
-<!-- Vendor js -->
-<script src="{% static 'assets/js/vendor.min.js' %}"></script>
-
-<!-- App js -->
-<script src="{% static 'assets/js/app.min.js' %}"></script>
 
 
 

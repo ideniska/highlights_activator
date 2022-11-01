@@ -33,14 +33,16 @@ function randomQuote() {
       current_quote = data[randItem].quote_id;
       console.log(current_quote);
       $("#like-button").html('<div id="like">' + showCurrentLike(like, current_quote) + '</div>');
-      $(".dashboard-delete").html('<div id="dash-delete" data-quoteId="' + current_quote + '"><i class="fa-solid fa-ban"></i></div>');
-      $(".dashboard-edit").html('<div id="dash-edit" data-quoteId="' + current_quote + '"><i class="fa-solid fa-pen-to-square"></i></div>');
+      // $("#dashboard-delete").attr('<div id="dash-delete" data-quoteId="' + current_quote + '"><i class="fa-solid fa-ban"></i></div>');
+      $("#dashboard-delete").data("quoteid", current_quote)
+      $("#dashboard-edit").html('<div id="dash-edit" data-quoteId="' + current_quote + '"><i class="fa-solid fa-pen-to-square"></i></div>');
       $(".dashboard-share").html(
         '<div class="dropdown"><div data-bs-toggle="dropdown" aria-expanded="false" id="dash-share"\
                data-quoteId="' + current_quote + '"><i class="fa-solid fa-share-nodes"></i></div><ul class="dropdown-menu">\
                <li><a class="dropdown-item" href="#">Twitter</a></li><li><a class="dropdown-item" href="#">Facebook</a></li>\
                <li><a class="dropdown-item" href="#">Copy</a></li></ul></div>'
       );
+
     },
     error: function (error) {
       // $(".card-header").html('');
@@ -99,7 +101,9 @@ function changeLikeStatus(quoteId) {
 
 
 // DELETE
-$(document).on('click', '#dash-delete', function () {
+$(document).on('click', '#dashboard-delete', function () {
+  console.log("Clicked");
+  console.log($(this).data("quoteid"));
   deleteQuote($(this).data("quoteid"));
 });
 
@@ -117,7 +121,7 @@ function deleteQuote(quoteId) {
       quote_id: quoteId,
     },
     success: function (data) {
-      console.log("success", data);
+      console.log("Deleted", data);
       window.location.reload();
     },
     error: function (data) {

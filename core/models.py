@@ -1,4 +1,5 @@
 from email.policy import default
+from operator import mod
 from sqlite3 import Timestamp
 from turtle import up
 from django.db import models

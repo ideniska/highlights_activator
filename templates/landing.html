@@ -1,86 +1,319 @@
-{% extends "base.html" %}
 {% load static %}
 
-{% block content %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-layout="topnav" data-topbar-color="dark" data-layout-mode="fluid"
+    data-layout-position="fixed">
 
-<h1>
-    <p class="text-center">Get the most out of what you read</p>
-</h1>
-<h4>
-    <p class="text-center">Highlights Activator makes it easy to revisit and learn from your ebook & article highlights.
-    </p>
-</h4>
-<div class="text-center text-center-custom">
-    <button id="1button" type="button" class="btn btn-primary">GET STARTED FOR FREE</button>
-</div>
-
-<div class="row mb-9 justify-content-center">
-    <div class="col-md-9 center">
-        <img id="main_img" src="{% static 'img/landing_hero.12a1e031294d.png' %}" class="img-fluid" alt="...">
-    </div>
-</div>
+<head>
+    <meta charset="utf-8" />
+    <title>Highlights Activator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
 
 
-<div class="container-fluid landing">
-    <h1>Here's how <mark>Highlights Activator</mark> works:</h1>
-</div>
-</div>
-</div>
-<div class="row justify-content-center">
-    <div class="col-md-3" style="backgroung-color:grey;">
-        <h2><i class="fa-solid fa-rotate"></i> Import Highlights</h2>
-        <hr />
-        <p>Sync your highlights from Kindle, Instapaper, Pocket, iBooks, and more.</p>
-    </div>
-    <div class="col-md-3" style="backgroung-color:grey;">
-        <h2><i class="fa-solid fa-rotate"></i> Review</h2>
-        <hr />
-        <p>Review the best parts easily through a daily email & app.</p>
-    </div>
-    <div class="col-md-3" style="backgroung-color:grey;">
-        <h2><i class="fa-solid fa-brain"></i> Remember</h2>
-        <hr />
-        <p>Recall more and grow your knowledge over time.</p>
-    </div>
-</div>
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico' %}">
 
-<div class="container overflow-hidden">
-    <div class="row justify-content-center">
-        <div class="col-md-4" style="backgroung-color:grey;">
-            <h2>Revisit your highlights</h2>
-            <br>
-            Highlighting is great, but what's the point if you're never going to see any of those highlights again?
-            <br>
-            <br>
-            Highlights Activator lets you quickly liberate your highlights (all into one place), and ensures that you'll
-            actually see and use them.
+    <!-- Theme Config Js -->
+    <script src="{% static 'assets/js/hyper-config.js' %}"></script>
+
+    <!-- Icons css -->
+    <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
+
+    <!-- App css -->
+    <link href="{% static 'assets/css/app-creative.min.css' %}" rel="stylesheet" type="text/css" id="app-style" />
+
+    <!--      Fontawesome icons-->
+    <script src="https://kit.fontawesome.com/d503f91806.js" crossorigin="anonymous"></script>
+
+
+</head>
+
+<body>
+
+    <!-- NAVBAR START -->
+    <nav class="navbar navbar-expand-lg py-lg-3 navbar-dark">
+        <div class="container">
+
+            <!-- logo -->
+            <!-- end logo -->
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="mdi mdi-menu"></i>
+            </button>
+
+            <!-- menus -->
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+
+                <!-- left menu -->
+                <ul class="navbar-nav me-auto align-items-center">
+                    <li class="nav-item mx-lg-1">
+                        <a class="nav-link active" href="">Home</a>
+                    </li>
+                    <li class="nav-item mx-lg-1">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item mx-lg-1">
+                        <a class="nav-link" href="#prices">Pricing</a>
+                    </li>
+                </ul>
+
+                <!-- right menu -->
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item me-0">
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'dashboard' %}" target="_blank" class="nav-link d-lg-none">Dashboard</a>
+                        <a href="{% url 'dashboard' %}" target="_blank"
+                            class="btn btn-sm btn-light rounded-pill d-none d-lg-inline-flex">
+                            Dashboard
+                        </a>
+
+                        {% else %}
+                        <a href="{% url 'login_page' %}" target="_blank" class="nav-link d-lg-none">Sign In</a>
+                        <a href="{% url 'login_page' %}" target="_blank"
+                            class="btn btn-sm btn-light rounded-pill d-none d-lg-inline-flex">
+                            Sign In
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+
+            </div>
         </div>
-        <div class="col-md-4" style="backgroung-color:grey;">
-            <img src="{% static '/img/revisit-highlights.a56141cb1af7.png' %}" alt="...">
-        </div>
+    </nav>
+    <!-- NAVBAR END -->
 
-    </div>
-    <div class="row justify-content-center">
-        <div class="col-md-4" style="backgroung-color:grey;">
-            <img src="{% static 'img/remember-what.8f22dbd70c26.png' %}" class="img-fluid" alt="...">
-        </div>
-        <div class="col-md-4" style="backgroung-color:grey;">
-            <h2>Remember what you read</h2>
-            <br>
-            How often do you finish a book, only to forget the key ideas two weeks later? We don't remember things by
-            just reading them once.
-            <br>
-            <br>
-            Highlights Activator fixes this using a scientific process called Spaced Repetition. We surface your best
-            highlights back to you at the right times, and let you review them every day with the daily email and app.
-        </div>
-    </div>
-</div>
+    <!-- START HERO -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-5">
+                    <div class="mt-md-4">
+                        <!-- <div>
+                            <span class="text-white-50 ms-1">Welcome to your highlights</span>
+                        </div> -->
+                        <h2 class="text-white fw-normal mb-4 mt-3 hero-title">
+                            Get the most out of what you read
+                        </h2>
 
+                        <p class="mb-4 font-16 text-white-50">Highlights Activator makes it easy to revisit and learn
+                            from your ebook & article
+                            highlights.</p>
+
+                        <a href="#prices" class="btn btn-success">Get started <i
+                                class="mdi mdi-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-5 offset-md-2">
+                    <div class="text-md-end mt-3 mt-md-0">
+                        <img src="{% static 'assets/images/svg/startup.svg' %}" alt="" class="img-fluid" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- END HERO -->
+
+    <!-- START HOW IT WORKS -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row py-4">
+                <div class="col-lg-12">
+                    <div class="text-center">
+                        <h1 class="mt-0"><i class="mdi mdi-infinity"></i></h1>
+                        <h3>
+                            <h1>Here's how <span class="text-primary">Highlights Activator</span> works:</h1>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-4 col-md-6">
+                    <div class="text-center p-2 p-sm-3" id="features">
+                        <div class="avatar-sm m-auto">
+                            <span class="avatar-title bg-primary-lighten rounded-circle">
+                                <i class="uil uil-sync text-primary font-24"></i>
+                            </span>
+                        </div>
+                        <h4 class="mt-3">Import Highlights</h4>
+                        <p class="text-muted mt-2 mb-0">Sync your highlights from Kindle and more.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="text-center p-2 p-sm-3">
+                        <div class="avatar-sm m-auto">
+                            <span class="avatar-title bg-primary-lighten rounded-circle">
+                                <i class="uil uil-backward text-primary font-24"></i>
+                            </span>
+                        </div>
+                        <h4 class="mt-3">Review</h4>
+                        <p class="text-muted mt-2 mb-0">Review the best parts easily through a daily email & app.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="text-center p-2 p-sm-3">
+                        <div class="avatar-sm m-auto">
+                            <span class="avatar-title bg-primary-lighten rounded-circle">
+                                <i class="uil uil-file-redo-alt text-primary font-24"></i>
+                            </span>
+                        </div>
+                        <h4 class="mt-3">Remember</h4>
+                        <p class="text-muted mt-2 mb-0">Recall more and grow your knowledge over time.
+                        </p>
+                    </div>
+                </div>
+
+
+            </div>
+    </section>
+    <!-- END HOW IT WORKS -->
+
+    <!-- START FEATURES -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row mt-2 py-5 align-items-center">
+                <div class="col-lg-5 col-md-6">
+                    <img src="{% static 'assets/images/svg/features-1.svg' %}" class="img-fluid" alt="">
+                </div>
+                <div class="col-lg-6 offset-md-1 col-md-5">
+                    <h3 class="fw-normal">Revisit your highlights</h3>
+                    <div class="mt-4">
+                        Highlighting is great, but what's the point if you're never going to see any of those highlights
+                        again?
+                        <br>
+                        <br>
+                        Highlights Activator lets you quickly liberate your highlights (all into one place), and ensures
+                        that
+                        you'll
+                        actually see and use them.
+                    </div>
+                </div>
+            </div>
+
+            <div class="row pb-3 pt-5 align-items-center">
+                <div class="col-lg-6 col-md-5">
+                    <h3 class="fw-normal">Remember what you read</h3>
+                    <div class="mt-4">
+                        How often do you finish a book, only to forget the key ideas two weeks later? We don't remember
+                        things
+                        by
+                        just reading them once.
+                        <br>
+                        <br>
+                        Highlights Activator fixes this using a scientific process called Spaced Repetition. We surface
+                        your
+                        best
+                        highlights back to you at the right times, and let you review them every day with the daily
+                        email and
+                        app.
+                    </div>
+                </div>
+                <div class="col-lg-5 col-md-6 offset-md-1">
+                    <img src="{% static 'assets/images/svg/features-2.svg' %}" class="img-fluid" alt="">
+                </div>
+            </div>
+
+        </div>
+    </section>
+    <!-- END FEATURES -->
+
+    <!-- START PRICING -->
+    <section class="py-5 bg-light-lighten border-top border-bottom border-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="text-center">
+                        <h1 class="mt-0"><i class="mdi mdi-tag-multiple"></i></h1>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-5 pt-3" id="prices">
+                <div class="col-md-4">
+                    <div class="card card-pricing">
+                        <div class="card-body text-center">
+                            <p class="card-pricing-plan-name fw-bold text-uppercase">Free </p>
+                            <i class="card-pricing-icon ri-user-line text-primary"></i>
+                            <h2 class="card-pricing-price">$0</h2>
+                            <ul class="card-pricing-features">
+                                <li>Show random highlight from
+                                    your
+                                    library</li>
+                            </ul>
+                            <button class="btn btn-primary mt-4 mb-2 rounded-pill">Choose Plan</button>
+                        </div>
+                    </div>
+                    <!-- end Pricing_card -->
+                </div>
+                <!-- end col -->
+
+                <div class="col-md-4">
+                    <div class="card card-pricing card-pricing-recommended">
+                        <div class="card-body text-center">
+                            <div class="card-pricing-plan-tag">Recommended</div>
+                            <p class="card-pricing-plan-name fw-bold text-uppercase">Pro</p>
+                            <i class="card-pricing-icon ri-briefcase-line text-primary"></i>
+                            <h2 class="card-pricing-price">$24 <span>/ year</span></h2>
+                            <ul class="card-pricing-features">
+                                <li>Show random highlight from
+                                    your
+                                    library</li>
+                                <li>Easily browse & search your
+                                    entire highlight
+                                    library</li>
+                                <li>Email and Telegram message
+                                    with your daily
+                                    highlights</li>
+                                <li>Organize your highlights with
+                                    likes, editing and
+                                    notes</li>
+                            </ul>
+                            <button class="btn btn-primary mt-4 mb-2 rounded-pill">Choose Plan</button>
+                        </div>
+                    </div>
+                    <!-- end Pricing_card -->
+                </div>
+                <!-- end col -->
+
+
+            </div>
+
+        </div>
+    </section>
+    <!-- END PRICING -->
+
+
+
+
+    <!-- START CONTACT -->
+
+    <!-- END CONTACT -->
+
+    <!-- START FOOTER -->
+    <footer class="bg-dark py-5">
+        <div class="container">
+            <div class="row">
+            </div>
+
+            <div class="row">
+
+            </div>
+        </div>
+    </footer>
+    <!-- END FOOTER -->
 </body>
+<!-- Vendor js -->
+<script src="{% static 'assets/js/vendor.min.js' %}"></script>
 
-{% endblock %}
+<!-- App js -->
+<script src="{% static 'assets/js/app.min.js' %}"></script>
 
-{% block jquery %}
-$.getScript('{% static 'js/landing.js' %}');
-{% endblock %}
+<script src="{% static 'js/index.js' %}"></script>
+
+</html>
