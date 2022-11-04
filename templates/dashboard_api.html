@@ -11,7 +11,7 @@
             <div class="row">
                 <div class="page-title-box">
                     <h4 class="page-title">Quote of the day</h4>
-                    <div class="col-xxl-6 col-lg-12 order-lg-2 order-xxl-1">
+                    <div class="col-xxl-6 col-lg-12 order-lg-2 order-xxl-1 order-sm-2">
                         <!-- ========== Quote Card Start ========== -->
                         <div class="card">
                             <div class="card-body pb-1">
@@ -29,25 +29,34 @@
                                                 <a class="dropdown-item" id="dashboard-delete">Delete</a>
                                             </div>
                                         </div>
-                                        <h5 class="m-0" id="book-title">BOOK TITLE</h5>
-                                        <p class="text-muted" id="date-added"><small>DATE ADDED</small></p>
+                                        <h5 class="m-0" id="book-title"></h5>
+                                        <p class="text-muted" id="date-added"><small></small></p>
                                     </div>
                                 </div>
 
                                 <hr class="m-0" />
-
-                                <div class="font-16 text-center text-dark my-3" id="quote-text">
-                                    <i class="mdi mdi-format-quote-open font-20"></i> QUOTE TEXT
+                                <p class="card-text"></p>
+                                <div class="font-16 text-center text-dark my-3">
+                                    <i class="mdi mdi-format-quote-open font-20"></i><span id="quote-text"> </span>
                                 </div>
+                                <p class="comment-text"></p>
+                                <div class="comment-box"></div>
 
                                 <hr class="m-0" />
 
                                 <div class="my-1">
-                                    <a id="like-button" href="" class="btn btn-sm btn-link text-muted ps-0"></a>
-                                    <a class="btn btn-sm btn-link text-muted"><i class='uil uil-comments-alt'></i>
-                                        Comment</a>
+                                    <a id="like-button" class="btn btn-sm btn-link text-muted ps-0"></a>
+                                    <!-- <a class="btn btn-sm btn-link text-muted"><i class='uil uil-comments-alt'></i>
+                                        Comment</a> -->
                                     <a class="btn btn-sm btn-link text-muted"><i class='uil uil-share-alt'></i>
                                         Share</a>
+                                    <span class="comment-box-buttons"><a
+                                            class="btn btn-sm btn-link text-muted comment-box-buttons" id="cancel"><i
+                                                class='uil uil-times'></i>
+                                            Cancel</a>
+                                        <a class="btn btn-sm btn-link text-muted comment-box-buttons" id="save"><i
+                                                class='uil uil-bookmark'></i>
+                                            Save</a></span>
                                 </div>
                             </div> <!-- end card-body -->
                         </div> <!-- end card -->

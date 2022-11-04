@@ -12,6 +12,9 @@ function bookList() {
     success: function (data) {
       if (BookListHandler(data)) requestedPage = false;
     },
+    error: function (error) {
+      $(".datarows").append("<tr>You don't have any quotes yet.</tr>");
+    }
   })
 };
 

@@ -20,7 +20,7 @@ function randomQuote() {
       cover_url = data[randItem].cover
       $("#book-title").html('From: ' + book);
       $(".book-cover").html('<img src=' + cover_url + '>');
-      $("#quote-text").html('<i class="mdi mdi-format-quote-open font-20"></i>' + quote);
+      $("#quote-text").html(quote);
       if (comment) {
         console.log(comment);
         $(".comment-box").html(comment);
@@ -45,11 +45,7 @@ function randomQuote() {
 
     },
     error: function (error) {
-      // $(".card-header").html('');
-      // $("#quote-text").html("You don't have any quotes yet.");
-      // $(".btn").attr("href", "/upload");
-      // $(".btn").html('Click to upload your file');
-      console.log(error.response.status)
+      $("#quote-text").html(`You don't have any quotes yet. <a href="/upload">Upload <i class="mdi mdi-cloud-upload me-1"></i></a>`);
     }
   });
 }
@@ -70,11 +66,11 @@ function showCurrentLike(like, current_quote) {
 // LIKE
 $(document).on('click', '#heart', function () {
   if ($(this).hasClass("liked")) {
-    $(this).html('<i class="fa fa-heart-o fa-lg" aria-hidden="true"></i>');
+    $(this).html('<i class="ri-heart-line" aria-hidden="true"></i>');
     $(this).removeClass("liked");
     changeLikeStatus($(this).data("quoteid"));
   } else {
-    $(this).html('<i class="fa fa-heart fa-lg" aria-hidden="true"></i>');
+    $(this).html('<i class="ri-heart-fill" aria-hidden="true"></i>');
     $(this).addClass("liked");
     changeLikeStatus($(this).data("quoteid"));
   }
@@ -142,14 +138,15 @@ $(document).on('click', '#dash-share', function () {
 function shareQuote(quoteId) {};
 
 // EDIT AND COMMENT
-$(document).on('click', '#dash-edit', function () {
-  editQuote();
+$(document).on('click', '#dashboard-edit', function () {
+  editQuote($(this).data("quoteid"));
 });
 
 // EDIT QUOTE, SHOW COMMENT BOX, SHOW CANCEL & SAVE BUTTONS
 function editQuote() {
   $("#quote-text").attr('contenteditable', 'true');
   $(".card-text").html('<h5>Edit:</h5>');
+  `  $(".comment-text").html('<h5>Comment:</h5>');`
   $("#quote-text").css({
     "background": "#FEFAE0",
   });
@@ -167,30 +164,21 @@ function editQuote() {
 
 // CANCEL EDIT
 $(document).on('click', '#cancel', function () {
-  if ($(".comment-box").text().length) {
-    $("#quote-text").attr('contenteditable', 'false');
-    $(".card-text").html('');
-    $("#quote-text").css({
-      "background": "white",
-    });
-    $(".comment-box").attr('contenteditable', 'false');
-    $(".comment-box-buttons").css({
-      "visibility": "hidden",
-      "height": "0",
-    });
-  } else {
-    $("#quote-text").attr('contenteditable', 'false');
-    $(".card-text").html('');
-    $("#quote-text").css({
-      "background": "white",
-    });
+  $(".card-text").html('');
+  $("#quote-text").attr('contenteditable', 'false');
+  $(".comment-box").attr('contenteditable', 'false');
+  $("#quote-text").css({
+    "background": "white",
+  });
+  $(".comment-box-buttons").css({
+    "visibility": "hidden",
+    "height": "0",
+  });
+
+  // If no comment clear draft text from comment box
+  if (!comment) {
     $(".comment").html('');
     $(".comment-box").css({
-      "visibility": "hidden",
-      "height": "0",
-    });
-    $(".comment-box").attr('contenteditable', 'false');
-    $(".comment-box-buttons").css({
       "visibility": "hidden",
       "height": "0",
     });
@@ -238,7 +226,6 @@ function saveToServer(current_quote, editedQuote, addedNote) {
     },
     success: function (data) {
       console.log("success", data);
-      window.location.reload();
     },
     error: function (data) {
       console.log("error", data)

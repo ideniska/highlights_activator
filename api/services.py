@@ -2,6 +2,7 @@ import random
 from urllib import response
 from api.serializers import UserSerializer, QuoteSerializer, BookSerializer
 from core.models import Quote, Orders, Book
+import datetime
 
 # from core.tasks import celery_stop_membership
 from django.contrib.auth import get_user_model
@@ -27,6 +28,10 @@ class ActivateTrialService:
         if not user.active_subscription and not user.trial_used:
             user.active_subscription = True
             user.trial_used = True
+            if user.paid_until == None:
+                user.paid_until = timezone.now() + datetime.timedelta(days=14)
+            else:
+                user.paid_until += datetime.timedelta(days=14)
             order = Orders.objects.create(
                 user=user,
                 order_type="Trial",
@@ -37,9 +42,9 @@ class ActivateTrialService:
             )
             user.save()
             order.save()
-            celery_stop_membership.apply_async(
-                kwargs={"user_id": user.id}, countdown=order.subscription_period
-            )
+            # celery_stop_membership.apply_async(
+            #     kwargs={"user_id": user.id}, countdown=order.subscription_period
+            # )
             return Response(status=status.HTTP_200_OK)
         return Response(
             {"Fail": "Trial already in use or finished"},
