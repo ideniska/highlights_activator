@@ -46,6 +46,8 @@ services:
       - "15672:15672"
     volumes:
       - rabbitmq:/var/lib/rabbitmq
+    env_file:
+      - ./.env.dev
     networks:
       - queue_network
     restart: always
