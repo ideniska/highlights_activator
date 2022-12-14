@@ -79,6 +79,7 @@ class ChangeQuoteLikeStatusService:
         except Quote.DoesNotExist:
             raise NotFound("Quote not found")
 
+        # TODO rewrite via F expression
         quote.like = not quote.like
         quote.save()
         return Response({"detail": True})

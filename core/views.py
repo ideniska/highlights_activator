@@ -52,17 +52,16 @@ class TemplateAPIView(APIView):
         return Response()
 
 
+class PageView(TemplateAPIView):
+    permission_classes = (AllowAny,)
+
+
 class AuthenticatedTemplateAPIView(TemplateAPIView):
     def dispatch(self, *args, **kwargs):
         a = super().dispatch(*args, **kwargs)
         if not self.request.user.is_authenticated:
             return redirect("landing")
         return a
-
-
-class ActivationPageView(TemplateAPIView):
-    permission_classes = (AllowAny,)
-    template_name: str = "confirm_email.html"
 
 
 class ByBookView(LoginRequiredMixin, ListView):
@@ -81,9 +80,6 @@ class ByTagView(LoginRequiredMixin, TemplateView):
 
 
 class BooksTemplateAPIView(APIView):
-    """Help to build CMS System using DRF, JWT and Cookies
-    path('some-path/', TemplateAPIView.as_view(template_name='template.html'))
-    """
 
     queryset = Book.objects.all()
     serializer_class = BookSerializer
@@ -135,51 +131,8 @@ def book_inside_view(request, id):
     return render(request, "book_page.html", context)
 
 
-class CheckEmailPasswordPageView(TemplateAPIView):
-    permission_classes = (AllowAny,)
-    template_name: str = "check_email_for_password.html"
-
-
 class DashboardPageView(AuthenticatedTemplateAPIView):
     template_name: str = "dashboard_api.html"
-
-
-class EmailActivatePageView(TemplateAPIView):
-    permission_classes = (AllowAny,)
-    template_name: str = "email_activate.html"
-
-
-class ForgotPasswordPageView(TemplateAPIView):
-    permission_classes = (AllowAny,)
-    template_name: str = "forgot_password.html"
-
-
-class LandingPageView(TemplateAPIView):
-    permission_classes = (AllowAny,)
-    template_name: str = "landing.html"
-
-
-class LoginPageView(TemplateAPIView):
-    permission_classes = (AllowAny,)
-    template_name: str = "login.html"
-
-
-class HomePageView(TemplateAPIView):
-    template_name: str = "home.html"
-
-
-class RegisterPageView(TemplateAPIView):
-    permission_classes = (AllowAny,)
-    template_name: str = "register.html"
-
-
-class SmartFeedView(ActivationPageView):
-    template_name: str = "smart_feed.html"
-
-
-class SetNewPassPageView(TemplateAPIView):
-    permission_classes = (AllowAny,)
-    template_name: str = "set_password.html"
 
 
 class SettingsPageView(AuthenticatedTemplateAPIView):
@@ -187,7 +140,7 @@ class SettingsPageView(AuthenticatedTemplateAPIView):
     template_name: str = "settings/subscription.html"
 
 
-class UploadView(ActivationPageView):
+class UploadView(AuthenticatedTemplateAPIView):
     template_name: str = "upload.html"
 
 

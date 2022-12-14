@@ -102,6 +102,8 @@ class ActivationService(ActivationAndPasswordService):
         user.save()
 
 
+
+
 ### MOVED TO NOTIFICATIONS ###
 
 # class EmailService:

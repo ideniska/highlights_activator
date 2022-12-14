@@ -6,11 +6,10 @@ from .forms import CustomUserCreationForm, CustomUserChangeForm
 from .models import CustomUser
 from django.utils.translation import gettext_lazy as _
 
-
+@admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
-    model = CustomUser
     list_display = [
         "email",
         "username",
@@ -40,4 +39,4 @@ class CustomUserAdmin(UserAdmin):
     )
 
 
-admin.site.register(CustomUser, CustomUserAdmin)
+

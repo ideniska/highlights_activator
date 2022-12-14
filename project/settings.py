@@ -63,9 +63,6 @@ INSTALLED_APPS = [
     "core",
     "api",
     # 3rd party
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
     "rest_framework",
     "rest_framework.authtoken",
     "drf_yasg",
@@ -185,25 +182,17 @@ DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "Localhost <info@test.
 # REDIS_HOST = "0.0.0.0"
 # REDIS_HOST = "127.0.0.1"
 # REDIS_PORT = "6379"
-# CELERY_BROKER_URL = os.environ.get(
-#     "CELERY_BROKER_URL", "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/0"
-# )
-# CELERY_BROKER_URL = "amqp://rabbitmq"
+CELERY_BROKER_URL = os.environ.get(
+     "CELERY_BROKER_URL", "amqp://rabbitmq"
+ )
+#CELERY_BROKER_URL = "amqp://rabbitmq"
 # CELERY_BROKER_TRANSPORT_OPTIONS = {"visibility_timeout": 36000}
-# CELERY_RESULT_BACKEND = os.environ.get(
-#     "CELERY_RESULT_BACKEND", "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/0"
-# )
+CELERY_RESULT_BACKEND = os.environ.get(
+     "CELERY_RESULT_BACKEND", "amqp://rabbitmq")
 CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 
-
-AUTHENTICATION_BACKENDS = (
-    # Needed to login by username in Django admin, regardless of `allauth`
-    "django.contrib.auth.backends.ModelBackend",
-    # `allauth` specific authentication methods, such as login by e-mail
-    "allauth.account.auth_backends.AuthenticationBackend",
-)
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),

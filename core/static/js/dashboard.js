@@ -8,48 +8,47 @@ function randomQuote() {
   $.ajax({
     url: '/api/random/',
     type: 'get',
-    success: function (data) {
-      console.log("SUCCESS", data);
-      var randItem = Math.floor(Math.random() * data.length);
-      console.log(data.randItem);
-      quote = data[randItem].text;
-      comment = data[randItem].comment;
-      quote_date = data[randItem].date_added
-      book = data[randItem].book
-      like = data[randItem].like
-      cover_url = data[randItem].cover
-      $("#book-title").html('From: ' + book);
-      $(".book-cover").html('<img src=' + cover_url + '>');
-      $("#quote-text").html(quote);
-      if (comment) {
-        console.log(comment);
-        $(".comment-box").html(comment);
-        $(".comment-box").css({
-          "visibility": "visible",
-          "height": "100px",
-        })
-      };
-      $("#date-added").html(quote_date);
-      current_quote = data[randItem].quote_id;
-      console.log(current_quote);
-      $("#like-button").html('<div id="like">' + showCurrentLike(like, current_quote) + '</div>');
-      // $("#dashboard-delete").attr('<div id="dash-delete" data-quoteId="' + current_quote + '"><i class="fa-solid fa-ban"></i></div>');
-      $("#dashboard-delete").attr("quoteid", current_quote);
-      $("#dashboard-edit").attr("quoteid", current_quote);
-      $(".dashboard-share").html(
-        '<div class="dropdown"><div data-bs-toggle="dropdown" aria-expanded="false" id="dash-share"\
-               data-quoteId="' + current_quote + '"><i class="fa-solid fa-share-nodes"></i></div><ul class="dropdown-menu">\
-               <li><a class="dropdown-item" href="#">Twitter</a></li><li><a class="dropdown-item" href="#">Facebook</a></li>\
-               <li><a class="dropdown-item" href="#">Copy</a></li></ul></div>'
-      );
-
-    },
+    success: successRandomQuoteHandler,
     error: function (error) {
       $("#quote-text").html(`You don't have any quotes yet. <a href="/upload">Upload <i class="mdi mdi-cloud-upload me-1"></i></a>`);
     }
   });
 }
 
+function successRandomQuoteHandler(data) {
+  var randItem = Math.floor(Math.random() * data.length);
+  console.log(data.randItem);
+  quote = data[randItem].text;
+  comment = data[randItem].comment;
+  quote_date = data[randItem].date_added
+  book = data[randItem].book
+  like = data[randItem].like
+  cover_url = data[randItem].cover
+  $("#book-title").html('From: ' + book);
+  $(".book-cover").html('<img src=' + cover_url + '>');
+  $("#quote-text").html(quote);
+  if (comment) {
+    console.log(comment);
+    $(".comment-box").html(comment);
+    $(".comment-box").css({
+      "visibility": "visible",
+      "height": "100px",
+    })
+  };
+  $("#date-added").html(quote_date);
+  current_quote = data[randItem].quote_id;
+  console.log(current_quote);
+  $("#like-button").html('<div id="like">' + showCurrentLike(like, current_quote) + '</div>');
+  // $("#dashboard-delete").attr('<div id="dash-delete" data-quoteId="' + current_quote + '"><i class="fa-solid fa-ban"></i></div>');
+  $("#dashboard-delete").attr("quoteid", current_quote);
+  $("#dashboard-edit").attr("quoteid", current_quote);
+  $(".dashboard-share").html(
+    '<div class="dropdown"><div data-bs-toggle="dropdown" aria-expanded="false" id="dash-share"\
+               data-quoteId="' + current_quote + '"><i class="fa-solid fa-share-nodes"></i></div><ul class="dropdown-menu">\
+               <li><a class="dropdown-item" href="#">Twitter</a></li><li><a class="dropdown-item" href="#">Facebook</a></li>\
+               <li><a class="dropdown-item" href="#">Copy</a></li></ul></div>'
+  );
+}
 
 function showCurrentLike(like, current_quote) {
   if (like) {
