@@ -115,15 +115,15 @@ class DailyTenAPIView(
 
 
 # !moved to a viewset
-# class FavoriteQuotesAPIView(
-#     generics.ListCreateAPIView,
-# ):
+class FavoriteQuotesAPIView(
+    generics.ListCreateAPIView,
+):
 
-#     serializer_class = QuoteSerializer
+    serializer_class = QuoteSerializer
 
-#     def get_queryset(self):
-#         queryset = Quote.objects.filter(owner=self.request.user).filter(like=True)
-#         return queryset
+    def get_queryset(self):
+        queryset = Quote.objects.filter(owner=self.request.user).filter(like=True)
+        return queryset
 
 
 class LastOrderAPIView(
@@ -245,15 +245,15 @@ class QuoteLikeUpdateDeleteViewset(viewsets.ModelViewSet):
 
 
 # !moved to a viewset
-# class RandomServerQuoteAPIView(
-#     generics.ListAPIView,
-# ):
-#     serializer_class = QuoteSerializer
+class RandomServerQuoteAPIView(
+    generics.ListAPIView,
+):
+    serializer_class = QuoteSerializer
 
-#     def get_queryset(self):
-#         return Quote.objects.filter(owner=self.request.user).filter(
-#             id=pick_random_quote_id(self.request.user)
-#         )
+    def get_queryset(self):
+        return Quote.objects.filter(owner=self.request.user).filter(
+            id=pick_random_quote_id(self.request.user)
+        )
 
 
 class UploadApiView(GenericAPIView):

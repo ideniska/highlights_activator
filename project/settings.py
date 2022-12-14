@@ -182,13 +182,10 @@ DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "Localhost <info@test.
 # REDIS_HOST = "0.0.0.0"
 # REDIS_HOST = "127.0.0.1"
 # REDIS_PORT = "6379"
-CELERY_BROKER_URL = os.environ.get(
-     "CELERY_BROKER_URL", "amqp://rabbitmq"
- )
-#CELERY_BROKER_URL = "amqp://rabbitmq"
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
+# CELERY_BROKER_URL = "amqp://rabbitmq"
 # CELERY_BROKER_TRANSPORT_OPTIONS = {"visibility_timeout": 36000}
-CELERY_RESULT_BACKEND = os.environ.get(
-     "CELERY_RESULT_BACKEND", "amqp://rabbitmq")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND")
 CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
