@@ -59,7 +59,7 @@ python-versions = ">=3.6"
 name = "attrs"
 version = "22.1.0"
 description = "Classes Without Boilerplate"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.5"
 
@@ -365,7 +365,7 @@ validation = ["swagger-spec-validator (>=2.1.0)"]
 name = "exceptiongroup"
 version = "1.0.4"
 description = "Backport of PEP 654 (exception groups)"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -435,7 +435,7 @@ python-versions = ">=3.5"
 name = "iniconfig"
 version = "1.1.1"
 description = "iniconfig: brain-dead simple config-ini parsing"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -506,10 +506,22 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
+name = "pika"
+version = "0.13.0"
+description = "Pika Python AMQP Client Library"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+tornado = ["tornado"]
+twisted = ["twisted"]
+
+[[package]]
 name = "pluggy"
 version = "1.0.0"
 description = "plugin and hook calling mechanisms for python"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -548,6 +560,18 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
+name = "PyAMQP"
+version = "0.1.0.7"
+description = "Python interface for simple usage of AMQP middleware applications."
+category = "main"
+optional = false
+python-versions = ">=3.6.0"
+
+[package.dependencies]
+pika = "0.13"
+pytest = "*"
+
+[[package]]
 name = "PyJWT"
 version = "2.6.0"
 description = "JSON Web Token implementation in Python"
@@ -565,7 +589,7 @@ tests = ["coverage[toml] (==5.0.4)", "pytest (>=6.0.0,<7.0.0)"]
 name = "pytest"
 version = "7.2.0"
 description = "pytest: simple powerful testing with Python"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -775,7 +799,7 @@ requests = {version = ">=2.20", markers = "python_version >= \"3.0\""}
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -851,7 +875,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "2d0f7d509592ec32a464a201834328fd4cb652a502e5968925e56b4e59664c27"
+content-hash = "d488c5c80c8052ed64fbe8f135922da66c9ff5eeedaabbb628c35e19ca72d84f"
 
 [metadata.files]
 amqp = [
@@ -1039,6 +1063,10 @@ packaging = [
     {file = "packaging-22.0-py3-none-any.whl", hash = "sha256:957e2148ba0e1a3b282772e791ef1d8083648bc131c8ab0c1feba110ce1146c3"},
     {file = "packaging-22.0.tar.gz", hash = "sha256:2198ec20bd4c017b8f9717e00f0c8714076fc2fd93816750ab48e2c41de2cfd3"},
 ]
+pika = [
+    {file = "pika-0.13.0-py2.py3-none-any.whl", hash = "sha256:847916ada527ee064025c1a0b981dc6856ea333734e695012006c24cab233bca"},
+    {file = "pika-0.13.0.tar.gz", hash = "sha256:5338d829d1edb3e5bcf1523b4a9e32c56dea5a8bda7018825849e35325580484"},
+]
 pluggy = [
     {file = "pluggy-1.0.0-py2.py3-none-any.whl", hash = "sha256:74134bbf457f031a36d68416e1509f34bd5ccc019f0bcc952c7b909d06b37bd3"},
     {file = "pluggy-1.0.0.tar.gz", hash = "sha256:4224373bacce55f955a878bf9cfa763c1e360858e330072059e10bad68531159"},
@@ -1065,6 +1093,10 @@ psycopg2 = [
     {file = "psycopg2-2.9.5-cp39-cp39-win32.whl", hash = "sha256:322fd5fca0b1113677089d4ebd5222c964b1760e361f151cbb2706c4912112c5"},
     {file = "psycopg2-2.9.5-cp39-cp39-win_amd64.whl", hash = "sha256:190d51e8c1b25a47484e52a79638a8182451d6f6dff99f26ad9bd81e5359a0fa"},
     {file = "psycopg2-2.9.5.tar.gz", hash = "sha256:a5246d2e683a972e2187a8714b5c2cf8156c064629f9a9b1a873c1730d9e245a"},
+]
+PyAMQP = [
+    {file = "PyAMQP-0.1.0.7-py2.py3-none-any.whl", hash = "sha256:d10a1c0e687f49784cdf2c3de101862fa698d3f156f7a35c5f899bf98012d5ca"},
+    {file = "PyAMQP-0.1.0.7.tar.gz", hash = "sha256:fff1d481cc3991eb4283f5bc465757b1e3842567ea51c571bb3a921881db1cff"},
 ]
 PyJWT = [
     {file = "PyJWT-2.6.0-py3-none-any.whl", hash = "sha256:d83c3d892a77bbb74d3e1a2cfa90afaadb60945205d1095d9221f04466f64c14"},
