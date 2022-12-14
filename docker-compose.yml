@@ -72,5 +72,10 @@ volumes:
   highlights_activator_postgres_data:
   static_data:
   media_data:
+  rabbitmq:
+
+networks:
+  queue_network:
+    driver: bridge
 
 
