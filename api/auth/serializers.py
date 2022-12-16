@@ -144,4 +144,7 @@ class UploadSerializer(serializers.ModelSerializer):
         validated_data["owner"] = self.context["request"].user
         instance: UserFile = super().create(validated_data)
         celery_start_kindle_parser.apply_async(kwargs={"userfile_id": instance.id})
+
+        # start_kindle_parser(instance)
+
         return instance

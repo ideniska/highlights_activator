@@ -6,7 +6,7 @@ $(function () {
 // GET FAV QUOTE LIST FROM API AND SHOW IT AS CARDS
 function quoteList() {
   $.ajax({
-    url: '/api/favorites/',
+    url: '/api/q2/liked/',
     type: 'get',
     success: function (data) {
       console.log(data);
@@ -23,41 +23,64 @@ function quoteList() {
 
 
 function QuoteListHandler(data) {
-  console.log('QuoteListHandler');
   if (data.length == 0) {
     console.log('No quotes');
     $('.col-xxl-6').append(`<div class="card""><div class="card-body pb-1"><div class="d-flex"><div class="w-100"><div class="dropdown float-end text-muted">\
     </div></div><h5 class="m-0"</h5></div></div>\
     <p class="card-text"></p><div class="font-16 text-center text-dark my-3" ><i class="mdi mdi-cards-heart-outline"></i> You don't have any liked quotes yet. </div><p class="comment-text""></p>\
     <div class="my-1"></div></div></div>`)
-  }
+  };
 
-  $.each(data, function (i, row) {
-
-    console.log(row)
-    let card = `<div class="card" id="${row.quote_id}"><div class="card-body pb-1"><div class="d-flex"><div class="w-100"><div class="dropdown float-end text-muted">\
-      <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-horizontal"></i>\
-      </a><div class="dropdown-menu dropdown-menu-end"><a class="dropdown-item" id="dashboard-edit" quoteid=${row.quote_id}>Edit</a><a class="dropdown-item" id="dashboard-delete" quoteid=${row.quote_id}>Delete</a>\
-      </div></div><h5 class="m-0" id="book-title">${row.book}</h5><p class="text-muted" id="date-added"><small>${row.date_added}</small></p></div></div><hr class="m-0" />\
-      <p class="card-text" id="${row.quote_id}"></p><div class="font-16 text-center text-dark my-3" ><i class="mdi mdi-format-quote-open font-20"></i><span id="quote-text"> ${row.text}</span></div><p class="comment-text" id="${row.quote_id}"></p>\
-      <div class="comment-box" id="${row.quote_id}"></div><hr class="m-0" />\
-      <div class="my-1"><a id="like-button" href="" class="btn btn-sm btn-link text-muted ps-0"><div id="like">${showCurrentLike(row.like, row.quote_id)}</div></a>\
-      <a href="" class="btn btn-sm btn-link text-muted"><i class='uil uil-share-alt'></i> Share</a>\
-      <span class="comment-box-buttons"><a class="btn btn-sm btn-link text-muted comment-box-buttons" id="cancel" quoteid="${row.quote_id}">\
-      <i class='uil uil-times'></i> Cancel</a><a class="btn btn-sm btn-link text-muted comment-box-buttons" id="save" quoteid="${row.quote_id}">\
-      <i class='uil uil-bookmark'></i>Save</a></span></div></div></div>`
-
+  $.each(data.results, function (i, row) {
+    let card = `<div class="card" id="${row.quote_id}">
+                  <div class="card-body pb-1">
+                    <div class="d-flex">
+                      <div class="w-100">
+                        <div class="dropdown float-end text-muted">
+                          <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="mdi mdi-dots-horizontal"></i>
+                          </a>
+                          <div class="dropdown-menu dropdown-menu-end">
+                            <a class="dropdown-item" id="dashboard-edit" quoteid=${row.quote_id}>Edit</a>
+                            <a class="dropdown-item" id="dashboard-delete" quoteid=${row.quote_id}>Delete</a>
+                          </div>
+                        </div>
+                        <h5 class="m-0" id="book-title">From: <a href="/by-book-api/${row.book_id}">${row.book}</a></h5>
+                        <p class="text-muted" id="date-added"><small>${row.date_added}</small></p>
+                      </div>
+                    </div>
+                    <hr class="m-0" />
+                    <p class="card-text" id="${row.quote_id}"></p>
+                  <div class="font-16 text-center text-dark my-3" >
+                  <i class="mdi mdi-format-quote-open font-20"></i><span id="quote-text"> ${row.text}</span>
+                </div>
+                <p class="comment-text" id="${row.quote_id}"></p>
+                <div class="comment-box" id="${row.quote_id}"></div>
+                <hr class="m-0" />
+                <div class="my-1">
+                  <a id="like-button" href="" class="btn btn-sm btn-link text-muted ps-0">
+                  <div id="like">${showCurrentLike(row.like, row.quote_id)}</div>
+                  </a>
+                  <a href="" class="btn btn-sm btn-link text-muted"><i class='uil uil-share-alt'></i> Share</a>
+                  <span class="comment-box-buttons">
+                    <a class="btn btn-sm btn-link text-muted comment-box-buttons" id="cancel" quoteid="${row.quote_id}">
+                    <i class='uil uil-times'></i> Cancel
+                    </a>
+                    <a class="btn btn-sm btn-link text-muted comment-box-buttons" id="save" quoteid="${row.quote_id}">
+                      <i class='uil uil-bookmark'></i>Save
+                    </a></span>
+                </div>
+              </div>
+            </div>`
+    $('.col-xxl-6').append(card)
     if (row.comment) {
       console.log(row.comment)
-      $('.col-xxl-6').append(card)
       $(".comment-box", "#" + row.quote_id).html(row.comment);
       $(".comment-box", "#" + row.quote_id).css({
         "visibility": "visible",
         "height": "100px",
       });
-    } else {
-      $('.col-xxl-6').append(card);
-    }
+    };
   });
   return true;
 };
@@ -91,7 +114,7 @@ function changeLikeStatus(quoteId) {
   console.log("This is", quoteId)
   $.ajax({
     type: "POST",
-    url: `/api/quote/${quoteId}/like/`,
+    url: `/api/q2/${quoteId}/like/`,
     data: {
       quote_id: quoteId,
       csrfmiddlewaretoken: csrftoken,
@@ -117,7 +140,7 @@ function deleteQuote(quoteId) {
   console.log("This is", quoteId)
   $.ajax({
     type: "DELETE",
-    url: `/api/quote/${quoteId}/delete/`,
+    url: `/api/q/${quoteId}/`,
     headers: {
       "X-CSRFToken": csrftoken
     },
@@ -222,7 +245,7 @@ function saveToServer(quote_id, editedQuote, addedNote) {
   console.log("This is", quote_id)
   $.ajax({
     type: "PUT",
-    url: `/api/quote/${quote_id}/update/`,
+    url: `/api/q/${quote_id}/`,
     headers: {
       "X-CSRFToken": csrftoken
     },

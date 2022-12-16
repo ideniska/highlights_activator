@@ -28,7 +28,7 @@ class UserFile(models.Model):
 
 
 class Book(models.Model):
-    title = models.CharField(max_length=350)
+    title = models.CharField(max_length=350, unique=True)
     author = models.CharField(max_length=350, default="")
     visibility = models.BooleanField(default=True)
     cover = models.CharField(max_length=150, default="")

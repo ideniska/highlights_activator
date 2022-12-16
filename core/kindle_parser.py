@@ -10,7 +10,6 @@ def start_kindle_parser(userfile: UserFile):
     # --- KINDLE NOTES FILE PARSER --- #
     # Using notes_line_list to parse note line by line and create indexes of title, date, highlight text
     notes_line_list = []
-    notes_list = []
 
     with open(file_path, "r", encoding="utf-8") as original:
         data = original.read()
@@ -34,6 +33,8 @@ def start_kindle_parser(userfile: UserFile):
     ):  # I use this func to find second appearance of '|' symbol to slice date added string
         return string.find(substring, string.find(substring) + 1)
 
+    cached_books: dict[str, Book] = {}
+    bulk_quotes: list[Quote] = []
     # notes_sublist is an indexed list of notes, where each element is a book note as a list of lines
     # Append all notes between separators/brakes to notes_sublist, to have an indexed list of notes
     for i in range(len(brake_index_list) - 1):
@@ -45,23 +46,27 @@ def start_kindle_parser(userfile: UserFile):
         for index in range(first_br_point, second_br_point):
             notes_sublist.append(notes_line_list[index])
 
-        book_title = notes_sublist[1].split("(")[0].strip("\ufeff")
-        author = notes_sublist[1].split("(")[1].strip()[:-1]
+        print(notes_sublist)
+        book_title = notes_sublist[0].split("(")[0].strip("\ufeff")
+        author = notes_sublist[0].split("(")[1].strip()[:-1]
 
         if "," in author:
             author = author.replace(",", "")
-        if notes_sublist[2].count("|") == 1:
-            start_slice = notes_sublist[2].find("|") + 2
+        if notes_sublist[1].count("|") == 1:
+            start_slice = notes_sublist[1].find("|") + 2
             stop_slice = None
         else:
-            start_slice = find_2nd(notes_sublist[2], "|") + 2
+            start_slice = find_2nd(notes_sublist[1], "|") + 2
             stop_slice = None
 
-        date_added = notes_sublist[2][start_slice:stop_slice]
-        quote = notes_sublist[3].strip("\xa0")
+        date_added = notes_sublist[1][start_slice:stop_slice]
+        quote = notes_sublist[2].strip("\xa0")
 
-        book_obj = Book(title=book_title, author=author, owner=user)
-        book_obj.save()
+        if book_title not in cached_books:
+            book_obj = Book.objects.create(title=book_title, author=author, owner=user)
+            cached_books[book_title] = book_obj
+        else:
+            book_obj = cached_books[book_title]
 
         quote_obj = Quote(
             date_added=date_added,
@@ -69,4 +74,9 @@ def start_kindle_parser(userfile: UserFile):
             book=book_obj,
             owner=user,
         )
-        quote_obj.save()
+        bulk_quotes.append(quote_obj)
+
+    Quote.objects.bulk_create(bulk_quotes)
+
+
+# TODO Quote.objects.values_list("id", "text")

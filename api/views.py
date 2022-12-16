@@ -29,6 +29,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.utils import timezone
 from core.tasks import celery_stop_membership
+
 from .services import (
     ActivateTelegramUserService,
     ChangeQuoteLikeStatusService,
@@ -102,30 +103,6 @@ class BookVisibilityView(generics.GenericAPIView):
         return response
 
 
-class DailyTenAPIView(
-    generics.ListCreateAPIView,
-):
-
-    serializer_class = QuoteSerializer
-
-    def get_queryset(self):
-        service = GetDailyQuotesQueryset()
-        queryset = service.get_daily_quotes_queryset(self.request.user)
-        return queryset
-
-
-# !moved to a viewset
-class FavoriteQuotesAPIView(
-    generics.ListCreateAPIView,
-):
-
-    serializer_class = QuoteSerializer
-
-    def get_queryset(self):
-        queryset = Quote.objects.filter(owner=self.request.user).filter(like=True)
-        return queryset
-
-
 class LastOrderAPIView(
     generics.ListCreateAPIView,
 ):
@@ -153,22 +130,6 @@ class NotificationsSettingsApiView(generics.GenericAPIView):
         return Response({"detail": True})
 
 
-# !moved to a viewset
-# class QuotesFromBookAPIView(generics.ListAPIView):
-
-#     queryset = Quote.objects.all()
-#     serializer_class = QuoteSerializer
-#     pagination_class = BasePageNumberPagination
-
-#     def get_queryset(self):
-#         return (
-#             super()
-#             .get_queryset()
-#             .filter(owner=self.request.user)
-#             .filter(book_id=self.kwargs["pk"])
-#         )
-
-
 class QuoteLikeView(generics.GenericAPIView):
 
     serializer_class = QuoteSerializer
@@ -180,26 +141,6 @@ class QuoteLikeView(generics.GenericAPIView):
         return response
 
 
-# !moved to a viewset
-# class QuoteDeleteView(generics.DestroyAPIView):
-
-#     serializer_class = QuoteSerializer
-#     queryset = Quote.objects.all()
-#     lookup_field = "pk"
-
-#     def perform_destroy(self, instance):
-#         # instance
-#         super().perform_destroy(instance)
-
-
-# !moved to a viewset
-# class QuoteUpdateView(generics.UpdateAPIView):
-
-#     serializer_class = QuoteUpdateSerializer
-#     queryset = Quote.objects.all()
-#     lookup_field = "pk"
-
-
 class QuoteViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
     serializer_class = QuoteSerializer
@@ -208,17 +149,18 @@ class QuoteViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     def get_queryset(self):
         qs = Quote.objects.filter(owner=self.request.user)
 
-        # QuotesFromBookAPIView
-        if self.action == "list":
-            return qs.filter(book_id=self.kwargs["pk"])
-
         # RandomServerQuoteAPIView
         if self.action == "get_random":
             return qs.filter(id=pick_random_quote_id(self.request.user))
 
         # FavoriteQuotesAPIView
-        if self.action == "get_favorite":
+        if self.action == "get_favorites":
             return qs.filter(like=True)
+
+        if self.action == "get_daily":
+            service = GetDailyQuotesQueryset()
+            queryset = service.get_daily_quotes_queryset(self.request.user)
+            return queryset
 
     # QuoteLikeView
     @action(detail=True, methods=["post"])
@@ -229,31 +171,44 @@ class QuoteViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         response = service.change_quote_like_status(pk)
         return response
 
+    # Get liked quotes
+    @action(detail=False, methods=["get"], url_path="liked")
+    def get_favorites(self, request):
+        return self.list(request)
+
     # Fix to get one quote instead of list
     # RandomServerQuoteAPIView
     @action(detail=False, methods=["get"], url_path="random")
     def get_random(self, request):
         return self.list(request)
 
+    @action(detail=False, methods=["get"], url_path="daily")
+    def get_daily(self, request):
+        return self.list(request)
+
+
+class QuotesFromBookAPIView(generics.ListAPIView):
+    queryset = Quote.objects.all()
+    serializer_class = QuoteSerializer
+    pagination_class = BasePageNumberPagination
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(owner=self.request.user)
+            .filter(book_id=self.kwargs["pk"])
+        )
+
 
 class QuoteLikeUpdateDeleteViewset(viewsets.ModelViewSet):
+    queryset = Quote.objects.all()
+
     def get_serializer_class(self):
         if self.action == "destroy":
             return QuoteSerializer
         if self.action == "update":
             return QuoteUpdateSerializer
-
-
-# !moved to a viewset
-class RandomServerQuoteAPIView(
-    generics.ListAPIView,
-):
-    serializer_class = QuoteSerializer
-
-    def get_queryset(self):
-        return Quote.objects.filter(owner=self.request.user).filter(
-            id=pick_random_quote_id(self.request.user)
-        )
 
 
 class UploadApiView(GenericAPIView):
@@ -265,3 +220,53 @@ class UploadApiView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# !MOVED TO A VIEWSET ------------------------------------------------------------
+
+# class DailyTenAPIView(
+#     generics.ListCreateAPIView,
+# ):
+
+#     serializer_class = QuoteSerializer
+
+#     def get_queryset(self):
+#         service = GetDailyQuotesQueryset()
+#         queryset = service.get_daily_quotes_queryset(self.request.user)
+#         return queryset
+
+# class FavoriteQuotesAPIView(
+#     generics.ListCreateAPIView,
+# ):
+#     serializer_class = QuoteSerializer
+
+#     def get_queryset(self):
+#         queryset = Quote.objects.filter(owner=self.request.user).filter(like=True)
+#         return queryset
+
+
+# class QuoteDeleteView(generics.DestroyAPIView):
+#     serializer_class = QuoteSerializer
+#     queryset = Quote.objects.all()
+#     lookup_field = "pk"
+
+#     def perform_destroy(self, instance):
+#         # instance
+#         super().perform_destroy(instance)
+
+
+# class QuoteUpdateView(generics.UpdateAPIView):
+#     serializer_class = QuoteUpdateSerializer
+#     queryset = Quote.objects.all()
+#     lookup_field = "pk"
+
+
+# class RandomServerQuoteAPIView(
+#     generics.ListAPIView,
+# ):
+#     serializer_class = QuoteSerializer
+
+#     def get_queryset(self):
+#         return Quote.objects.filter(owner=self.request.user).filter(
+#             id=pick_random_quote_id(self.request.user)
+#         )

@@ -12,6 +12,9 @@ from core.kindle_parser import start_kindle_parser
 from core.models import Quote, UserFile, CustomUser, Orders
 from api.services import GetDailyQuotesQueryset
 from users.models import NotificationSetting
+from celery.utils.log import get_task_logger
+
+logger = get_task_logger(__name__)
 
 YOUR_DOMAIN = settings.YOUR_DOMAIN
 

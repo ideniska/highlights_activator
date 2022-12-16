@@ -6,7 +6,7 @@ var current_quote = 0
 
 function randomQuote() {
   $.ajax({
-    url: '/api/random/',
+    url: '/api/q2/random',
     type: 'get',
     success: successRandomQuoteHandler,
     error: function (error) {
@@ -16,15 +16,17 @@ function randomQuote() {
 }
 
 function successRandomQuoteHandler(data) {
-  var randItem = Math.floor(Math.random() * data.length);
-  console.log(data.randItem);
-  quote = data[randItem].text;
-  comment = data[randItem].comment;
-  quote_date = data[randItem].date_added
-  book = data[randItem].book
-  like = data[randItem].like
-  cover_url = data[randItem].cover
-  $("#book-title").html('From: ' + book);
+  console.log(data.results[0])
+  let api_response = data.results[0]
+  let quote = api_response.text;
+  let comment = api_response.comment;
+  let quote_date = api_response.date_added
+  let book = api_response.book
+  let book_id = api_response.book_id
+  let like = api_response.like
+  let cover_url = api_response.cover
+
+  $("#book-title").html(`From: <a href="/by-book-api/${book_id}">${book}</a>`);
   $(".book-cover").html('<img src=' + cover_url + '>');
   $("#quote-text").html(quote);
   if (comment) {
@@ -36,26 +38,33 @@ function successRandomQuoteHandler(data) {
     })
   };
   $("#date-added").html(quote_date);
-  current_quote = data[randItem].quote_id;
+  let current_quote = api_response.quote_id;
   console.log(current_quote);
   $("#like-button").html('<div id="like">' + showCurrentLike(like, current_quote) + '</div>');
-  // $("#dashboard-delete").attr('<div id="dash-delete" data-quoteId="' + current_quote + '"><i class="fa-solid fa-ban"></i></div>');
   $("#dashboard-delete").attr("quoteid", current_quote);
   $("#dashboard-edit").attr("quoteid", current_quote);
-  $(".dashboard-share").html(
-    '<div class="dropdown"><div data-bs-toggle="dropdown" aria-expanded="false" id="dash-share"\
-               data-quoteId="' + current_quote + '"><i class="fa-solid fa-share-nodes"></i></div><ul class="dropdown-menu">\
-               <li><a class="dropdown-item" href="#">Twitter</a></li><li><a class="dropdown-item" href="#">Facebook</a></li>\
-               <li><a class="dropdown-item" href="#">Copy</a></li></ul></div>'
-  );
+  $(".dashboard-share").html(socialMediaDropdown(current_quote));
+}
+
+const socialMediaDropdown = (current_quote) => {
+  return `
+      <div class="dropdown">
+        <div data-bs-toggle="dropdown" aria-expanded="false" id="dash-share" data-quoteId="${current_quote}">
+          <i class="fa-solid fa-share-nodes"></i>
+        </div>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="#">Twitter</a></li>
+          <li><a class="dropdown-item" href="#">Facebook</a></li>
+          <li><a class="dropdown-item" href="#">Copy</a></li>
+        </ul>
+      </div>
+  `
 }
 
 function showCurrentLike(like, current_quote) {
   if (like) {
     console.log(current_quote);
-    //return '<span class="liked" id ="heart" data-quoteId="' + current_quote + '"><i class="fa fa-heart fa-lg" aria-hidden="true"></i></span>'
     return '<span class="liked" id ="heart" data-quoteId="' + current_quote + '"><i class="ri-heart-fill"></i></span>'
-    return ''
   }
   console.log(current_quote);
   return '<span id ="heart" data-quoteId="' + current_quote + '"><i class="ri-heart-line"></i></span>'
@@ -80,7 +89,7 @@ function changeLikeStatus(quoteId) {
   console.log("This is", quoteId)
   $.ajax({
     type: "POST",
-    url: `/api/quote/${quoteId}/like/`,
+    url: `/api/q2/${quoteId}/like/`,
     data: {
       quote_id: quoteId,
       csrfmiddlewaretoken: csrftoken,
@@ -108,7 +117,7 @@ function deleteQuote(quoteId) {
   console.log("This is", quoteId)
   $.ajax({
     type: "DELETE",
-    url: `/api/quote/${quoteId}/delete/`,
+    url: `/api/q/${quoteId}/`,
     headers: {
       "X-CSRFToken": csrftoken
     },
@@ -214,7 +223,7 @@ function saveToServer(current_quote, editedQuote, addedNote) {
   console.log("This is", current_quote)
   $.ajax({
     type: "PUT",
-    url: `/api/quote/${current_quote}/update/`,
+    url: `/api/q/${quoteId}/`,
     headers: {
       "X-CSRFToken": csrftoken
     },

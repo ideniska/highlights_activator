@@ -48,44 +48,52 @@ const carouselItem = (quote_id, book_id, book, text, date_added, comment, like, 
   return `
         <div class="carousel-item ${active}">
           <div id="${quote_id}" class="card">
-            <div class="card-body pb-1" style="margin: 0% 10% 0% 10%">
+            <div class="card-header">
+              <h5 class="card-title">From: <a href="/by-book-api/${book_id}">${book}</a>
+              <p class="text-muted" id="date-added"><small>${date_added}</small></p>
+              </h5> 
+            </div>
+            <div class="card-body">
               <div class="d-flex">
                 <div class="w-100">
-                    <div class="dropdown float-end text-muted">
-                      <a href="#" class="dropdown-toggle arrow-none card-drop"
-                          data-bs-toggle="dropdown" aria-expanded="false">
-                          <i class="mdi mdi-dots-horizontal"></i>
-                      </a>
-                      <div class="dropdown-menu dropdown-menu-end">
-                          <!-- item-->
-                          <a class="dropdown-item" id="dashboard-edit">Edit</a>
-                          <!-- item-->
-                          <a class="dropdown-item" id="dashboard-delete">Delete</a>
+            <hr class="m-0">
+                <p class="card-text"></p>
+                <blockquote class="blockquote mb-0">
+                      <p id="quote-text">${text}</p>
+                      <footer class="blockquote-footer">${date_added}<cite title="Source Title"></footer>
+                  <div class="comment">
+                      <div class="comment-box">${comment}
                       </div>
-                    </div>
-                  <h5 class="m-0" id="book-title">From: <a href="/by-book-api/${book_id}">${book}</a></h5>
-                  <p class="text-muted" id="date-added"><small>${date_added}</small></p>
-                </div>
-               </div>
-              <hr class="m-0" />
-              <p class="card-text"></p>
-              <div class="font-16 text-center text-dark my-3">
-                  <i class="mdi mdi-format-quote-open font-20"></i><span id="quote-text">${text}</span>
-              </div>
-              <p class="comment-text"></p>
-              <div class="comment-box">${comment}</div>
-              <hr class="m-0" />
-              <div class="my-1">
-                <a id="like-button" class="btn btn-sm btn-link text-muted ps-0"><div id="like">${showCurrentLike(like, quote_id)}</div></a>
-                <a class="btn btn-sm btn-link text-muted"><i class='uil uil-share-alt'></i>Share</a>
-                <span class="comment-box-buttons"><a class="btn btn-sm btn-link text-muted comment-box-buttons" id="cancel">
-                  <i class='uil uil-times'></i> Cancel</a>
-                  <a class="btn btn-sm btn-link text-muted comment-box-buttons" id="save">
-                  <i class='uil uil-bookmark'></i> Save</a></span>
-              </div>
-            </div> 
-          </div>
-        </div>
+                  </div>
+                  <div class="comment-box-buttons">
+                      <button type="button" id="cancel" class="btn btn-outline-secondary" data-quoteId="${quote_id}">Cancel</button>
+                      <button type="button" id="save" class="btn btn-outline-success" data-quoteId="${quote_id}">Save</button>
+                  </div>
+                  </blockquote>
+                  <br>
+                  <div>
+                      <div class="like-button" style="display: inline-block;">
+                          <div id="like">${showCurrentLike(like, quote_id)}
+                          </div>
+                      </div>
+                      <div id="daily-delete" style="display: inline-block;" data-quoteid="${quote_id}">
+                          <i class="fa-solid fa-ban"></i>
+                      </div>
+                      <div class="dashboard-edit" style="display: inline-block;">
+                          <div id="dash-edit" data-quoteId="${quote_id}">
+                              <i class="fa-solid fa-pen-to-square"></i>
+                          </div>
+                      </div>
+                    <div class="dropdown" id="daily-dropdown" style="display: inline-block;">
+                        <div data-bs-toggle="dropdown" aria-expanded="false" id="dash-share" data-quoteId="${quote_id}">
+                            <i class="fa-solid fa-share-nodes"></i>
+                        </div>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Twitter</a></li>
+                            <li><a class="dropdown-item" href="#">Facebook</a></li>
+                            <li><a class="dropdown-item" href="#">Copy</a></li>
+                        </ul>
+                </div></div></div></div></div>
             `
 };
 
