@@ -58,9 +58,9 @@ const carouselItem = (quote_id, book_id, book, text, date_added, comment, like, 
                       </a>
                       <div class="dropdown-menu dropdown-menu-end">
                           <!-- item-->
-                          <a class="dropdown-item" id="dashboard-edit">Edit</a>
+                          <a class="dropdown-item" id="daily-edit" quoteid=${quote_id}>Edit</a>
                           <!-- item-->
-                          <a class="dropdown-item" id="dashboard-delete">Delete</a>
+                          <a class="dropdown-item" id="daily-delete" quoteid=${quote_id}>Delete</a>
                       </div>
                     </div>
                   <h5 class="m-0" id="book-title">From: <a href="/by-book-api/${book_id}">${book}</a></h5>
@@ -78,9 +78,9 @@ const carouselItem = (quote_id, book_id, book, text, date_added, comment, like, 
               <div class="my-1">
                 <a id="like-button" class="btn btn-sm btn-link text-muted ps-0"><div id="like">${showCurrentLike(like, quote_id)}</div></a>
                 <a class="btn btn-sm btn-link text-muted"><i class='uil uil-share-alt'></i>Share</a>
-                <span class="comment-box-buttons"><a class="btn btn-sm btn-link text-muted comment-box-buttons" id="cancel">
+                <span class="comment-box-buttons"><a class="btn btn-sm btn-link text-muted comment-box-buttons" id="cancel" quoteid="${quote_id}">
                   <i class='uil uil-times'></i> Cancel</a>
-                  <a class="btn btn-sm btn-link text-muted comment-box-buttons" id="save">
+                  <a class="btn btn-sm btn-link text-muted comment-box-buttons" id="save" quoteid="${quote_id}">
                   <i class='uil uil-bookmark'></i> Save</a></span>
               </div>
             </div> 
@@ -100,7 +100,7 @@ function showCurrentLike(like, quoteId) {
 // DELETE
 $(document).on('click', '#daily-delete', function () {
   console.log($(this))
-  deleteQuote($(this).data("quoteid"));
+  deleteQuote($(this).attr("quoteid"));
 });
 
 // LIKE
@@ -122,7 +122,7 @@ function changeLikeStatus(quoteId) {
   console.log("This is", quoteId)
   $.ajax({
     type: "POST",
-    url: `/api/quote/${quoteId}/like/`,
+    url: `/api/q2/${quoteId}/like/`,
     data: {
       quote_id: quoteId,
       csrfmiddlewaretoken: csrftoken,
@@ -142,7 +142,7 @@ function deleteQuote(quoteId) {
   console.log("This is", quoteId)
   $.ajax({
     type: "DELETE",
-    url: `/api/quote/${quoteId}/delete/`,
+    url: `/api/q/${quoteId}/`,
     headers: {
       "X-CSRFToken": csrftoken
     },
@@ -165,8 +165,8 @@ function deleteQuote(quoteId) {
 // TODO use remove() to delete card from a screen after clicking on delete button
 
 // EDIT AND COMMENT
-$(document).on('click', '#dash-edit', function () {
-  editQuote($(this).data("quoteid"));
+$(document).on('click', '#daily-edit', function () {
+  editQuote($(this).attr("quoteid"));
 });
 
 // EDIT QUOTE, SHOW COMMENT BOX, SHOW CANCEL & SAVE BUTTONS
@@ -190,7 +190,7 @@ function editQuote(quote_id) {
 
 // CANCEL EDIT
 $(document).on('click', '#cancel', function () {
-  cancelEditQuote($(this).data("quoteid"));
+  cancelEditQuote($(this).attr("quoteid"));
 });
 
 function cancelEditQuote(quote_id) {
@@ -227,7 +227,7 @@ function cancelEditQuote(quote_id) {
 
 // SAVE EDIT
 $(document).on('click', '#save', function () {
-  saveEditQuote($(this).data("quoteid"));
+  saveEditQuote($(this).attr("quoteid"));
 });
 
 function saveEditQuote(quote_id) {
@@ -259,7 +259,7 @@ function saveToServer(quote_id, editedQuote, addedNote) {
   console.log("This is", quote_id)
   $.ajax({
     type: "PUT",
-    url: `/api/quote/${quote_id}/update/`,
+    url: `/api/q/${quote_id}/`,
     headers: {
       "X-CSRFToken": csrftoken
     },
