@@ -194,31 +194,21 @@ $(document).on('click', '#cancel', function () {
 });
 
 function cancelEditQuote(quote_id) {
-  if ($(".comment-box").text().length) {
-    $("#quote-text", "#" + quote_id).attr('contenteditable', 'false');
-    $(".card-text", "#" + quote_id).html('');
-    $("#quote-text", "#" + quote_id).css({
-      "background": "white",
-    });
-    $(".comment-box", "#" + quote_id).attr('contenteditable', 'false');
-    $(".comment-box-buttons", "#" + quote_id).css({
-      "visibility": "hidden",
-      "height": "0",
-    });
-  } else {
+  $("#quote-text", "#" + quote_id).attr('contenteditable', 'false');
+  $(".card-text", "#" + quote_id).html('');
+  $(".comment-text", "#" + quote_id).html('');
+  $("#quote-text", "#" + quote_id).css({
+    "background": "white",
+  });
+  $(".comment-box", "#" + quote_id).attr('contenteditable', 'false');
+  $(".comment-box-buttons", "#" + quote_id).css({
+    "visibility": "hidden",
+    "height": "0",
+  });
 
-    $("#quote-text", "#" + quote_id).attr('contenteditable', 'false');
-    $(".card-text", "#" + quote_id).html('');
-    $("#quote-text", "#" + quote_id).css({
-      "background": "white",
-    });
+  if (!$(".comment-box", "#" + quote_id).text().length) {
     $(".comment", "#" + quote_id).html('');
     $(".comment-box", "#" + quote_id).css({
-      "visibility": "hidden",
-      "height": "0",
-    });
-    $(".comment-box", "#" + quote_id).attr('contenteditable', 'false');
-    $(".comment-box-buttons", "#" + quote_id).css({
       "visibility": "hidden",
       "height": "0",
     });

@@ -43,7 +43,7 @@ function successRandomQuoteHandler(data) {
   $("#like-button").html('<div id="like">' + showCurrentLike(like, current_quote) + '</div>');
   $("#dashboard-delete").attr("quoteid", current_quote);
   $("#dashboard-edit").attr("quoteid", current_quote);
-  $(".dashboard-share").html(socialMediaDropdown(current_quote));
+  $("#shareButton").attr("quoteid", current_quote);
 }
 
 const socialMediaDropdown = (current_quote) => {
@@ -136,14 +136,32 @@ function deleteQuote(quoteId) {
 
 
 // SHARE
-$(document).on('click', '#dash-share', function () {
-
-  shareQuote($(this).data("quoteid"));
+$(document).on('click', '#shareButton', function () {
+  shareQuote($(this).attr("quoteid"));
 
 });
 
+let popup = document.getElementById("sharePopup");
 
-function shareQuote(quoteId) {};
+
+function shareQuote(quoteId) {
+  console.log(quoteId)
+  let encodedID = btoa(quoteId);
+  console.log(encodedID)
+  popup.classList.toggle("show");
+  let quote_url = 'http://127.0.0.1:8000/share/' + encodedID
+  console.log(quote_url)
+
+  navigator.clipboard.writeText(quote_url);
+};
+
+window.onclick = function (event) {
+  if (event.target == popup) {
+    popup.classList.toggle("noshow");
+  }
+}
+
+
 
 // EDIT AND COMMENT
 $(document).on('click', '#dashboard-edit', function () {
@@ -184,8 +202,9 @@ $(document).on('click', '#cancel', function () {
   });
 
   // If no comment clear draft text from comment box
-  if (!comment) {
-    $(".comment").html('');
+  if (!$(".comment-box").text().length) {
+    console($(".comment-box").text(''))
+    $(".comment-box").text('');
     $(".comment-box").css({
       "visibility": "hidden",
       "height": "0",
@@ -214,6 +233,7 @@ $(document).on('click', '#save', function () {
   });
   var editedQuote = sessionStorage.getItem('quote-text');
   var addedNote = sessionStorage.getItem('note-text');
+  current_quote = $("#dashboard-edit").attr("quoteid")
   saveToServer(current_quote, editedQuote, addedNote);
 });
 
@@ -223,7 +243,7 @@ function saveToServer(current_quote, editedQuote, addedNote) {
   console.log("This is", current_quote)
   $.ajax({
     type: "PUT",
-    url: `/api/q/${quoteId}/`,
+    url: `/api/q/${current_quote}/`,
     headers: {
       "X-CSRFToken": csrftoken
     },

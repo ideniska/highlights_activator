@@ -114,7 +114,7 @@ function changeLikeStatus(quoteId) {
   console.log("This is", quoteId)
   $.ajax({
     type: "POST",
-    url: `/api/quote/${quoteId}/like/`,
+    url: `/api/q2/${quoteId}/like/`,
     data: {
       quote_id: quoteId,
       csrfmiddlewaretoken: csrftoken,
@@ -134,7 +134,7 @@ function deleteQuote(quoteId) {
   console.log("This is", quoteId)
   $.ajax({
     type: "DELETE",
-    url: `/api/quote/${quoteId}/delete/`,
+    url: `/api/q/${quoteId}/`,
     headers: {
       "X-CSRFToken": csrftoken
     },

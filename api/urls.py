@@ -29,6 +29,7 @@ urlpatterns = [
         views.NotificationsSettingsApiView.as_view(),
         name="notifications_settings",
     ),
+    path("share/<int:pk>/", views.QuoteShareView.as_view(), name="share"),
     # MOVED TO VIEWSET
     # path("quote/<int:pk>/like/", views.QuoteLikeView.as_view(), name="quote_like"),
     # path(

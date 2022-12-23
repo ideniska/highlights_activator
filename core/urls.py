@@ -18,6 +18,11 @@ urlpatterns = [
         views.AuthenticatedTemplateAPIView.as_view(template_name="daily.html"),
         name="daily",
     ),
+    path(
+        "share/<int:id>/",
+        views.PageView.as_view(template_name="quote_share.html"),
+        name="share",
+    ),
     path("", views.PageView.as_view(template_name="landing.html"), name="landing"),
     path(
         "upload/",

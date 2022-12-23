@@ -130,6 +130,16 @@ class NotificationsSettingsApiView(generics.GenericAPIView):
         return Response({"detail": True})
 
 
+class QuoteShareView(generics.RetrieveAPIView):
+    serializer_class = QuoteSerializer
+    queryset = Quote.objects.all()
+    permission_classes = (AllowAny,)
+
+    # def get_queryset(self):
+    #     queryset = Quote.objects.filter(owner=self.request.user)
+    #     return queryset
+
+
 class QuoteLikeView(generics.GenericAPIView):
 
     serializer_class = QuoteSerializer

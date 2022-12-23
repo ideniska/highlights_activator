@@ -40,7 +40,20 @@ services:
       - ./.env.dev
 
   rabbitmq:
-    image: "rabbitmq:alpine"
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+    networks:
+      - queue_network
+    restart: always
+    healthcheck:
+      test: rabbitmq-diagnostics -q status
+      interval: 10s
+      timeout: 30s
+      retries: 3
 
   nginx:
     image: nginx:1.19.8-alpine
@@ -59,6 +72,8 @@ volumes:
   highlights_activator_postgres_data:
   static_data:
   media_data:
+  rabbitmq:
 
-
-
+networks:
+  queue_network:
+    driver: bridge
