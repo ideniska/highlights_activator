@@ -21,6 +21,37 @@ from users.models import CustomUser, UserType
 User: UserType = get_user_model()
 
 
+class DemoLoginService:
+    response_serializer = LoginResponseSerializer
+
+    def __init__(self, request):
+        self.request = request
+
+    def _authenticate(self, **kwargs):
+        return authenticate(self.request, **kwargs)
+
+    def __user_tokens(self, user) -> tuple[str, str]:
+        refresh: RefreshToken = RefreshToken.for_user(user)
+        return refresh.access_token, str(refresh)
+
+    def response(self, user):
+        access_token, refresh_token = self.__user_tokens(user)
+        access_token_expiration = timezone.now() + jwt_settings.ACCESS_TOKEN_LIFETIME
+        refresh_token_expiration = timezone.now() + jwt_settings.REFRESH_TOKEN_LIFETIME
+        return_expiration_times = getattr(settings, "JWT_AUTH_RETURN_EXPIRATION", False)
+        data = {
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+        }
+        if return_expiration_times:
+            data["access_token_expiration"] = access_token_expiration
+            data["refresh_token_expiration"] = refresh_token_expiration
+        serializer = self.response_serializer(data)
+        response = Response(serializer.data, status=HTTP_200_OK)
+        set_jwt_cookies(response, access_token, refresh_token)
+        return response
+
+
 class LoginService:
     response_serializer = LoginResponseSerializer
 
@@ -100,8 +131,6 @@ class ActivationService(ActivationAndPasswordService):
     def set_active(self, user: CustomUser):
         user.is_active = True
         user.save()
-
-
 
 
 ### MOVED TO NOTIFICATIONS ###

@@ -9,8 +9,9 @@ from .serializers import (
     ActivationSerializer,
     RestorePasswordSerializer,
     SetPasswordSerializer,
+    DemoSignUpSerializer,
 )
-from .services import LoginService, PasswordService, ActivationService
+from .services import LoginService, PasswordService, ActivationService, DemoLoginService
 from core.notifications import EmailService
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import get_user_model
@@ -19,6 +20,18 @@ from django.contrib.sites.shortcuts import get_current_site
 
 
 User = get_user_model()
+
+
+class DemoLoginView(GenericAPIView):
+    serializer_class = DemoSignUpSerializer
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        login_service = DemoLoginService(request)
+        return login_service.response(user)
 
 
 class SignUpView(GenericAPIView):

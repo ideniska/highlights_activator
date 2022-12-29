@@ -11,6 +11,10 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.conf import settings
 from core.kindle_parser import start_kindle_parser
 from core.tasks import celery_start_kindle_parser
+from faker import Faker
+
+
+fake_data = Faker()
 
 
 class SignInSerializer(serializers.Serializer):
@@ -21,6 +25,23 @@ class SignInSerializer(serializers.Serializer):
 class ActivationSerializer(serializers.Serializer):
     uid = serializers.CharField()
     token = serializers.CharField()
+
+
+class DemoSignUpSerializer(serializers.Serializer):
+    name = serializers.CharField()
+
+    def save(self):
+        print(fake_data.email())
+        user = CustomUser.objects.create_user(
+            username=self.validated_data["name"],
+            email=fake_data.email(),
+            password=fake_data.password(),
+        )
+
+        user.is_active = True
+        user.is_demo = True
+        user.save()
+        return user
 
 
 class RestorePasswordSerializer(serializers.Serializer):

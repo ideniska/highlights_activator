@@ -19,7 +19,14 @@ User: UserType = get_user_model()
 
 
 def pick_random_quote_id(user):
-    id_list = Quote.objects.filter(owner=user).values_list("id", flat=True)
+    id_list = Quote.objects.filter(owner=user, book__visibility=True).values_list(
+        "id", flat=True
+    )
+    return random.choice(id_list)
+
+
+def pick_random_quote_id_demo():
+    id_list = Quote.objects.filter(book__visibility=True).values_list("id", flat=True)
     return random.choice(id_list)
 
 
@@ -102,11 +109,18 @@ class GetDailyQuotesQueryset:
 
     def get_daily_quotes_queryset(self, user):
         # list of liked quotes id's
-        liked_quotes_id_list = list(
-            Quote.objects.filter(owner=user)
-            .filter(like=True)
-            .values_list("id", flat=True)
-        )
+        if user.is_demo:
+            liked_quotes_id_list = list(
+                Quote.objects.filter(owner__is_demo=True)
+                .filter(like=True)
+                .values_list("id", flat=True)
+            )
+        else:
+            liked_quotes_id_list = list(
+                Quote.objects.filter(owner=user)
+                .filter(like=True)
+                .values_list("id", flat=True)
+            )
 
         liked_quotes_count = len(liked_quotes_id_list)
 
@@ -125,21 +139,37 @@ class GetDailyQuotesQueryset:
             liked_quotes_id_list, min(liked_quotes_count, number_of_fav_quotes)
         )
 
-        queryset1 = Quote.objects.filter(owner=user).filter(
-            id__in=liked_random_quote_id_list
-        )
-
-        # list of all other quotes to show in daily review
-        other_quotes_id_list = list(
-            Quote.objects.filter(owner=user).values_list("id", flat=True)
-        )
+        if user.is_demo:
+            queryset1 = Quote.objects.filter(owner__is_demo=True).filter(
+                id__in=liked_random_quote_id_list
+            )
+            # list of all other quotes to show in daily review
+            other_quotes_id_list = list(
+                Quote.objects.filter(owner__is_demo=True).values_list("id", flat=True)
+            )
+        else:
+            queryset1 = Quote.objects.filter(owner=user).filter(
+                id__in=liked_random_quote_id_list
+            )
+            # list of all other quotes to show in daily review
+            other_quotes_id_list = list(
+                Quote.objects.filter(owner=user).values_list("id", flat=True)
+            )
 
         number_of_quotes_to_show = 10 - number_of_fav_quotes
         random_quote_id_list = random.sample(
             other_quotes_id_list,
             min(len(other_quotes_id_list), number_of_quotes_to_show),
         )
-        queryset2 = Quote.objects.filter(owner=user).filter(id__in=random_quote_id_list)
+
+        if user.is_demo:
+            queryset2 = Quote.objects.filter(owner__is_demo=True).filter(
+                id__in=random_quote_id_list
+            )
+        else:
+            queryset2 = Quote.objects.filter(owner=user).filter(
+                id__in=random_quote_id_list
+            )
 
         queryset = queryset1.union(queryset2)
         return queryset

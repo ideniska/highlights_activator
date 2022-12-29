@@ -1,8 +1,10 @@
-var parts = $(location).attr('href').split('/');
+let initial_url = decodeURIComponent($(location).attr('href'))
+var parts = initial_url.split('/');
 var lastSegment = parts.pop() || parts.pop(); // handle potential trailing slash
 lastSegment_decoded = atob(lastSegment)
 var url = '/api/share/' + lastSegment_decoded + '/'
 
+console.log(url)
 $(function () {
     getQuote();
 });

@@ -34,6 +34,7 @@ from .services import (
     ActivateTelegramUserService,
     ChangeQuoteLikeStatusService,
     pick_random_quote_id,
+    pick_random_quote_id_demo,
     ActivateTrialService,
     ChangeBookVisibilityService,
     GetDailyQuotesQueryset,
@@ -67,15 +68,25 @@ class BookListAPIView(
     pagination_class = BasePageNumberPagination
 
     def get_queryset(self):
-        queryset = (
-            Book.objects.filter(owner=self.request.user)
-            .annotate(
-                quotes_count=Count("quotes"),
-                liked_quotes_count=Count("quotes", filter=Q(quotes__like=True)),
+        if not self.request.user.is_demo:
+            queryset = (
+                Book.objects.filter(owner=self.request.user)
+                .annotate(
+                    quotes_count=Count("quotes"),
+                    liked_quotes_count=Count("quotes", filter=Q(quotes__like=True)),
+                )
+                .order_by("-quotes_count")
             )
-            .order_by("-quotes_count")
-        )
-        print(str(queryset.query))
+        else:
+            queryset = (
+                Book.objects.filter(owner__is_demo=True)
+                .annotate(
+                    quotes_count=Count("quotes"),
+                    liked_quotes_count=Count("quotes", filter=Q(quotes__like=True)),
+                )
+                .order_by("-quotes_count")
+            )
+
         return queryset
 
 
@@ -84,11 +95,18 @@ class BookDetailAPIView(generics.RetrieveAPIView):
     serializer_class = BookSerializer
 
     def get_queryset(self):
-        queryset = (
-            Book.objects.filter(owner=self.request.user)
-            .annotate(quotes_count=Count("quotes"))
-            .order_by("-quotes_count")
-        )
+        if self.request.user.is_demo:
+            queryset = (
+                Book.objects.filter(owner__is_demo=True)
+                .annotate(quotes_count=Count("quotes"))
+                .order_by("-quotes_count")
+            )
+        else:
+            queryset = (
+                Book.objects.filter(owner=self.request.user)
+                .annotate(quotes_count=Count("quotes"))
+                .order_by("-quotes_count")
+            )
         return queryset
 
 
@@ -157,20 +175,37 @@ class QuoteViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     pagination_class = BasePageNumberPagination
 
     def get_queryset(self):
-        qs = Quote.objects.filter(owner=self.request.user)
+        if not self.request.user.is_demo:
+            qs = Quote.objects.filter(owner=self.request.user)
 
-        # RandomServerQuoteAPIView
-        if self.action == "get_random":
-            return qs.filter(id=pick_random_quote_id(self.request.user))
+            # RandomServerQuoteAPIView
+            if self.action == "get_random":
+                return qs.filter(id=pick_random_quote_id(self.request.user))
 
-        # FavoriteQuotesAPIView
-        if self.action == "get_favorites":
-            return qs.filter(like=True)
+            # FavoriteQuotesAPIView
+            if self.action == "get_favorites":
+                return qs.filter(like=True)
 
-        if self.action == "get_daily":
-            service = GetDailyQuotesQueryset()
-            queryset = service.get_daily_quotes_queryset(self.request.user)
-            return queryset
+            if self.action == "get_daily":
+                service = GetDailyQuotesQueryset()
+                queryset = service.get_daily_quotes_queryset(self.request.user)
+                return queryset
+        else:
+            qs = Quote.objects.filter(owner__is_demo=True)
+            print(qs)
+
+            # RandomServerQuoteAPIView
+            if self.action == "get_random":
+                return qs.filter(id=pick_random_quote_id_demo())
+
+            # FavoriteQuotesAPIView
+            if self.action == "get_favorites":
+                return qs.filter(like=True)
+
+            if self.action == "get_daily":
+                service = GetDailyQuotesQueryset()
+                queryset = service.get_daily_quotes_queryset(self.request.user)
+                return queryset
 
     # QuoteLikeView
     @action(detail=True, methods=["post"])
@@ -203,12 +238,21 @@ class QuotesFromBookAPIView(generics.ListAPIView):
     pagination_class = BasePageNumberPagination
 
     def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .filter(owner=self.request.user)
-            .filter(book_id=self.kwargs["pk"])
-        )
+        if self.request.user.is_demo:
+            qs = (
+                super()
+                .get_queryset()
+                .filter(owner__is_demo=True)
+                .filter(book_id=self.kwargs["pk"])
+            )
+        else:
+            qs = (
+                super()
+                .get_queryset()
+                .filter(owner=self.request.user)
+                .filter(book_id=self.kwargs["pk"])
+            )
+        return qs
 
 
 class QuoteLikeUpdateDeleteViewset(viewsets.ModelViewSet):

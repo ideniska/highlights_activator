@@ -6,7 +6,7 @@ var current_quote = 0
 
 function randomQuote() {
   $.ajax({
-    url: '/api/q2/random',
+    url: '/api/q2/random/',
     type: 'get',
     success: successRandomQuoteHandler,
     error: function (error) {
@@ -190,6 +190,7 @@ function editQuote() {
 
 // CANCEL EDIT
 $(document).on('click', '#cancel', function () {
+  console.log('CANCEL')
   $(".card-text").html('');
   $("#quote-text").attr('contenteditable', 'false');
   $(".comment-box").attr('contenteditable', 'false');

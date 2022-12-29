@@ -18,6 +18,13 @@ class NotificationSetting(models.IntegerChoices):
     DISABLED = (3, "Disabled")
 
 
+class DemoUserData(models.Model):
+    ip_address = models.GenericIPAddressField()
+    user = models.OneToOneField(
+        "CustomUser", on_delete=models.CASCADE, related_name="demo_user"
+    )
+
+
 class CustomUser(AbstractUser):
     # username = None  # type: ignore
     email = models.EmailField("Email address", unique=True)
@@ -25,6 +32,7 @@ class CustomUser(AbstractUser):
     active_subscription = models.BooleanField(default=False)
     trial_used = models.BooleanField(default=False)
     paid_until = models.DateTimeField(null=True, blank=True)
+    is_demo = models.BooleanField(default=False)
     stripe_session_id = models.CharField(
         max_length=150, null=True, blank=True, unique=True
     )

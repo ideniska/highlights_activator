@@ -163,11 +163,14 @@ function editQuote() {
     "visibility": "visible",
     "height": "30px",
   });
+  // MOVE CANCEL AND SAVE HERE
 };
 
 // CANCEL EDIT
 $(document).on('click', '#cancel', function () {
+  console.log('CANCEL')
   if ($(".comment-box").text().length) {
+
     $("#quote-text").attr('contenteditable', 'false');
     $(".card-text").html('');
     $("#quote-text").css({
@@ -199,6 +202,7 @@ $(document).on('click', '#cancel', function () {
 
 // SAVE EDIT
 $(document).on('click', '#save', function () {
+  console.log('SAVE')
   sessionStorage.setItem("quote-text", $('#quote-text').html());
   sessionStorage.setItem("note-text", $('.comment-box').html());
   $("#quote-text").attr('contenteditable', 'false');

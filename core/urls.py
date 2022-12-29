@@ -19,7 +19,7 @@ urlpatterns = [
         name="daily",
     ),
     path(
-        "share/<int:id>/",
+        "share/<id>/",
         views.PageView.as_view(template_name="quote_share.html"),
         name="share",
     ),
